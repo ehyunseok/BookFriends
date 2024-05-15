@@ -44,12 +44,9 @@ public class UserDao {
 	
 //회원가입
 	public int join(UserDto user) {
-		
-		String SQL = "INSERT INTO user VALUES(?, ?, ?, ?, false);";
-		
+		String SQL = "INSERT INTO user VALUES(?, ?, ?, ?, ?);";
 		Connection conn = null;
 		PreparedStatement pstmt = null;
-		
 		try {
 			conn = DatabaseUtil.getConnection();
 			pstmt = conn.prepareStatement(SQL);
@@ -57,7 +54,7 @@ public class UserDao {
 			pstmt.setString(2, user.getUserPassword());
 			pstmt.setString(3, user.getUserEmail());
 			pstmt.setString(4, user.getUserEmailHash());
-			pstmt.setString(5, user.getUserEmailChecked());
+			pstmt.setBoolean(5, Boolean.parseBoolean(user.getUserEmailChecked()));
 			return pstmt.executeUpdate();	// 회원가입 성공
 		} catch(Exception e) {
 			e.printStackTrace();
