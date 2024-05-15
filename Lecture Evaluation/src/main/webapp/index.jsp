@@ -5,7 +5,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<title>강의평가 웹사이트</title>
+	<title>Hyun Univ. CourseReview</title>
 	<!-- 부트스트랩 css 추가하기 -->
 	<link rel="stylesheet" href="./css/bootstrap.min.css">
 	<!-- 커스텀 css 추가하기 -->
@@ -15,7 +15,7 @@
 
 <!-- navigation -->
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">
-		<a class="navbar-brand" href="index.jsp">강의평가 웹사이트</a>
+		<a class="navbar-brand" href="index.jsp">Ehyun Univ Course Review</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
 			<span class="navbar-toggler-icon"></span>
 		</button>
@@ -28,9 +28,9 @@
 					<a class="nav-link dropdown-toggle" id="dropdown" data-toggle="dropdown">회원관리
 					</a>
 					<div class="dropdown-menu" aria-labelledby="dropdown">
-						<a class="dropdown-item" href="#">로그인</a>
-						<a class="dropdown-item" href="#">회원가입</a>
-						<a class="dropdown-item" href="#">로그아웃</a>
+						<a class="dropdown-item" href="userLogin.jsp">로그인</a>
+						<a class="dropdown-item" href="userJoin.jsp">회원가입</a>
+						<a class="dropdown-item" href="userLogout.jsp">로그아웃</a>
 					</div>
 				</li>
 			</ul>
@@ -41,7 +41,7 @@
 		</div>
 	</nav>
 	
-<!-- selection  -->
+<!-- container  -->
 	<section class="container">
 		<form method="get" action="./index.jsp" class="form-inline mt-3">
 			<select name="lectureDivid" class="form-control mx-1 mt-2">

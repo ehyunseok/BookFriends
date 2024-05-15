@@ -1,10 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gowun+Dodum&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Gasoek+One&family=Gothic+A1&display=swap');
 .navbar-brand, h1, h2, h3, h4 {
-	font-family: 'Black Han Sans';
+	font-family: 'Gothic A1';
 }
 h5 {
-	font-family: 'Black Han Sans';
+	font-family: 'Gothic A1';
 	font-size: 18px;
 }
 body {
