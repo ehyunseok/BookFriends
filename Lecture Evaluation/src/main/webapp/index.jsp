@@ -1,12 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.io.PrintWriter"%>
 <%@ page import="user.UserDao"%>
+<%@ page import="evaluation.EvaluationDao"%>
+<%@ page import="evaluation.EvaluationDto"%>
+<%@ page import="java.util.ArrayList"%>
+<%@ page import="java.net.URLEncoder"%>
 <!DOCTYPE html>
 <html>
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<title>Hyun Univ. CourseReview</title>
+	<title>이현대학교 대나무숲</title>
 	<!-- 부트스트랩 css 추가하기 -->
 	<link rel="stylesheet" href="./css/bootstrap.min.css">
 	<!-- 커스텀 css 추가하기 -->
@@ -15,6 +19,31 @@
 <body>
 <!-- 로그인 상태에 따라 사용자에게 다른화면이 나오게 하기 -->
 <%
+
+//검색했을 때 어떤 게시글을 검색했는지 판단할 수 있게~
+	request.setCharacterEncoding("UTF-8");		
+	String lectureDivide = "전체";
+	String searchType = "최신순";
+	String search = "";
+	int pageNumber = 0;
+	if(request.getParameter("lectureDivide") != null){
+		lectureDivide = request.getParameter("lectureDivide");
+	}
+	if(request.getParameter("searchType") != null){
+		searchType = request.getParameter("searchType");
+	}
+	if(request.getParameter("search") != null){
+		search = request.getParameter("search");
+	}
+	if(request.getParameter("pageNumber") != null){
+		try{
+			pageNumber = Integer.parseInt( request.getParameter("pageNumber") );
+		} catch(Exception e){
+			System.out.println("검색 페이지 오류");
+			e.printStackTrace();
+		}
+	}
+	
 	String userID = null;
 	if(session.getAttribute("userID") != null){		// 로그인한 상태라서 세션에 userID가 존재할 경우
 		userID = (String)session.getAttribute("userID");	// userID에 해당 세션의 값을 저장함
@@ -43,7 +72,7 @@
 
 <!-- navigation -->
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">
-		<a class="navbar-brand" href="index.jsp">Ehyun Univ Course Review</a>
+		<a class="navbar-brand" href="index.jsp">이현대학교 대나무숲</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
 			<span class="navbar-toggler-icon"></span>
 		</button>
@@ -73,8 +102,8 @@
 					</div>
 				</li>
 			</ul>
-			<form class="form-inline my-2 my-lg-0">
-				<input class="form-control mr-sm-2" type="search" placeholder="내용을 입력하세요." aria-label="Search">
+			<form action="./index.jsp" method="get" class="form-inline my-2 my-lg-0">
+				<input type="text" name="search" class="form-control mr-sm-2" type="search" placeholder="내용을 입력하세요." aria-label="Search">
 				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">검색</button>
 			</form>
 		</div>
@@ -85,37 +114,49 @@
 		<form method="get" action="./index.jsp" class="form-inline mt-3">
 			<select name="lectureDivid" class="form-control mx-1 mt-2">
 				<option value="전체">전체</option>
-				<option value="전공">전공</option>
-				<option value="교양">교양</option>
-				<option value="기타">기타</option>
+				<option value="전공" <% if(lectureDivide.equals("전공")) out.println("selected"); %>>전공</option>
+				<option value="교양" <% if(lectureDivide.equals("교양")) out.println("selected"); %>>교양</option>
+				<option value="기타" <% if(lectureDivide.equals("기타")) out.println("selected"); %>>기타</option>
+			</select>
+			<select name="searchType" class="form-control mx-1 mt-2">
+				<option value="최신순">최신순</option>
+				<option value="추천순" <% if(lectureDivide.equals("추천순")) out.println("selected"); %>>추천순</option>
 			</select>
 			<input type="text" name="search" class="form-control mx-1 mt-2" placeholder="내용을 입력해주세요.">
 			<button type="submit" class="btn btn-primary mx-1 mt-2">검색</button>
 			<a class="btn btn-primary mx-1 mt-2" data-toggle="modal" href="#registerModal">등록하기</a>
 			<a class="btn btn-danger mx-1 mt-2" data-toggle="modal" href="#reportModal">신고</a>
 		</form>
-		
+<%
+//사용자가 검색한 내용이 리스트에 담긴 상태로 출력되게 하기
+	ArrayList<EvaluationDto> evalList = new ArrayList<EvaluationDto>();
+	evalList = new EvaluationDao().getList(lectureDivide, searchType, search, pageNumber);
+	if(evalList != null){
+		for(int i =0; i<evalList.size() ; i++){
+			if(i == 5) break;	//게시글 5개까지 출력
+			EvaluationDto evaluation = evalList.get(i);
+%>
 		<!-- 등록된 평가 목록 카드 -->
 		<div class="card bg-light mt-3">
 			<div class="card-header bg-light">
 				<div class="row">
-					<div class="col-8 text-left">컴퓨터개론&nbsp;<small>장영실</small></div>
+					<div class="col-8 text-left"><%= evaluation.getLectureName() %>&nbsp;<small><%= evaluation.getProfessorName() %></small></div>
 					<div class="col-4 text-right">
-						종합<span style="color: red;"> A</span>
+						총점<span style="color: red;"> <%= evaluation.getTotalScore() %></span>
 					</div>
 				</div>
 			</div>
 			<div class="card-body">
 				<h5 class="card-title">
-					최고의 강의!!&nbsp;<small>(2023년 1학기)</small>
+					<%= evaluation.getEvaluationTitle() %>&nbsp;<small>(<%= evaluation.getLectureYear() %>년 <%= evaluation.getSemesterDivide() %>)</small>
 				</h5>
-				<p class="card-text">정말 훌륭한 강의였습니다. 장영실 교수님 감사합니다.</p>
+				<p class="card-text"><%= evaluation.getEvaluationContent() %></p>
 				<div class="row">
 					<div class="col-9 text-left">
-						강의력<span style="color: red;"> A</span>
-						유용성<span style="color: red;"> A</span>
-						종합<span style="color: red;"> A</span>
-						<span style="color: green;">(추천: 15)</span>
+						강의력<span style="color: red;"> <%= evaluation.getSkillScore() %></span>
+						유용성<span style="color: red;"> <%= evaluation.getUsabilityScore() %></span>
+						종합<span style="color: red;"> <%= evaluation.getTotalScore() %></span>
+						<span style="color: green;">(추천: <%= evaluation.getLikeCount() %>)</span>
 					</div>
 					<div class="col-9 text-right">
 						<a onclick="return confirm('추천하시겠습니까?')" href="./likeAction.jsp?evaluationID=">추천</a>
@@ -124,64 +165,46 @@
 				</div>
 			</div>
 		</div>
-		<div class="card bg-light mt-3">
-			<div class="card-header bg-light">
-				<div class="row">
-					<div class="col-8 text-left">현대미술의이해&nbsp;<small>신윤복</small></div>
-					<div class="col-4 text-right">
-						종합<span style="color: red;"> B</span>
-					</div>
-				</div>
-			</div>
-			<div class="card-body">
-				<h5 class="card-title">
-					그럭저럭 들을만했음&nbsp;<small>(2023년 여름학기)</small>
-				</h5>
-				<p class="card-text">ㅈㄱㄴ</p>
-				<div class="row">
-					<div class="col-9 text-left">
-						강의력<span style="color: red;"> B</span>
-						유용성<span style="color: red;"> B</span>
-						종합<span style="color: red;"> B</span>
-						<span style="color: green;">(추천: 0)</span>
-					</div>
-					<div class="col-9 text-right">
-						<a onclick="return confirm('추천하시겠습니까?')" href="./likeAction.jsp?evaluationID=">추천</a>
-						<a onclick="return confirm('삭제하시겠습니까?')" href="./deleteAction.jsp?evaluationID=">삭제</a>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="card bg-light mt-3">
-			<div class="card-header bg-light">
-				<div class="row">
-					<div class="col-8 text-left">목민심서&nbsp;<small>정약용</small></div>
-					<div class="col-4 text-right">
-						종합<span style="color: red;"> D</span>
-					</div>
-				</div>
-			</div>
-			<div class="card-body">
-				<h5 class="card-title">
-					지루했어요&nbsp;<small>(2023년 2학기)</small>
-				</h5>
-				<p class="card-text">졸려서 혼났습니다..완전 비추천입니다. 교수님은 정말 좋으시지만 강의는 정말 지루해요...ㅠㅠ</p>
-				<div class="row">
-					<div class="col-9 text-left">
-						강의력<span style="color: red;"> F</span>
-						유용성<span style="color: red;"> C</span>
-						종합<span style="color: red;"> D</span>
-						<span style="color: green;">(추천: 3)</span>
-					</div>
-					<div class="col-9 text-right">
-						<a onclick="return confirm('추천하시겠습니까?')" href="./likeAction.jsp?evaluationID=">추천</a>
-						<a onclick="return confirm('삭제하시겠습니까?')" href="./deleteAction.jsp?evaluationID=">삭제</a>
-					</div>
-				</div>
-			</div>
-		</div>
+<%
+		}
+	}
+%>
 	</section>
 	
+
+<!-- 페이징 -->
+	<ul class="pagination justify-content-center mt-3">
+		<li class="page-item">
+<% 
+	if(pageNumber <= 0){	//페이지수가 0보다 작거나 같으면 이전 버튼 비활성화
+%>
+		<a class="page-link disabled">이전</a>
+<% 
+	} else { 
+%>
+		<a class="page-link" href="./index.jsp?lectureDivide=<%= URLEncoder.encode(lectureDivide,"UTF-8") %>&searchType=
+		<%= URLEncoder.encode(searchType,"UTF-8") %>&search=<%= URLEncoder.encode(search,"UTF-8") %>&pageNumber="<%= pageNumber-1 
+		%>">이전</a>
+<% 
+	} 
+%>
+		</li>
+		<li>
+<% 
+	if(evalList.size() < 6){	//게시글 리스트가 6개보다 작으면 다음페이지 버튼 비활성화
+%>
+		<a class="page-link disabled">다음</a>
+<% 
+	} else { 
+%>
+		<a class="page-link" href="./index.jsp?lectureDivide=<%= URLEncoder.encode(lectureDivide,"UTF-8") %>&searchType=
+		<%= URLEncoder.encode(searchType,"UTF-8") %>&search=<%= URLEncoder.encode(search,"UTF-8") %>&pageNumber="<%= pageNumber+1 
+		%>">다음</a>
+<% 
+	} 
+%>		
+		</li>
+	</ul>
 	
 <!-- 평가 등록하기 모달  -->
 	<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="modal">
