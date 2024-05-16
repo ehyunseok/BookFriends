@@ -18,11 +18,11 @@
 	if(session.getAttribute("userID") != null){		// 로그인한 상태라서 세션에 userID가 존재할 경우
 		userID = (String)session.getAttribute("userID");	// userID에 해당 세션의 값을 저장함
 	}
-	if(userID != null){		// 로그인 상태인 경우에는 메인 페이지로 이동
+	if(userID == null){		// 로그인 상태가 아닌 경우에는 로그인 페이지로 이동
 		PrintWriter script = response.getWriter();
 		script.println("<script>");
-		script.println("alert('로그인이 된 상태입니다.');");
-		script.println("location.href='index.jsp'");
+		script.println("alert('로그인을 해주세요.');");
+		script.println("location.href='userLogin.jsp'");
 		script.println("</script>");
 		script.close();
 		return;
@@ -69,17 +69,10 @@
 	
 <!-- container  -->
 	<section class="container mt-3" style="max-width: 560px">
-		<form method="post" action="./userLoginAction.jsp">
-			<div class="form-group">
-				<label>아이디</label>
-				<input type="text" name="userID" class="form-control">
-			</div>
-			<div class="form-group">
-				<label>비밀번호</label>
-				<input type="password" name="userPassword" class="form-control">
-			</div>
-			<button type="submit" class="btn btn-primary">로그인</button>
-		</form>
+		<div class="alert alert-warning mt-4" role="alert">
+			이메일 인증이 완료되어야 이용할 수 있습니다. 인증 메일을 받지 못 하셨나요?
+		</div>
+		<a href="emailSendAction.jsp" class="btn btn-primary">인증 메일 다시 받기</a>
 	</section>
 	
 	
