@@ -78,7 +78,7 @@
 				<label>비밀번호</label>
 				<input type="password" name="userPassword" class="form-control">
 			</div>
-			<button type="submit" class="btn btn-primary">로그인</button>
+			<button type="submit" class="btn btn-primary btn-block">로그인</button>
 		</form>
 	</section>
 	

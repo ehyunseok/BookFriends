@@ -194,7 +194,7 @@
 					</button>
 				</div>
 				<div class="modal-body">
-					<form action="./evaluationRegisterAction.jsp" method="post">
+					<form method="post" action="./evaluationRegisterAction.jsp">
 						<div class="form-row">
 							<div class="form-group col-sm-6">
 								<label>강의명</label>
@@ -245,11 +245,11 @@
 						</div>
 						<div class="form-group">
 							<label>제목</label>
-							<input type="text" name="elvaluationTitle" class="form-control" maxlength="30">
+							<input type="text" name="evaluationTitle" class="form-control" maxlength="30">
 						</div>
 						<div class="form-group">
 							<label>내용</label>
-							<textarea name="elvaluationContent" class="form-control" maxlength="2048" style="height: 180px;"></textarea>
+							<textarea name="evaluationContent" class="form-control" maxlength="2048" style="height: 180px;"></textarea>
 						</div>
 						<div class="form-row">
 							<div class="form-group col-sm-3">
@@ -285,7 +285,7 @@
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
-							<button type="button" class="btn btn-primary">등록</button>
+							<button type="submit" class="btn btn-primary">등록</button>
 						</div>
 					</form>
 				</div>
@@ -315,7 +315,7 @@
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
-							<button type="button" class="btn btn-danger">신고하기</button>
+							<button type="submit" class="btn btn-danger">신고하기</button>
 						</div>
 					</form>
 				</div>
