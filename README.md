@@ -1,6 +1,6 @@
 # LectureEvaluationWeb_JSP
 
-JSP 강의 평가 웹사이트 'Ehyun Univ Course Review'
+JSP 대학생 커뮤니티 웹사이트
 
 ## 개발환경
 - 웹 브라우저: 웨일(Whale)
