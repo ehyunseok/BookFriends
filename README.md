@@ -1,4 +1,4 @@
-# LectureEvaluationWeb_JSP
+# CommunityOfUniversityStudents_JSP
 
 JSP 대학생 커뮤니티 웹사이트
 
