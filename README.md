@@ -1,7 +1,7 @@
 # CommunityOfUniversityStudents_JSP
 
 ## 소개
-JSP(Java Server Pages)를 활용하여 재학생들이 정보를 공유하고 소통할 수 있는 커뮤니티 웹사이트를 제작하였습니다.
+JSP(Java Server Pages)를 활용한 재학생들이 정보를 공유하고 소통할 수 있는 커뮤니티 웹사이트
 
 ## 개발환경
 - Frontend: HTML, CSS, JavaScript
