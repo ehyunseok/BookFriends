@@ -95,6 +95,7 @@
 <%
 	} else {
 %> 	<!-- 로그인 했을 경우 로그아웃만 보이게 -->
+						<a class="dropdown-item" style="color: green;" ><%= userID %>님 환영합니다.</a>
 						<a class="dropdown-item" href="userLogoutAction.jsp">로그아웃</a>
 <%
 	}
@@ -142,7 +143,7 @@
 				<div class="row">
 					<div class="col-8 text-left"><%= evaluation.getLectureName() %>&nbsp;<small><%= evaluation.getProfessorName() %></small></div>
 					<div class="col-4 text-right">
-						총점<span style="color: red;"> <%= evaluation.getTotalScore() %></span>
+						<small>작성자</small><span> <%= evaluation.getUserID() %></span>
 					</div>
 				</div>
 			</div>
@@ -153,9 +154,9 @@
 				<p class="card-text"><%= evaluation.getEvaluationContent() %></p>
 				<div class="row">
 					<div class="col-9 text-left">
-						강의력<span style="color: red;"> <%= evaluation.getSkillScore() %></span>
-						유용성<span style="color: red;"> <%= evaluation.getUsabilityScore() %></span>
-						종합<span style="color: red;"> <%= evaluation.getTotalScore() %></span>
+						강의력: <span> <%= evaluation.getSkillScore() %></span> 
+						| 유용성: <span> <%= evaluation.getUsabilityScore() %></span> 
+						| <b>총점: </b><span style="color: red;"> <%= evaluation.getTotalScore() %></span>
 						<span style="color: green;">(추천: <%= evaluation.getLikeCount() %>)</span>
 					</div>
 					<div class="col-9 text-right">
