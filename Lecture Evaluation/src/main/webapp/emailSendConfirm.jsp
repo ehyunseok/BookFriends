@@ -77,7 +77,7 @@
 	
 	
 <!-- footer -->
-	<footer class="bg-dark mt-4 p-5 text-center" style="color: #FFFFFF;">
+	<footer class="sticky-bottom bg-dark text-center mt-5" style="color: #FFFFFF;">
 		Copyright &copy; 2024 EhyunSeok All Rights Reserved.
 	</footer>
 	
