@@ -182,24 +182,24 @@
 <% 
 	} else { 
 %>
-		<a class="page-link" href="./index.jsp?lectureDivide=<%= URLEncoder.encode(lectureDivide,"UTF-8") %>&searchType=
-		<%= URLEncoder.encode(searchType,"UTF-8") %>&search=<%= URLEncoder.encode(search,"UTF-8") %>&pageNumber="<%= pageNumber-1 
-		%>">이전</a>
+		<a class="page-link" href="./index.jsp?lectureDivide=<%= URLEncoder.encode(lectureDivide, "UTF-8") %>
+		&searchType=<%= URLEncoder.encode(searchType, "UTF-8") %>
+		&search=<%= URLEncoder.encode(search, "UTF-8") %>&pageNumber=<%= pageNumber-1 %>">이전</a>
 <% 
 	} 
 %>
 		</li>
 		<li>
 <% 
-	if(evalList.size() < 6){	//게시글 리스트가 6개보다 작으면 다음페이지 버튼 비활성화
+	if(evalList.size() < 6){	//게시글 개수가 6개보다 작으면 다음페이지 버튼 비활성화
 %>
 		<a class="page-link disabled">다음</a>
 <% 
 	} else { 
 %>
-		<a class="page-link" href="./index.jsp?lectureDivide=<%= URLEncoder.encode(lectureDivide,"UTF-8") %>&searchType=
-		<%= URLEncoder.encode(searchType,"UTF-8") %>&search=<%= URLEncoder.encode(search,"UTF-8") %>&pageNumber="<%= pageNumber+1 
-		%>">다음</a>
+		<a class="page-link" href="./index.jsp?lectureDivide=<%= URLEncoder.encode(lectureDivide,"UTF-8") %>
+		&searchType=<%= URLEncoder.encode(searchType, "UTF-8") %>
+		&search=<%= URLEncoder.encode(search,"UTF-8") %>&pageNumber=<%= pageNumber + 1%>">다음</a>
 <% 
 	} 
 %>		
