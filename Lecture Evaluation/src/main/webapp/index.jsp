@@ -159,8 +159,8 @@
 						<span style="color: green;">(추천: <%= evaluation.getLikeCount() %>)</span>
 					</div>
 					<div class="col-9 text-right">
-						<a onclick="return confirm('추천하시겠습니까?')" href="./likeAction.jsp?evaluationID=">추천</a>
-						<a onclick="return confirm('삭제하시겠습니까?')" href="./deleteAction.jsp?evaluationID=">삭제</a>
+						<a onclick="return confirm('추천하시겠습니까?')" href="./likeEvaluationAction.jsp?evaluationID=<%= evaluation.getEvaluationID() %>">추천</a>
+						<a onclick="return confirm('삭제하시겠습니까?')" href="./deleteEvaluationAction.jsp?evaluationID=<%= evaluation.getEvaluationID() %>">삭제</a>
 					</div>
 				</div>
 			</div>

@@ -66,7 +66,7 @@ public class UserDao {
 	}
 	
 	
-//이메일 확인
+//이메일 인증 상태 확인
 	public boolean getUserEmailChecked(String userID) {
 		
 		String SQL = "SELECT userEmailChecked FROM user WHERE userID = ?;";

@@ -44,7 +44,8 @@ public class EvaluationDao {
 			return -1; // db 오류
 
 		}
-		
+
+// 강의평가 리스트 불러오기(메인, 검색)
 		public ArrayList<EvaluationDto> getList(String lectureDivide, String searchType, String search, int pageNumber) {
 		    if (lectureDivide.equals("전체")) {
 		        lectureDivide = "";
@@ -108,6 +109,78 @@ public class EvaluationDao {
 		    }
 		    
 		    return evalList;
+		}
+		
+// 강의평가 추천
+		public int like(String evaluationID) {
+
+			String SQL = "UPDATE evaluation SET likeCount = likeCount + 1 WHERE evaluationID = ?;";
+			// 실행 시 해당 평가의 추천 1씩 증가시킴
+			
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+			
+			try {
+				conn = DatabaseUtil.getConnection();
+				pstmt = conn.prepareStatement(SQL);
+				pstmt.setInt(1, Integer.parseInt(evaluationID));
+				return pstmt.executeUpdate();	//실행 결과를 반환함
+			} catch(Exception e) {
+				e.printStackTrace();
+			} finally {
+				try { if(conn != null) conn.close();} catch(Exception e ) {e.printStackTrace();}
+				try { if(pstmt != null) pstmt.close();} catch(Exception e ) {e.printStackTrace();}
+			}
+			return -1;	//오류 발생
+		}
+		
+// 강의평가 삭제
+		public int delete(String evaluationID) {
+			
+			String SQL = "DELETE FROM evaluation WHERE evaluationID = ?";
+			
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+			
+			try {
+				conn = DatabaseUtil.getConnection();
+				pstmt = conn.prepareStatement(SQL);
+				pstmt.setInt(1, Integer.parseInt(evaluationID));
+				return pstmt.executeUpdate();	//실행 결과를 반환함
+			} catch(Exception e) {
+				e.printStackTrace();
+			} finally {
+				try { if(conn != null) conn.close();} catch(Exception e ) {e.printStackTrace();}
+				try { if(pstmt != null) pstmt.close();} catch(Exception e ) {e.printStackTrace();}
+			}
+			return -1;	//오류 발생
+		}
+		
+// 강의평가 작성자의 아이디 가져오기
+		public String getUserID(String evaluationID) {
+			
+			String SQL = "SELECT userID FROM evaluation WHERE evaluationID = ?;";
+			
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			
+			try {
+				conn = DatabaseUtil.getConnection();
+				pstmt = conn.prepareStatement(SQL);
+				pstmt.setInt(1, Integer.parseInt(evaluationID));
+				rs = pstmt.executeQuery();
+				if(rs.next()) {
+					return rs.getString(1);	// 이메일 인증이 완료된 사용자일 경우 true 반환 
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+			} finally {
+				try { if(conn != null) conn.close();} catch(Exception e ) {e.printStackTrace();}
+				try { if(pstmt != null) pstmt.close();} catch(Exception e ) {e.printStackTrace();}
+				try { if(rs != null) rs.close();} catch(Exception e ) {e.printStackTrace();}
+			}
+			return null;
 		}
 
 	
