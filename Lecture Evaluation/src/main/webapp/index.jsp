@@ -95,7 +95,7 @@
 <%
 	} else {
 %> 	<!-- 로그인 했을 경우 로그아웃만 보이게 -->
-						<a class="dropdown-item" style="color: green;" ><%= userID %>님 환영합니다.</a>
+						<a class="dropdown-item" style="color: green;"><b><%= userID %></b>님 환영합니다.</a>
 						<a class="dropdown-item" href="userLogoutAction.jsp">로그아웃</a>
 <%
 	}
@@ -113,7 +113,7 @@
 <!-- container  -->
 	<section class="container">
 		<form method="get" action="./index.jsp" class="form-inline mt-3">
-			<select name="lectureDivid" class="form-control mx-1 mt-2">
+			<select name="lectureDivide" class="form-control mx-1 mt-2">
 				<option value="전체">전체</option>
 				<option value="전공" <% if(lectureDivide.equals("전공")) out.println("selected"); %>>전공</option>
 				<option value="교양" <% if(lectureDivide.equals("교양")) out.println("selected"); %>>교양</option>
@@ -153,15 +153,14 @@
 				</h5>
 				<p class="card-text"><%= evaluation.getEvaluationContent() %></p>
 				<div class="row">
-					<div class="col-9 text-left">
-						강의력: <span> <%= evaluation.getSkillScore() %></span> 
-						| 유용성: <span> <%= evaluation.getUsabilityScore() %></span> 
-						| <b>총점: </b><span style="color: red;"> <%= evaluation.getTotalScore() %></span>
-						<span style="color: green;">(추천: <%= evaluation.getLikeCount() %>)</span>
+					<div class="col-12 text-left">
+						강의력 <span> <%= evaluation.getSkillScore() %></span> 
+						| 유용성 <span> <%= evaluation.getUsabilityScore() %></span> 
+						| <b>총점 <span style="color: red;"> <%= evaluation.getTotalScore() %></span></b>
 					</div>
-					<div class="col-9 text-right">
-						<a onclick="return confirm('추천하시겠습니까?')" href="./likeEvaluationAction.jsp?evaluationID=<%= evaluation.getEvaluationID() %>">추천</a>
-						<a onclick="return confirm('삭제하시겠습니까?')" href="./deleteEvaluationAction.jsp?evaluationID=<%= evaluation.getEvaluationID() %>">삭제</a>
+					<div class="col-12 text-right">
+						<a style="color: black;" onclick="return confirm('추천하시겠습니까?')" href="./likeEvaluationAction.jsp?evaluationID=<%= evaluation.getEvaluationID() %>">추천(<%= evaluation.getLikeCount() %>)</a> | 
+						<a style="color: gray;" onclick="return confirm('삭제하시겠습니까?')" href="./deleteEvaluationAction.jsp?evaluationID=<%= evaluation.getEvaluationID() %>">삭제</a>
 					</div>
 				</div>
 			</div>
@@ -255,7 +254,7 @@
 									<option value="1학기" selected>1학기</option>
 									<option value="여름학기">여름학기</option>
 									<option value="2학기">2학기</option>
-									<option value="겨울학기">겨울학기</option>
+									<option value="가을학기">가을학기</option>
 								</select>
 							</div>
 							<div class="form-group col-sm-4">
