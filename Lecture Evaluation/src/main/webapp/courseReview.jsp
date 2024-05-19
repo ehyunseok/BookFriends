@@ -142,7 +142,7 @@
 			EvaluationDto evaluation = evalList.get(i);
 %>
 		<!-- 등록된 평가 목록 카드 -->
-		<div class="card bg-light mt-3">
+		<div class="card bg-light mt-3 mb-3">
 			<div class="card-header bg-light">
 				<div class="row">
 					<div class="col-8 text-left"><%= evaluation.getLectureName() %>&nbsp;<small><%= evaluation.getProfessorName() %></small></div>

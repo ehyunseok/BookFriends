@@ -1,8 +1,9 @@
+<%@page import="board.BoardDao"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.io.PrintWriter"%>
 <%@ page import="user.UserDao"%>
-<%@ page import="evaluation.EvaluationDao"%>
-<%@ page import="evaluation.EvaluationDto"%>
+<%@ page import="board.BoardDao"%>
+<%@ page import="board.BoardDto"%>
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="java.net.URLEncoder"%>
 <!DOCTYPE html>
@@ -15,51 +16,12 @@
 	<link rel="stylesheet" href="./css/bootstrap.min.css">
 	<!-- 커스텀 css 추가하기 -->
 	<link rel="stylesheet" href="./css/custom.css">
-	<style>
-		.center-container {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			min-height: 20vh;
-		}
-		.card-wrapper {
-			height: 50vh;
-			width: 80vh;
-		}
-		.truncate-text {
-		    white-space: nowrap;
-		    overflow: hidden;
-		    text-overflow: ellipsis;
-		    max-width: 500px;
-		}
-	</style>
+	
 </head>
 <body>
-
 <%
 //검색했을 때 어떤 게시글을 검색했는지 판단할 수 있게~
 	request.setCharacterEncoding("UTF-8");		
-	String lectureDivide = "전체";
-	String searchType = "최신순";
-	String search = "";
-	int pageNumber = 0;
-	if(request.getParameter("lectureDivide") != null){
-		lectureDivide = request.getParameter("lectureDivide");
-	}
-	if(request.getParameter("searchType") != null){
-		searchType = request.getParameter("searchType");
-	}
-	if(request.getParameter("search") != null){
-		search = request.getParameter("search");
-	}
-	if(request.getParameter("pageNumber") != null){
-		try{
-			pageNumber = Integer.parseInt( request.getParameter("pageNumber") );
-		} catch(Exception e){
-			System.out.println("검색 페이지 오류");
-			e.printStackTrace();
-		}
-	}
 	
 // 로그인 상태 관리
 	String userID = null;
@@ -130,48 +92,59 @@
 		</div>
 	</nav>
 	<section class="container">
-		<div class="center-container">
-			<div class="row row-cols-1 row-cols-md-2 mt-5">
-				<div class="col card-wrapper">
-					<div class="card">
-						<div class="card-header text-center">
-							<a  href="couseReview.jsp" style="color: black;">
-								<h5 class="card-title"><b>강의평가</b></h5>
-								<p class="card-text">추천수 top5</p>
-							</a>
-						</div>
-						<ul class="list-group list-group-flush">
-							<li class="list-group-item">
-									[강의명 <small>교수명</small>] 
-								<div class="truncate-text">
-									<b>제목이 너무 길면 줄여주닌가?궁금하다정말궁궁해히히히히히ㅣ힣궁궁하다가ㅗ</b> 
-								</div>
-									<small>작성자: 홍길동        👍100</small>
-							</li>
-						</ul>
+		<div class="card bg-light mt-3">
+			<div class="card-header bg-light">
+				<h5 class="card-title"><b>개똥이</b></h5>
+				<p class="card-text">조회수: 0 | 작성일: 2024.05.05</p>
+			</div>
+			<div class="card-body">
+				<h4 class="card-title"><b>제목</b></h4>
+				<p class="card-text" style="text-align:justify; white-space:pre-wrap;">내용
+				</p>
+				<div class="row">
+					<div class="col-12 text-right">
+						<a style="color: black;" onclick="return confirm('추천하시겠습니까?')" href="#">추천(1)</a> | 
+						<a style="color: gray;" onclick="return confirm('삭제하시겠습니까?')" href="#">삭제</a>
 					</div>
-				</div>
-				<div class="col card-wrapper">
-					<div class="card">
-						<div class="card-header text-center">
-							<a href="board.jsp" style="color: black;">
-								<h5 class="card-title"><b>자유게시판</b></h5>
-								<p class="card-text">인기글 top5</p>
-							</a>
-						</div>
-						<ul class="list-group list-group-flush">
-							<li class="list-group-item">
-								[카테고리] <div class="truncate-text"><b>제목이 너무 길면 줄여주닌가?궁금하다정말궁궁해히히히히히ㅣ힣궁궁하다가ㅗ</b></div>
-								<div class="sidebyside">
-									<small>작성자: 홍길동        👍100</small>
-								</div>
-							</li>
-						</ul>
 				</div>
 			</div>
 		</div>
-	</div>
-	</section>
+		<div class="card mt-2">
+			<div class="card-header">comment</div>
+			<div class="card-body">
+				<form method="post" action="./replyRegisterAction.jsp">
+					<input type="text" name="replyContent" class="form-control" maxlength="2048" style="height: 100px;">
+					<div class="text-right">
+						<button type="submit" class="btn btn-primary mt-1">작성</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div id="comments-area">
+			<div class="card mb-5 mt-2">
+				<div class="card-header">1개의 댓글</div>
+				<div class="card-body">
+				<ul class="list-group list-group-flush">
+					<li class="list-group-item m-1">
+						<h5><b>작성자</b></h5>
+						<p>댓글내용댓글내용</p>
+						<div class="text-right">
+							<a style="color: gray;" onclick="return confirm('삭제하시겠습니까?')">삭제</a>
+						</div>
+					</li>
+					<li class="list-group-item m-1">
+						<h5><b>작성자</b></h5>
+						<p>댓글내용댓글내용</p>
+						<div class="text-right">
+							<a style="color: gray;" onclick="return confirm('삭제하시겠습니까?')">삭제</a>
+						</div>
+					</li>
+				</ul>
+				</div>
+			</div>
+		</div>
+	</section>	
+	
 	
 <!-- footer -->
 	<footer class="fixed-bottom bg-dark text-center mt-5" style="color: #FFFFFF;">
