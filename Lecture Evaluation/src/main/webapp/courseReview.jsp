@@ -82,7 +82,7 @@
 					<a class="nav-link" href="index.jsp">메인</a>
 				</li>
 				<li class="nav-item active">
-					<a class="nav-link" href="./courseReview.jsp">강의평가</a>
+					<a class="nav-link" href="./courseReview.jsp"><b>강의평가</b></a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="./board.jsp">자유게시판</a>
@@ -101,7 +101,7 @@
 <%
 	} else {
 %> 	<!-- 로그인 했을 경우 로그아웃만 보이게 -->
-						<a class="dropdown-item" style="color: green;"><b><%= userID %></b>님 환영합니다.</a>
+						<a class="dropdown-item" style="color: green;"><b><%= userID %></b> 님 환영합니다.</a>
 						<a class="dropdown-item" href="userLogoutAction.jsp">로그아웃</a>
 <%
 	}
@@ -114,7 +114,7 @@
 	
 <!-- container  -->
 	<section class="container">
-		<form method="get" action="./index.jsp" class="form-inline mt-3">
+		<form method="get" action="./courseReview.jsp" class="form-inline mt-3">
 			<select name="lectureDivide" class="form-control mx-1 mt-2">
 				<option value="전체">전체</option>
 				<option value="전공" <% if(lectureDivide.equals("전공")) out.println("selected"); %>>전공</option>
@@ -123,7 +123,7 @@
 			</select>
 			<select name="searchType" class="form-control mx-1 mt-2">
 				<option value="최신순">최신순</option>
-				<option value="추천순" <% if(lectureDivide.equals("추천순")) out.println("selected"); %>>추천순</option>
+				<option value="추천순" <% if(searchType.equals("추천순")) out.println("selected"); %>>추천순</option>
 			</select>
 			<input type="text" name="search" class="form-control mx-1 mt-2" placeholder="내용을 입력해주세요.">
 			<button type="submit" class="btn btn-dark mx-1 mt-2">검색</button>
@@ -186,7 +186,7 @@
 <% 
 	} else { 
 %>
-		<a class="page-link" href="./index.jsp?lectureDivide=<%= URLEncoder.encode(lectureDivide, "UTF-8") %>
+		<a class="page-link" href="./courseReview.jsp?lectureDivide=<%= URLEncoder.encode(lectureDivide, "UTF-8") %>
 		&searchType=<%= URLEncoder.encode(searchType, "UTF-8") %>
 		&search=<%= URLEncoder.encode(search, "UTF-8") %>&pageNumber=<%= pageNumber-1 %>">이전</a>
 <% 
@@ -201,7 +201,7 @@
 <% 
 	} else { 
 %>
-		<a class="page-link" href="./index.jsp?lectureDivide=<%= URLEncoder.encode(lectureDivide,"UTF-8") %>
+		<a class="page-link" href="./courseReview.jsp?lectureDivide=<%= URLEncoder.encode(lectureDivide,"UTF-8") %>
 		&searchType=<%= URLEncoder.encode(searchType, "UTF-8") %>
 		&search=<%= URLEncoder.encode(search,"UTF-8") %>&pageNumber=<%= pageNumber + 1%>">다음</a>
 <% 
