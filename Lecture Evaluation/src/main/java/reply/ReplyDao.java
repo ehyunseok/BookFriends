@@ -1,4 +1,4 @@
-package board;
+package reply;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,46 +7,42 @@ import java.util.ArrayList;
 
 import util.DatabaseUtil;
 
-public class BoardDao {
+public class ReplyDao {
 
 	//사용자가 게시글을 작성할 수 있는 함수
-		public int write(BoardDto boardDto) {
+		public int write(ReplyDto replyDto) {
 			
-			String SQL = "INSERT INTO board VALUES (NULL, ?, ?, ?, ?, 0, 0, ?);";
+			String SQL = "INSERT INTO reply VALUES (NULL, ?, ?, ?, 0, ?);";
 			
 			Connection conn = null;
 			PreparedStatement pstmt = null;
-			ResultSet rs = null;
 			
 			try {
 				conn = DatabaseUtil.getConnection();
 				pstmt = conn.prepareStatement(SQL);
-				pstmt.setString(1, boardDto.userID);
-				pstmt.setString(2, boardDto.postCategory);
-				pstmt.setString(3, boardDto.postTitle);
-				pstmt.setString(4, boardDto.postContent);
-				pstmt.setTimestamp(5, boardDto.postDate);
+				pstmt.setString(1, replyDto.userID);
+				pstmt.setInt(2, replyDto.postID);
+				pstmt.setString(3, replyDto.replyContent);
+				pstmt.setTimestamp(4, replyDto.replyDate);
 				return pstmt.executeUpdate();	// insert구문을 실행한 결과를 반환함
 				
 			} catch(Exception e) {
 				e.printStackTrace();
+				System.err.println("Foreign key constraint violation: " + e.getMessage());
 			} finally {
 				try { if(conn != null) conn.close();} catch(Exception e ) {e.printStackTrace();}
 				try { if(pstmt != null) pstmt.close();} catch(Exception e ) {e.printStackTrace();}
-				try { if(rs != null) rs.close();} catch(Exception e ) {e.printStackTrace();}
 			}
 			return -1; // db 오류
 
 		}
 
-// 자유게시판 리스트 불러오기(조회, 검색)
-		public ArrayList<BoardDto> getList(String postCategory, String searchType, String search, int pageNumber) {
-		    if (postCategory.equals("전체")) {
-		    	postCategory = "";
-		    }
-		    
-		    ArrayList<BoardDto> boardList = null;
-		    String SQL = "";
+// 댓글 리스트 불러오기
+		public ArrayList<ReplyDto> getList(String postID) {
+		    ArrayList<ReplyDto> replyList = null;
+		    String SQL = "SELECT * FROM reply "
+	                + "WHERE postID = ? "
+	                + "ORDER BY replyDate DESC";
 		    
 		    Connection conn = null;
 		    PreparedStatement pstmt = null;
@@ -54,45 +50,23 @@ public class BoardDao {
 		    
 		    try {
 		        conn = DatabaseUtil.getConnection();
-		        
-		        if (searchType.equals("최신순")) {
-		            SQL = "SELECT * FROM board "
-		                + "WHERE postCategory LIKE ? "
-		                + "AND CONCAT(userID, postTitle, postContent) LIKE ? "
-		                + "ORDER BY postDate DESC LIMIT ?, ?";
-		        } else if (searchType.equals("조회수순")) {
-		            SQL = "SELECT * FROM board "
-		                + "WHERE postCategory LIKE ? "
-		                + "AND CONCAT(userID, postTitle, postContent) LIKE ? "
-		                + "ORDER BY viewCount DESC LIMIT ?, ?";
-		        } else if (searchType.equals("추천순")) {
-		        	SQL = "SELECT * FROM board "
-			                + "WHERE postCategory LIKE ? "
-			                + "AND CONCAT(userID, postTitle, postContent) LIKE ? "
-			                + "ORDER BY likeCount DESC LIMIT ?, ?";
-			        }
-		        
 		        pstmt = conn.prepareStatement(SQL);
-		        pstmt.setString(1, "%" + postCategory + "%");
-		        pstmt.setString(2, "%" + search + "%");
-		        pstmt.setInt(3, pageNumber * 5); // offset 계산
-		        pstmt.setInt(4, pageNumber * 5 + 6); // row count
+		        pstmt = conn.prepareStatement(SQL);
+		        pstmt.setString(1, postID);
 		        
 		        rs = pstmt.executeQuery();
 		        
-		        boardList = new ArrayList<BoardDto>(); // 조회 결과를 저장하는 리스트를 초기화함
-		        while (rs.next()) { // 모든 게시글이 존재할 때마다 리스트에 담길 수 있게 함
-		        	BoardDto boardDto = new BoardDto(
+		        replyList = new ArrayList<ReplyDto>();
+		        while (rs.next()) { // 해당 게시글에 댓글을 하나하나 리스트에 담길 수 있게 함
+		        	ReplyDto replyDto = new ReplyDto(
 		                    rs.getInt(1),
 		                    rs.getString(2),
-		                    rs.getString(3),
+		                    rs.getInt(3),
 		                    rs.getString(4),
-		                    rs.getString(5),
-		                    rs.getInt(6),
-		                    rs.getInt(7),
-		                    rs.getTimestamp(8)
+		                    rs.getInt(5),
+		                    rs.getTimestamp(6)
 		            );
-		            boardList.add(boardDto);
+		        	replyList.add(replyDto);
 		        }
 		    } catch (Exception e) {
 		        e.printStackTrace();
@@ -102,13 +76,13 @@ public class BoardDao {
 		        try { if (rs != null) rs.close(); } catch (Exception e ) { e.printStackTrace(); }
 		    }
 		    
-		    return boardList;
+		    return replyList;
 		}
 		
-// 게시글 추천
-		public int like(String postID) {
+// 댓글 추천
+		public int like(String replyID) {
 
-			String SQL = "UPDATE board SET likeCount = likeCount + 1 WHERE postID = ?;";
+			String SQL = "UPDATE reply SET likeCount = likeCount + 1 WHERE replyID = ?;";
 			// 실행 시 해당 평가의 추천 1씩 증가시킴
 			
 			Connection conn = null;
@@ -117,7 +91,7 @@ public class BoardDao {
 			try {
 				conn = DatabaseUtil.getConnection();
 				pstmt = conn.prepareStatement(SQL);
-				pstmt.setInt(1, Integer.parseInt(postID));
+				pstmt.setInt(1, Integer.parseInt(replyID));
 				return pstmt.executeUpdate();	//실행 결과를 반환함
 			} catch(Exception e) {
 				e.printStackTrace();
@@ -128,10 +102,10 @@ public class BoardDao {
 			return -1;	//오류 발생
 		}
 		
-// 강의평가 삭제
-		public int delete(String postID) {
+// 댓글 삭제
+		public int delete(String replyID) {
 			
-			String SQL = "DELETE FROM board WHERE postID = ?";
+			String SQL = "DELETE FROM reply WHERE replyID = ?";
 			
 			Connection conn = null;
 			PreparedStatement pstmt = null;
@@ -139,7 +113,7 @@ public class BoardDao {
 			try {
 				conn = DatabaseUtil.getConnection();
 				pstmt = conn.prepareStatement(SQL);
-				pstmt.setInt(1, Integer.parseInt(postID));
+				pstmt.setInt(1, Integer.parseInt(replyID));
 				return pstmt.executeUpdate();	//실행 결과를 반환함
 			} catch(Exception e) {
 				e.printStackTrace();
@@ -151,9 +125,9 @@ public class BoardDao {
 		}
 		
 // 게시글 작성자의 아이디 가져오기
-		public String getUserID(String postID) {
+		public String getUserID(String replyID) {
 			
-			String SQL = "SELECT userID FROM board WHERE postID = ?;";
+			String SQL = "SELECT userID FROM reply WHERE replyID = ?;";
 			
 			Connection conn = null;
 			PreparedStatement pstmt = null;
@@ -162,7 +136,7 @@ public class BoardDao {
 			try {
 				conn = DatabaseUtil.getConnection();
 				pstmt = conn.prepareStatement(SQL);
-				pstmt.setInt(1, Integer.parseInt(postID));
+				pstmt.setInt(1, Integer.parseInt(replyID));
 				rs = pstmt.executeQuery();
 				if(rs.next()) {
 					return rs.getString(1);
@@ -176,14 +150,15 @@ public class BoardDao {
 			}
 			return null;
 		}
-
 	
-		
-// 게시글 가져오기
-		public BoardDto getPost(String postID) {
+// 댓글 가져오기
+		public ReplyDto getReply(String replyID) {
 			
-			String updateSQL = "UPDATE board SET viewCount = viewCount + 1 WHERE postID = ?;"; 
-			String selectSQL = "SELECT * FROM board WHERE postID = ?;";
+			if (replyID == null || replyID.isEmpty()) {
+		        return null;
+		    }
+			
+			String selectSQL = "SELECT * FROM reply WHERE replyID = ?;";
 			
 			Connection conn = null;
 			PreparedStatement upPstmt = null;
@@ -192,25 +167,18 @@ public class BoardDao {
 			
 			try {
 				conn = DatabaseUtil.getConnection();
-				
-				upPstmt = conn.prepareStatement(updateSQL);
-				upPstmt.setInt(1, Integer.parseInt(postID));
-				upPstmt.executeUpdate();
-				
 				selPstmt = conn.prepareStatement(selectSQL);
-				selPstmt.setInt(1, Integer.parseInt(postID));
+				selPstmt.setInt(1, Integer.parseInt(replyID));
 				rs = selPstmt.executeQuery();
 				if(rs.next()) {
-					BoardDto board = new BoardDto(); 
-					board.setPostID(rs.getInt(1));
-					board.setUserID(rs.getString(2));
-					board.setPostCategory(rs.getString(3));
-					board.setPostTitle(rs.getString(4));
-					board.setPostContent(rs.getString(5));
-					board.setViewCount(rs.getInt(6));
-					board.setLikeCount(rs.getInt(7));
-					board.setPostDate(rs.getTimestamp(8));
-					return board;
+					ReplyDto reply = new ReplyDto(); 
+					reply.setReplyID(rs.getInt("replyID"));
+					reply.setUserID(rs.getString("userID"));
+					reply.setPostID(rs.getInt("postID"));
+					reply.setReplyContent(rs.getString("replyContent"));
+					reply.setLikeCount(rs.getInt("likeCount"));
+					reply.setReplyDate(rs.getTimestamp("replyDate"));
+					return reply;
 				}
 			} catch(Exception e) {
 				e.printStackTrace();
@@ -223,9 +191,9 @@ public class BoardDao {
 			return null;
 		}
 		
-		// 특정 게시글 추천
-		public int likePost(String postID) {
-			String SQL = "UPDATE board SET likeCount = likeCount + 1 WHERE postID = ?;";
+// 특정 댓글 추천
+		public int likeReply(String replyID) {
+			String SQL = "UPDATE reply SET likeCount = likeCount + 1 WHERE replyID = ?;";
 			// 실행 시 해당 평가의 추천 1씩 증가시킴
 			
 			Connection conn = null;
@@ -234,7 +202,7 @@ public class BoardDao {
 			try {
 				conn = DatabaseUtil.getConnection();
 				pstmt = conn.prepareStatement(SQL);
-				pstmt.setInt(1, Integer.parseInt(postID));
+				pstmt.setInt(1, Integer.parseInt(replyID));
 				return pstmt.executeUpdate();	//실행 결과를 반환함
 			} catch(Exception e) {
 				e.printStackTrace();
@@ -245,17 +213,17 @@ public class BoardDao {
 			return -1;	//오류 발생
 		}
 		
-//게시글 삭제
-		public int deletePost(String postID) {
+//댓글 삭제
+		public int deleteReply(String replyID) {
 			
-			String SQL = "DELETE FROM board WHERE postID = ?;";
+			String SQL = "DELETE FROM reply WHERE replyID = ?;";
 			
 			Connection conn = null;
 			PreparedStatement pstmt = null;
 			try {
 				conn = DatabaseUtil.getConnection();
 				pstmt = conn.prepareStatement(SQL);
-				pstmt.setInt(1, Integer.parseInt(postID));
+				pstmt.setInt(1, Integer.parseInt(replyID));
 				return pstmt.executeUpdate();
 			} catch(Exception e) {
 				e.printStackTrace();
@@ -267,10 +235,10 @@ public class BoardDao {
 		}
 		
 		
-// 게시글 수정
-		public int update(int postID, String postCategory, String postTitle, String postContent) {
+// 댓글 수정
+		public int update(int replyID, String replyContent) {
 
-			String SQL = "UPDATE board SET postCategory = ?, postTitle = ?, postContent = ? WHERE postID = ?;";
+			String SQL = "UPDATE reply SET replyContent = ? WHERE replyID = ?;";
 			
 			Connection conn = null;
 			PreparedStatement pstmt = null;
@@ -279,10 +247,8 @@ public class BoardDao {
 			try {
 				conn = DatabaseUtil.getConnection();
 				pstmt = conn.prepareStatement(SQL);
-				pstmt.setString(1, postCategory);
-				pstmt.setString(2, postTitle);
-				pstmt.setString(3, postContent);
-				pstmt.setInt(4, postID);
+				pstmt.setString(1, replyContent);
+				pstmt.setInt(2, replyID);
 				return pstmt.executeUpdate();
 				
 			} catch(Exception e) {
@@ -295,31 +261,33 @@ public class BoardDao {
 			return -1; // db 오류
 
 		}
-		
-// 댓글 등록할 때 postID 정보 가져오기
-		public BoardDto getPost(int postID) {
-		    String SQL = "SELECT * FROM board WHERE postID = ?";
-		    
-		    try (Connection conn = DatabaseUtil.getConnection();
-		         PreparedStatement pstmt = conn.prepareStatement(SQL)) {
-		         
-		        pstmt.setInt(1, postID);
-		        try (ResultSet rs = pstmt.executeQuery()) {
-		            if (rs.next()) {
-		                BoardDto board = new BoardDto();
-		                board.setPostID(rs.getInt("postID"));
-		                board.setUserID(rs.getString("userID"));
-		                board.setPostTitle(rs.getString("postTitle"));
-		                board.setPostContent(rs.getString("postContent"));
-		                board.setLikeCount(rs.getInt("likeCount"));
-		                board.setPostDate(rs.getTimestamp("postDate"));
-		                board.setViewCount(rs.getInt("viewCount"));
-		                return board;
-		            }
-		        }
-		    } catch (Exception e) {
-		        e.printStackTrace();
-		    }
-		    return null;
+//댓글 수 카운트
+		public int countReply(String postID) {
+			String SQL = "SELECT COUNT(*) FROM reply WHERE postID = ?;";
+			
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			
+			try {
+				conn = DatabaseUtil.getConnection();
+				pstmt = conn.prepareStatement(SQL);
+				pstmt.setInt(1, Integer.parseInt(postID));
+				rs = pstmt.executeQuery();
+				if(rs.next()) {
+					return rs.getInt(1);
+				}
+				
+			} catch(Exception e) {
+				e.printStackTrace();
+			} finally {
+				try { if(conn != null) conn.close();} catch(Exception e ) {e.printStackTrace();}
+				try { if(pstmt != null) pstmt.close();} catch(Exception e ) {e.printStackTrace();}
+				try { if(rs != null) rs.close();} catch(Exception e ) {e.printStackTrace();}
+			}
+			
+			
+			return -1;
 		}
+		
 }

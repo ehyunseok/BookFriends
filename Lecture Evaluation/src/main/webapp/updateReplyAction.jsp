@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="board.BoardDao"%>
-<%@ page import="board.BoardDto"%>
+<%@ page import="reply.ReplyDao"%>
+<%@ page import="reply.ReplyDto"%>
 <%@ page import="util.SHA256"%>
 <%@ page import="java.sql.Timestamp"%>
 <%@ page import="java.io.PrintWriter"%>
@@ -20,41 +20,41 @@
 		script.close();
 		return;
 	}
+	int replyID = 0;
+	String replyContent = null;
 	
-	String postCategory = null;
-	String postTitle = null;
-	String postContent = null;
-	
-	if(request.getParameter("postCategory") != null){
-		postCategory = request.getParameter("postCategory");
+	if(request.getParameter("replyID") != null){
+		replyID = Integer.parseInt( request.getParameter("replyID") );
 	}
-	if(request.getParameter("postTitle") != null){
-		postTitle = request.getParameter("postTitle");
-	}
-	if(request.getParameter("postContent") != null){
-		postContent = request.getParameter("postContent");
-	}
-	
-	
-	if(postCategory == null || postTitle == null || postContent == null 
-			|| postCategory.equals("") || postTitle.equals("") || postContent.equals("")){
+	if(replyID == 0){
 		PrintWriter script = response.getWriter();
 		script.println("<script>");
-		script.println("alert('모든 항목을 입력하세요.');");
+		script.println("alert('replyID == null')");
+		script.println("history.back();");
+		script.println("</script>");
+	}
+	
+	if(request.getParameter("replyContent") != null){
+		replyContent = request.getParameter("replyContent");
+	}
+	
+	if(request.getParameter("replyContent") == null || request.getParameter("replyContent").equals("")){
+		PrintWriter script = response.getWriter();
+		script.println("<script>");
+		script.println("alert('내용을 입력하세요.');");
 		script.println("history.back();");
 		script.println("</script>");
 		script.close();
 		return;
 	}
 	
-// 모든 항목을 다 입력했을 경우, 게시글 등록
-	BoardDao boardDao = new BoardDao();
-	Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-	int result = boardDao.write(new BoardDto(0, userID, postCategory, postTitle, postContent, 0, 0, currentTimestamp));
-	if(result == -1){	// 등록 실패
+	// 모든 항목을 다 입력했을 경우, 평가 게시글을 수정한다.
+	ReplyDao replyDao = new ReplyDao();
+	int result = replyDao.update(replyID, replyContent);
+	if(result == -1){	// 수정 실패
 		PrintWriter script = response.getWriter();
 		script.println("<script>");
-		script.println("alert('게시글 등록 실패');");
+		script.println("alert('댓글 수정 실패');");
 		script.println("history.back();");
 		script.println("</script>");
 		script.close();
@@ -63,8 +63,8 @@
 		session.setAttribute("userID", userID);
 		PrintWriter script = response.getWriter();
 		script.println("<script>");
-		script.println("alert('게시글 등록 완료');");
-		script.println("location.href='board.jsp'");
+		script.println("alert('댓글 수정 완료');");
+		script.println("history.back();");
 		script.println("</script>");
 		script.close();
 		return;

@@ -4,6 +4,8 @@
 <%@ page import="user.UserDao"%>
 <%@ page import="board.BoardDao"%>
 <%@ page import="board.BoardDto"%>
+<%@ page import="reply.ReplyDto"%>
+<%@ page import="reply.ReplyDao"%>
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="java.net.URLEncoder"%>
 <!DOCTYPE html>
@@ -53,8 +55,8 @@
 	if(request.getParameter("postID") != null){
 		postID = request.getParameter("postID");
 	}
+	
 	BoardDao boardDao = new BoardDao();
-	BoardDto board = new BoardDto();
 	if(postID == null){
 		PrintWriter script = response.getWriter();
 		script.println("<script>");
@@ -64,9 +66,8 @@
 		script.close();
 		return;
 	}
-		board = new BoardDao().getPost(postID);
-
-		
+	BoardDto board = new BoardDao().getPost(postID);
+	
 %>
 
 <!-- navigation -->
@@ -77,13 +78,13 @@
 		</button>
 		<div id="navbar" class="collapse navbar-collapse">
 			<ul class="navbar-nav mr-auto">
-				<li class="nav-item active">
+				<li class="nav-item">
 					<a class="nav-link" href="index.jsp">메인</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="./courseReview.jsp">강의평가</a>
 				</li>
-				<li class="nav-item">
+				<li class="nav-item active">
 					<a class="nav-link" href="./board.jsp">자유게시판</a>
 				</li>
 				<li class="nav-item dropdown">
@@ -98,78 +99,112 @@
 			</ul>
 		</div>
 	</nav>
+	
+<!-- 컨테이너 -->
 	<section class="container">
-		<div class="card bg-light mt-3">
-			<div class="card-header bg-light">
-				<h5 class="card-title"><small>작성자 </small><b><%= board.getUserID() %></b></h5>
-				<p class="card-text">조회수: <%= board.getViewCount() %> | 작성일: <%= board.getPostDate() %></p>
-			</div>
-			<div class="card-body">
-				<h4 class="card-title"><b><%= board.getPostTitle() %></b></h4>
-				<p class="card-text" style="text-align:justify; white-space:pre-wrap;"><%= board.getPostContent() %>
-				</p>
-				<div class="row">
-					<div class="col-12 text-right">
-						<a style="color: black;" onclick="return confirm('추천하시겠습니까?')" href="./likePostAction.jsp?postID=<%= board.getPostID() %>">추천(<%= board.getLikeCount() %>)</a>
+		<div>
+			<div class="card bg-light mt-3">
+				<div class="card-header bg-light">
+					<h5 class="card-title"><small>작성자 </small><b><%= board.getUserID() %></b></h5>
+					<p class="card-text">조회수: <%= board.getViewCount() %> | 작성일: <%= board.getPostDate() %></p>
+				</div>
+				<div class="card-body">
+					<h4 class="card-title"><b><%= board.getPostTitle() %></b></h4>
+					<p class="card-text" style="text-align:justify; white-space:pre-wrap;"><%= board.getPostContent() %>
+					</p>
+					<div class="row">
+						<div class="col-12 text-right">
+							<a style="color: black;" onclick="return confirm('추천하시겠습니까?')" href="./likePostAction.jsp?postID=<%= board.getPostID() %>">추천(<%= board.getLikeCount() %>)</a>
 <%
 // 사용자가 작성자와 동일한 경우 수정, 삭제버튼 노출
 		if(userID.equals(board.getUserID())){
 %>
-						 
-						 | <a style="color: gray;" onclick="return confirm('수정하시겠습니까?')" data-toggle="modal" href="#updateModal">수정</a> | 
-						<a style="color: gray;" onclick="return confirm('삭제하시겠습니까?')" href="./deletePostAction.jsp?postID=<%= board.getPostID() %>">삭제</a>
-					</div>
-			
+							 
+							 | <a style="color: gray;" onclick="return confirm('수정하시겠습니까?')" data-toggle="modal" href="#updateModal">수정</a> | 
+							<a style="color: gray;" onclick="return confirm('삭제하시겠습니까?')" href="./deletePostAction.jsp?postID=<%= board.getPostID() %>">삭제</a>
+						</div>
+				
 <%
 		} else {
 %>
 					</div>
-			<%
+<%
 		}
 %>
 				</div>
 			</div>
 		</div>
-		<div class="card mt-2">
+			
+			
+			
+<!-- 댓글 작성 -->
+		<div class="card mt-3">
 			<div class="card-header">comment</div>
 			<div class="card-body">
 				<form method="post" action="./replyRegisterAction.jsp">
-					<input type="text" name="replyContent" class="form-control" maxlength="2048" style="height: 100px;">
+					<input type="hidden" name="postID" value="<%= postID %>">
+					<textarea name="replyContent" class="form-control" maxlength="2048" style="height: 100px;"></textarea>
 					<div class="text-right">
 						<button type="submit" class="btn btn-primary mt-1">작성</button>
 					</div>
 				</form>
 			</div>
 		</div>
+		
+<!-- 댓글 리스트 -->		
+<%
+	String replyID = null;
+	if(request.getParameter("replyID") != null){
+		replyID = request.getParameter("replyID");
+	}	
+	ReplyDao replyDao = new ReplyDao();
+	ReplyDto reply = new ReplyDao().getReply(replyID);
+	//댓글 수 찾기
+	int countReply = new ReplyDao().countReply(postID);
+
+	// 댓글 리스트 가져오기
+	ArrayList<ReplyDto> replyList = new ArrayList<ReplyDto>();
+	
+
+%>		
+
+		
 		<div id="comments-area">
 			<div class="card mb-5 mt-2">
-				<div class="card-header">1개의 댓글</div>
+				<div class="card-header"><b><%= countReply %></b>개의 댓글</div>
 				<div class="card-body">
-				<ul class="list-group list-group-flush">
-					<li class="list-group-item m-1">
-						<h5><b><%= board.getUserID() %></b></h5>
-						<p>댓글내용댓글내용</p>
-						<div class="text-right">
-							<a style="color: gray;" onclick="return confirm('수정하시겠습니까?')">수정</a> | 
-							<a style="color: gray;" onclick="return confirm('삭제하시겠습니까?')">삭제</a>
-						</div>
-					</li>
-					<li class="list-group-item m-1">
-						<h5><b>작성자</b></h5>
-						<p>댓글내용댓글내용</p>
-						<div class="text-right">
-							<a style="color: gray;" onclick="return confirm('수정하시겠습니까?')">수정</a> | 
-							<a style="color: gray;" onclick="return confirm('삭제하시겠습니까?')">삭제</a>
-						</div>
-					</li>
-				</ul>
+					<ul class="list-group list-group-flush">
+<%	
+	if(postID != null){
+		replyList = new ReplyDao().getList(postID);
+		for(int i = 0 ; i < replyList.size(); i++){
+			ReplyDto replyDto = replyList.get(i);
+%>		
+						<li class="list-group-item m-1">
+							<h5><b><%= replyDto.getUserID() %></b></h5>
+							<small><%= replyDto.getReplyDate() %></small>
+							<p style="text-align:justify; white-space:pre-wrap; padding-top:10px; font-size:large;"><%= replyDto.getReplyContent() %></p>
+							<div class="text-right">
+								<a style="color: black;" onclick="return confirm('추천하시겠습니까?')" href="./likeReplyAction.jsp?replyID=<%= replyDto.getReplyID() %>">추천(<%= replyDto.getLikeCount() %>)</a> | 		
+								<a style="color: gray;" onclick="return confirm('수정하시겠습니까?')" data-toggle="modal" href="#updateReplyModal">수정</a> | 
+								<a style="color: gray;" onclick="return confirm('삭제하시겠습니까?')" href="./deleteReplyAction.jsp?replyID=<%= replyDto.getReplyID() %>">삭제</a>
+							</div>
+						</li>
+<%
+
+		}
+	}
+%>
+					</ul>
 				</div>
 			</div>
 		</div>
-	</section>	
+		
+		
+	</section>
 	
-<%
-%>
+	
+		
 <!-- 게시글 수정하기 모달  -->
 	<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="modal">
 		<div class="modal-dialog">
@@ -185,7 +220,7 @@
 						<div class="form-row">
 							<div class="form-group col-sm-4">
 								<label>카테고리</label>
-								<select name="postCategory" class="form-control" value="<%= board.getPostCategory() %>">
+								<select name="postCategory" class="form-control">
 									<option value="질문">질문</option>
 									<option value="맛집 추천">맛집 추천</option>
 									<option value="사담">사담</option>
@@ -209,10 +244,31 @@
 			</div>
 		</div>
 	</div>
-	
-
-
-
+		
+<!-- 댓글 수정하기 모달  -->
+	<div class="modal fade" id="updateReplyModal" tabindex="-1" role="dialog" aria-labelledby="modal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modal">댓글 수정</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form method="post" action="./updateReplyAction.jsp?replyID=<%= reply.getReplyID() %>">
+						<div class="form-row">
+							<textarea name="replyContent" class="form-control" maxlength="2048" style="height: 180px;" ><%= reply.getReplyContent() %></textarea>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+							<button type="submit" class="btn btn-primary">수정</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 	
 <!-- footer -->
 	<footer class="fixed-bottom bg-dark text-center mt-5" style="color: #FFFFFF;">
