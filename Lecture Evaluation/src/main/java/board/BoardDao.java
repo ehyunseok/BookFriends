@@ -105,7 +105,7 @@ public class BoardDao {
 		    return boardList;
 		}
 		
-// 게시글 추천------------------------------------------------------
+// 게시글 추천
 		public int like(String postID) {
 
 			String SQL = "UPDATE board SET likeCount = likeCount + 1 WHERE postID = ?;";
@@ -178,4 +178,122 @@ public class BoardDao {
 		}
 
 	
+		
+// 게시글 가져오기
+		public BoardDto getPost(String postID) {
+			
+			String updateSQL = "UPDATE board SET viewCount = viewCount + 1 WHERE postID = ?;"; 
+			String selectSQL = "SELECT * FROM board WHERE postID = ?;";
+			
+			Connection conn = null;
+			PreparedStatement upPstmt = null;
+			PreparedStatement selPstmt = null;
+			ResultSet rs = null;
+			
+			try {
+				conn = DatabaseUtil.getConnection();
+				
+				upPstmt = conn.prepareStatement(updateSQL);
+				upPstmt.setInt(1, Integer.parseInt(postID));
+				upPstmt.executeUpdate();
+				
+				selPstmt = conn.prepareStatement(selectSQL);
+				selPstmt.setInt(1, Integer.parseInt(postID));
+				rs = selPstmt.executeQuery();
+				if(rs.next()) {
+					BoardDto board = new BoardDto(); 
+					board.setPostID(rs.getInt(1));
+					board.setUserID(rs.getString(2));
+					board.setPostCategory(rs.getString(3));
+					board.setPostTitle(rs.getString(4));
+					board.setPostContent(rs.getString(5));
+					board.setViewCount(rs.getInt(6));
+					board.setLikeCount(rs.getInt(7));
+					board.setPostDate(rs.getTimestamp(8));
+					return board;
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+			} finally {
+				try { if(conn != null) conn.close();} catch(Exception e ) {e.printStackTrace();}
+				try { if(upPstmt != null) upPstmt.close();} catch(Exception e ) {e.printStackTrace();}
+				try { if(selPstmt != null) selPstmt.close();} catch(Exception e ) {e.printStackTrace();}
+				try { if(rs != null) rs.close();} catch(Exception e ) {e.printStackTrace();}
+			}
+			return null;
+		}
+		
+		// 특정 게시글 추천
+		public int likePost(String postID) {
+			String SQL = "UPDATE board SET likeCount = likeCount + 1 WHERE postID = ?;";
+			// 실행 시 해당 평가의 추천 1씩 증가시킴
+			
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+			
+			try {
+				conn = DatabaseUtil.getConnection();
+				pstmt = conn.prepareStatement(SQL);
+				pstmt.setInt(1, Integer.parseInt(postID));
+				return pstmt.executeUpdate();	//실행 결과를 반환함
+			} catch(Exception e) {
+				e.printStackTrace();
+			} finally {
+				try { if(conn != null) conn.close();} catch(Exception e ) {e.printStackTrace();}
+				try { if(pstmt != null) pstmt.close();} catch(Exception e ) {e.printStackTrace();}
+			}
+			return -1;	//오류 발생
+		}
+		
+//게시글 삭제
+		public int deletePost(String postID) {
+			
+			String SQL = "DELETE FROM board WHERE postID = ?;";
+			
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+			try {
+				conn = DatabaseUtil.getConnection();
+				pstmt = conn.prepareStatement(SQL);
+				pstmt.setInt(1, Integer.parseInt(postID));
+				return pstmt.executeUpdate();
+			} catch(Exception e) {
+				e.printStackTrace();
+			} finally {
+				try { if(conn != null) conn.close();} catch(Exception e ) {e.printStackTrace();}
+				try { if(pstmt != null) pstmt.close();} catch(Exception e ) {e.printStackTrace();}
+			}
+			return -1;
+		}
+		
+		
+// 게시글 수정
+		public int update(int postID, String postCategory, String postTitle, String postContent) {
+
+			String SQL = "UPDATE board SET postCategory = ?, postTitle = ?, postContent = ? WHERE postID = ?;";
+			
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			
+			try {
+				conn = DatabaseUtil.getConnection();
+				pstmt = conn.prepareStatement(SQL);
+				pstmt.setString(1, postCategory);
+				pstmt.setString(2, postTitle);
+				pstmt.setString(3, postContent);
+				pstmt.setInt(4, postID);
+				return pstmt.executeUpdate();
+				
+			} catch(Exception e) {
+				e.printStackTrace();
+			} finally {
+				try { if(conn != null) conn.close();} catch(Exception e ) {e.printStackTrace();}
+				try { if(pstmt != null) pstmt.close();} catch(Exception e ) {e.printStackTrace();}
+				try { if(rs != null) rs.close();} catch(Exception e ) {e.printStackTrace();}
+			}
+			return -1; // db 오류
+
+		}
+		
 }
