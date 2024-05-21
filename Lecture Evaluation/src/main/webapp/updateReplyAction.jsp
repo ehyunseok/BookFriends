@@ -20,35 +20,21 @@
 		script.close();
 		return;
 	}
-	int replyID = 0;
-	String replyContent = null;
+	String replyIDStr = request.getParameter("replyID");
+	String replyContent = request.getParameter("replyContent");
 	
-	if(request.getParameter("replyID") != null){
-		replyID = Integer.parseInt( request.getParameter("replyID") );
-	}
-	if(replyID == 0){
+	if(replyIDStr == null || replyContent == null){
 		PrintWriter script = response.getWriter();
 		script.println("<script>");
-		script.println("alert('replyID == null')");
+		script.println("alert('유효하지 않은 입력')");
 		script.println("history.back();");
 		script.println("</script>");
 	}
 	
-	if(request.getParameter("replyContent") != null){
-		replyContent = request.getParameter("replyContent");
-	}
+	//replyIDStr을 정수로 변환하여 replyID로 저장
+	int replyID = Integer.parseInt(replyIDStr);
 	
-	if(request.getParameter("replyContent") == null || request.getParameter("replyContent").equals("")){
-		PrintWriter script = response.getWriter();
-		script.println("<script>");
-		script.println("alert('내용을 입력하세요.');");
-		script.println("history.back();");
-		script.println("</script>");
-		script.close();
-		return;
-	}
 	
-	// 모든 항목을 다 입력했을 경우, 평가 게시글을 수정한다.
 	ReplyDao replyDao = new ReplyDao();
 	int result = replyDao.update(replyID, replyContent);
 	if(result == -1){	// 수정 실패

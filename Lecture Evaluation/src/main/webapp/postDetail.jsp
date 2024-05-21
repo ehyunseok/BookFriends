@@ -1,4 +1,3 @@
-<%@page import="board.BoardDao"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.io.PrintWriter"%>
 <%@ page import="user.UserDao"%>
@@ -51,12 +50,8 @@
 	}
 	
 	// 해당 게시글 아이디 가져오기
-	String postID = null;
-	if(request.getParameter("postID") != null){
-		postID = request.getParameter("postID");
-	}
+	String postID =  request.getParameter("postID");
 	
-	BoardDao boardDao = new BoardDao();
 	if(postID == null){
 		PrintWriter script = response.getWriter();
 		script.println("<script>");
@@ -66,8 +61,24 @@
 		script.close();
 		return;
 	}
-	BoardDto board = new BoardDao().getPost(postID);
 	
+	BoardDao boardDao = new BoardDao();
+	BoardDto board = new BoardDao().getPost(postID);
+    if (board == null) {
+        PrintWriter script = response.getWriter();
+        script.println("<script>");
+        script.println("alert('게시글을 불러올 수 없습니다.');");
+        script.println("history.back();");
+        script.println("</script>");
+        script.close();
+        return;
+    }
+	// 댓글 리스트 가져오기
+	ArrayList<ReplyDto> replyList = new ReplyDao().getList(postID);
+	
+	// 댓글 개수 가져오기
+	int countReply = replyList.size();
+    
 %>
 
 <!-- navigation -->
@@ -123,14 +134,14 @@
 							 | <a style="color: gray;" onclick="return confirm('수정하시겠습니까?')" data-toggle="modal" href="#updateModal">수정</a> | 
 							<a style="color: gray;" onclick="return confirm('삭제하시겠습니까?')" href="./deletePostAction.jsp?postID=<%= board.getPostID() %>">삭제</a>
 						</div>
-				
 <%
 		} else {
 %>
-					</div>
+						</div>
 <%
 		}
 %>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -152,55 +163,62 @@
 		</div>
 		
 <!-- 댓글 리스트 -->		
-<%
-	String replyID = null;
-	if(request.getParameter("replyID") != null){
-		replyID = request.getParameter("replyID");
-	}	
-	ReplyDao replyDao = new ReplyDao();
-	ReplyDto reply = new ReplyDao().getReply(replyID);
-	//댓글 수 찾기
-	int countReply = new ReplyDao().countReply(postID);
-
-	// 댓글 리스트 가져오기
-	ArrayList<ReplyDto> replyList = new ArrayList<ReplyDto>();
-	
-
-%>		
-
-		
 		<div id="comments-area">
 			<div class="card mb-5 mt-2">
 				<div class="card-header"><b><%= countReply %></b>개의 댓글</div>
 				<div class="card-body">
 					<ul class="list-group list-group-flush">
 <%	
-	if(postID != null){
-		replyList = new ReplyDao().getList(postID);
-		for(int i = 0 ; i < replyList.size(); i++){
-			ReplyDto replyDto = replyList.get(i);
+	for(ReplyDto replyDto : replyList){
 %>		
 						<li class="list-group-item m-1">
 							<h5><b><%= replyDto.getUserID() %></b></h5>
 							<small><%= replyDto.getReplyDate() %></small>
 							<p style="text-align:justify; white-space:pre-wrap; padding-top:10px; font-size:large;"><%= replyDto.getReplyContent() %></p>
 							<div class="text-right">
-								<a style="color: black;" onclick="return confirm('추천하시겠습니까?')" href="./likeReplyAction.jsp?replyID=<%= replyDto.getReplyID() %>">추천(<%= replyDto.getLikeCount() %>)</a> | 		
-								<a style="color: gray;" onclick="return confirm('수정하시겠습니까?')" data-toggle="modal" href="#updateReplyModal">수정</a> | 
+							
+								<a style="color: black;" onclick="return confirm('추천하시겠습니까?')" href="./likeReplyAction.jsp?replyID=<%= replyDto.getReplyID() %>">추천(<%= replyDto.getLikeCount() %>)</a> |
+<%
+		if(userID.equals(replyDto.getUserID())){
+%>								 		
+								<a style="color: gray;" onclick="return confirm('수정하시겠습니까?')" data-toggle="modal" href="#updateReplyModal<%= replyDto.getReplyID() %>">수정</a> | 
 								<a style="color: gray;" onclick="return confirm('삭제하시겠습니까?')" href="./deleteReplyAction.jsp?replyID=<%= replyDto.getReplyID() %>">삭제</a>
+<%
+		}
+%>							
 							</div>
 						</li>
+<!-- 댓글 수정하기 모달 -->
+					<div class="modal fade" id="updateReplyModal<%= replyDto.getReplyID() %>" tabindex="-1" role="dialog" aria-labelledby="modal">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="modal">댓글 수정</h5>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<form method="post" action="./updateReplyAction.jsp?replyID=<%= replyDto.getReplyID() %>">
+										<div class="form-row">
+											<textarea name="replyContent" class="form-control" maxlength="2048" style="height: 180px;"><%= replyDto.getReplyContent() %></textarea>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+											<button type="submit" class="btn btn-primary">수정</button>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
 <%
-
-		}
 	}
-%>
+%>						
 					</ul>
 				</div>
 			</div>
 		</div>
-		
-		
 	</section>
 	
 	
@@ -245,31 +263,6 @@
 		</div>
 	</div>
 		
-<!-- 댓글 수정하기 모달  -->
-	<div class="modal fade" id="updateReplyModal" tabindex="-1" role="dialog" aria-labelledby="modal">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="modal">댓글 수정</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<form method="post" action="./updateReplyAction.jsp?replyID=<%= reply.getReplyID() %>">
-						<div class="form-row">
-							<textarea name="replyContent" class="form-control" maxlength="2048" style="height: 180px;" ><%= reply.getReplyContent() %></textarea>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
-							<button type="submit" class="btn btn-primary">수정</button>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
-	
 <!-- footer -->
 	<footer class="fixed-bottom bg-dark text-center mt-5" style="color: #FFFFFF;">
 		Copyright &copy; 2024 EhyunSeok All Rights Reserved.
