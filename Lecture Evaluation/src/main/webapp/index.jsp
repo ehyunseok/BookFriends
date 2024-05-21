@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.io.PrintWriter"%>
 <%@ page import="user.UserDao"%>
+<%@ page import="board.BoardDao"%>
+<%@ page import="board.BoardDto"%>
 <%@ page import="evaluation.EvaluationDao"%>
 <%@ page import="evaluation.EvaluationDto"%>
 <%@ page import="java.util.ArrayList"%>
@@ -132,6 +134,7 @@
 	<section class="container">
 		<div class="center-container">
 			<div class="row row-cols-1 row-cols-md-2 mt-5">
+				<!-- 강의평가 인기글 -->
 				<div class="col card-wrapper">
 					<div class="card">
 						<div class="card-header text-center">
@@ -141,16 +144,26 @@
 							</a>
 						</div>
 						<ul class="list-group list-group-flush">
+						<%
+							ArrayList<EvaluationDto> evalDto = new ArrayList<EvaluationDto>();
+							evalDto = new EvaluationDao().top5();
+							for(int i = 0 ; i < 5; i++){
+								EvaluationDto eval = evalDto.get(i);
+						%>
 							<li class="list-group-item">
-									[강의명 <small>교수명</small>] 
+									[<%= eval.getLectureName() %> <small><%= eval.getProfessorName() %></small>] 
 								<div class="truncate-text">
-									<b>제목이 너무 길면 줄여주닌가?궁금하다정말궁궁해히히히히히ㅣ힣궁궁하다가ㅗ</b> 
+									<b><%= eval.getEvaluationTitle() %></b> 
 								</div>
-									<small>작성자: 홍길동        👍100</small>
+									<small>작성자: <%= eval.getUserID() %>        👍<%= eval.getLikeCount() %></small>
 							</li>
+						<% 
+							}
+						%>
 						</ul>
 					</div>
 				</div>
+				<!-- 자유게시판 인기글 -->
 				<div class="col card-wrapper">
 					<div class="card">
 						<div class="card-header text-center">
@@ -160,12 +173,21 @@
 							</a>
 						</div>
 						<ul class="list-group list-group-flush">
-							<li class="list-group-item">
-								[카테고리] <div class="truncate-text"><b>제목이 너무 길면 줄여주닌가?궁금하다정말궁궁해히히히히히ㅣ힣궁궁하다가ㅗ</b></div>
+						<%
+							ArrayList<BoardDto> boardList = new ArrayList<BoardDto>();
+							boardList = new BoardDao().top5();
+							for(int i = 0 ; i < 5; i++){
+								BoardDto board = boardList.get(i);
+						%>
+							<li class="list-group-item" onclick="window.location='./postDetail.jsp?postID=<%= board.getPostID() %>'">
+								[<%= board.getPostCategory() %>] <div class="truncate-text"><b><%= board.getPostTitle() %></b></div>
 								<div class="sidebyside">
-									<small>작성자: 홍길동        👍100</small>
+									<small>작성자: <%= board.getUserID() %>        👍<%= board.getLikeCount() %></small>
 								</div>
 							</li>
+						<% 
+							}
+						%>
 						</ul>
 				</div>
 			</div>

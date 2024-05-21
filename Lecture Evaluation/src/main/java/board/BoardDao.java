@@ -322,4 +322,44 @@ public class BoardDao {
 		    }
 		    return null;
 		}
+
+// 인기글 5개 불러오기
+		public ArrayList<BoardDto> top5() {
+		    ArrayList<BoardDto> boardList = null;
+		    String SQL = "SELECT * FROM board ORDER BY likeCount DESC LIMIT 5";
+		    
+		    Connection conn = null;
+		    PreparedStatement pstmt = null;
+		    ResultSet rs = null;
+		    
+		    try {
+		        conn = DatabaseUtil.getConnection();
+		        pstmt = conn.prepareStatement(SQL);
+		        rs = pstmt.executeQuery();
+		        
+		        boardList = new ArrayList<BoardDto>();
+		        while (rs.next()) {
+		        	BoardDto boardDto = new BoardDto(
+		                    rs.getInt(1),
+		                    rs.getString(2),
+		                    rs.getString(3),
+		                    rs.getString(4),
+		                    rs.getString(5),
+		                    rs.getInt(6),
+		                    rs.getInt(7),
+		                    rs.getTimestamp(8)
+		            );
+		            boardList.add(boardDto);
+		        }
+		    } catch (Exception e) {
+		        e.printStackTrace();
+		    } finally {
+		        try { if (conn != null) conn.close(); } catch (Exception e ) { e.printStackTrace(); }
+		        try { if (pstmt != null) pstmt.close(); } catch (Exception e ) { e.printStackTrace(); }
+		        try { if (rs != null) rs.close(); } catch (Exception e ) { e.printStackTrace(); }
+		    }
+		    
+		    return boardList;
+		}
+		
 }

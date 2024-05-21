@@ -39,24 +39,19 @@
 				<li class="nav-item active">
 					<a class="nav-link" href="index.jsp">메인</a>
 				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="./courseReview.jsp"><b>강의평가</b></a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="./board.jsp">자유게시판</a>
+				</li>
 				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" id="dropdown" data-toggle="dropdown">
+					<a class="nav-link dropdown-toggle active" id="dropdown" data-toggle="dropdown">
 						회원관리
 					</a>
 					<div class="dropdown-menu" aria-labelledby="dropdown">
-<!-- 사용자가 로그인한 상태가 아닐 경우 로그인/회원가입이 보이게-->
-<%
-	if(userID == null){
-%>
 						<a class="dropdown-item" href="userLogin.jsp">로그인</a>
 						<a class="dropdown-item" href="userJoin.jsp">회원가입</a>
-<%
-	} else {
-%> 	<!-- 로그인 했을 경우 로그아웃만 보이게 -->
-						<a class="dropdown-item" href="userLogoutAction.jsp">로그아웃</a>
-<%
-	}
-%>						
 					</div>
 				</li>
 			</ul>
