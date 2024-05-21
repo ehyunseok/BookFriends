@@ -138,10 +138,10 @@
 				<div class="col card-wrapper">
 					<div class="card">
 						<div class="card-header text-center">
-							<a  href="couseReview.jsp" style="color: black;">
+							<a  href="courseReview.jsp" style="color: black;">
 								<h5 class="card-title"><b>강의평가</b></h5>
-								<p class="card-text">추천수 top5</p>
 							</a>
+								<p class="card-text">추천수 top5</p>
 						</div>
 						<ul class="list-group list-group-flush">
 						<%
@@ -153,9 +153,9 @@
 							<li class="list-group-item">
 									[<%= eval.getLectureName() %> <small><%= eval.getProfessorName() %></small>] 
 								<div class="truncate-text">
-									<b><%= eval.getEvaluationTitle() %></b> 
+									<b><%= eval.getEvaluationTitle() %></b>  <small style="font-size:xx-small;">추천:<%= eval.getLikeCount() %></small> 
 								</div>
-									<small>작성자: <%= eval.getUserID() %>        👍<%= eval.getLikeCount() %></small>
+									<small><img class="" src="images/icon.png" style="height:12px;"><%= eval.getUserID() %></small>
 							</li>
 						<% 
 							}
@@ -169,8 +169,8 @@
 						<div class="card-header text-center">
 							<a href="board.jsp" style="color: black;">
 								<h5 class="card-title"><b>자유게시판</b></h5>
-								<p class="card-text">인기글 top5</p>
 							</a>
+								<p class="card-text">인기글 top5</p>
 						</div>
 						<ul class="list-group list-group-flush">
 						<%
@@ -180,9 +180,12 @@
 								BoardDto board = boardList.get(i);
 						%>
 							<li class="list-group-item" onclick="window.location='./postDetail.jsp?postID=<%= board.getPostID() %>'">
-								[<%= board.getPostCategory() %>] <div class="truncate-text"><b><%= board.getPostTitle() %></b></div>
+								[<%= board.getPostCategory() %>] 
+								<div class="truncate-text">
+									<b><%= board.getPostTitle() %></b>  <small style="font-size:xx-small;">추천:<%= board.getLikeCount() %></small>
+								</div>
 								<div class="sidebyside">
-									<small>작성자: <%= board.getUserID() %>        👍<%= board.getLikeCount() %></small>
+									<small><img class="" src="images/icon.png" style="height:15px;"> <%= board.getUserID() %></small>
 								</div>
 							</li>
 						<% 
