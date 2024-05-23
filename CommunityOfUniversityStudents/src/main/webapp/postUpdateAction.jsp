@@ -4,6 +4,7 @@
 <%@ page import="util.SHA256"%>
 <%@ page import="java.sql.Timestamp"%>
 <%@ page import="java.io.PrintWriter"%>
+<%@ page import="java.net.URLEncoder"%>
 <%
 	request.setCharacterEncoding("UTF-8");
 
@@ -60,6 +61,9 @@
 	// 모든 항목을 다 입력했을 경우, 평가 게시글을 수정한다.
 	BoardDao boardDao = new BoardDao();
 	int result = boardDao.update(postID, postCategory, postTitle, postContent);
+	
+	String postIDStr = postID + "";
+	
 	if(result == -1){	// 수정 실패
 		PrintWriter script = response.getWriter();
 		script.println("<script>");
@@ -73,7 +77,7 @@
 		PrintWriter script = response.getWriter();
 		script.println("<script>");
 		script.println("alert('게시글 수정 완료');");
-		script.println("location.href='board.jsp'");
+		script.println("location.href='./postDetail.jsp?postID=" + URLEncoder.encode(postIDStr, "UTF-8") + "';");
 		script.println("</script>");
 		script.close();
 		return;

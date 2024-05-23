@@ -65,6 +65,32 @@ public class UserDao {
 		return -1; // 회원가입 실패
 	}
 	
+//회원 아이디 중복 확인
+	public boolean checkDuplication(String userID) {
+		
+		String SQL = "SELECT userID FROM user WHERE userID = ?;";
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = DatabaseUtil.getConnection();
+			pstmt = conn.prepareStatement(SQL);
+			pstmt.setString(1, userID);
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				return rs.getBoolean(1);	// 입력한 아이디가 이미 존재하는 경우 true 반환 
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try { if(conn != null) conn.close();} catch(Exception e ) {e.printStackTrace();}
+			try { if(pstmt != null) pstmt.close();} catch(Exception e ) {e.printStackTrace();}
+			try { if(rs != null) rs.close();} catch(Exception e ) {e.printStackTrace();}
+		}
+		return false;
+	}
 	
 //이메일 인증 상태 확인
 	public boolean getUserEmailChecked(String userID) {

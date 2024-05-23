@@ -172,16 +172,16 @@
 	for(ReplyDto replyDto : replyList){
 %>		
 						<li class="list-group-item m-1">
-							<h5><b><%= replyDto.getUserID() %></b></h5>
+							<h5><img class="" src="images/icon.png" style="height:20px;"> <b><%= replyDto.getUserID() %></b></h5>
 							<small><%= replyDto.getReplyDate() %></small>
 							<p style="text-align:justify; white-space:pre-wrap; padding-top:10px; font-size:large;"><%= replyDto.getReplyContent() %></p>
 							<div class="text-right">
 							
-								<a style="color: black;" onclick="return confirm('추천하시겠습니까?')" href="./likeReplyAction.jsp?replyID=<%= replyDto.getReplyID() %>">추천(<%= replyDto.getLikeCount() %>)</a> |
+								<a style="color: black;" onclick="return confirm('추천하시겠습니까?')" href="./likeReplyAction.jsp?replyID=<%= replyDto.getReplyID() %>">추천(<%= replyDto.getLikeCount() %>)</a>
 <%
 		if(userID.equals(replyDto.getUserID())){
 %>								 		
-								<a style="color: gray;" onclick="return confirm('수정하시겠습니까?')" data-toggle="modal" href="#updateReplyModal<%= replyDto.getReplyID() %>">수정</a> | 
+								 | <a style="color: gray;" onclick="return confirm('수정하시겠습니까?')" data-toggle="modal" href="#updateReplyModal<%= replyDto.getReplyID() %>">수정</a> | 
 								<a style="color: gray;" onclick="return confirm('삭제하시겠습니까?')" href="./deleteReplyAction.jsp?replyID=<%= replyDto.getReplyID() %>">삭제</a>
 <%
 		}

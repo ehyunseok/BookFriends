@@ -22,35 +22,18 @@
 //검색했을 때 어떤 게시글을 검색했는지 판단할 수 있게~
 	request.setCharacterEncoding("UTF-8");
 	int postID = 0;
-	String postCategory = "전체";
-	String searchType = "최신순";
-	String search = "";
-	int pageNumber = 0;
-	if(request.getParameter("postCategory") != null){
-		postCategory = request.getParameter("postCategory");
-	}
-	if(request.getParameter("searchType") != null){
-		searchType = request.getParameter("searchType");
-	}
-	if(request.getParameter("search") != null){
-		search = request.getParameter("search");
-	}
-	if(request.getParameter("pageNumber") != null){
-		try{
-			pageNumber = Integer.parseInt( request.getParameter("pageNumber") );
-		} catch(Exception e){
-			System.out.println("검색 페이지 오류");
-			e.printStackTrace();
-		}
-	}
-	if(request.getParameter("postID") != null){
-		try{
-			postID = Integer.parseInt( request.getParameter("postID") );
-		} catch(Exception e){
-			System.out.println("게시글 아이디 불러오기 오류");
-			e.printStackTrace();
-		}
-	}
+	String postCategory = request.getParameter("postCategory") != null ? request.getParameter("postCategory") : "전체";
+    String searchType = request.getParameter("searchType") != null ? request.getParameter("searchType") : "최신순";
+    String search = request.getParameter("search") != null ? request.getParameter("search") : "";
+    int pageNumber = request.getParameter("pageNumber") != null ? Integer.parseInt(request.getParameter("pageNumber")) : 0;
+
+    BoardDao boardDao = new BoardDao();
+    ArrayList<BoardDto> boardList = boardDao.getList(postCategory, searchType, search, pageNumber);
+    int totalPosts = boardDao.getTotalPosts(postCategory, searchType, search);
+    int totalPages = (int) Math.ceil(totalPosts / 5.0);
+    int pageBlock = 5;
+    int startPage = (pageNumber / pageBlock) * pageBlock + 1;
+    int endPage = Math.min(startPage + pageBlock - 1, totalPages);
 	
 // 로그인 상태 관리
 	String userID = null;
@@ -119,11 +102,11 @@
 				<option value="사담" <% if(postCategory.equals("사담")) out.println("selected"); %>>사담</option>
 			</select>
 			<select name="searchType" class="form-control mx-1 mt-2">
-				<option value="최신순">최신순</option>
-				<option value="조회수순" <% if(searchType.equals("조회수")) out.println("selected"); %>>조회수순</option>
+				<option value="최신순" <% if(searchType.equals("최신순")) out.println("selected"); %>>최신순</option>
+				<option value="조회수순" <% if(searchType.equals("조회수순")) out.println("selected"); %>>조회수순</option>
 				<option value="추천순" <% if(searchType.equals("추천순")) out.println("selected"); %>>추천순</option>
 			</select>
-			<input type="text" name="search" class="form-control mx-1 mt-2" placeholder="내용을 입력해주세요.">
+			<input type="text" name="search" class="form-control mx-1 mt-2" placeholder="내용을 입력해주세요." value="<%= search %>">
 			<button type="submit" class="btn btn-dark mx-1 mt-2">검색</button>
 			<div class="ml-auto">
 				<a class="btn btn-primary mx-1 mt-2" data-toggle="modal" href="#registerModal">작성하기</a>
@@ -144,22 +127,7 @@
 				</thead>
 				<tbody>
 <%
-//사용자가 검색한 내용이 리스트에 담긴 상태로 출력되게 하기
-	ArrayList<BoardDto> boardList = new ArrayList<BoardDto>();
-
-	boardList = new BoardDao().getList(postCategory, searchType, search, pageNumber);
-
-	int totalPosts = boardList.size();	// boardList의 크기에 따른 총 게시글 수 확인
-	int postsPerPage = 5;	// 페이지당 5개의 글을 불러옴
-	int totalPages = (int)Math.ceil( (double)boardList.size() / 5 );	// 전체 페이지 수 계산
-	int currentPage = pageNumber +1; // 현재 페이지 번호 가져오기(0부터 시작해서 1을 더함)
-	int startPage = Math.max(1, pageNumber - 2); // 시작 페이지 번호 계산
-    int endPage = Math.min(startPage + 4, totalPages); // 끝 페이지 번호 계산
-	int startIndex = pageNumber * postsPerPage;	//시작 인덱스 계산
-	int endIndex = Math.min(startIndex + postsPerPage, totalPosts);	// 끝 인덱스 계산
-	
-	for(int i = startIndex; i<endIndex; i++){
-		BoardDto board = boardList.get(i);
+	for(BoardDto board : boardList) {
 %>
 
 			  		<!-- 해당 게시글 번호 페이지로 이동 -->
@@ -178,34 +146,30 @@
 				<tfoot></tfoot>				
 			</table>
 		</div>
-	</section>
+	
 	
 	
 	
 <!-- pagination -->
-		<nav aria-label="Page navigation example" >
+		<nav aria-label="Page navigation" >
 		  <ul class="pagination justify-content-center mt-3" style="padding-bottom: 3px;">
-		    <li class="page-item">
-	            <a class="page-link <%= currentPage <= 1 ? "disabled" : "" %>" href="./board.jsp?postCategory=<%= URLEncoder.encode(postCategory, "UTF-8") %>&searchType=<%= URLEncoder.encode(searchType, "UTF-8") %>&search=<%= URLEncoder.encode(search, "UTF-8") %>&pageNumber=<%= currentPage - 2 %>" aria-label="Previous">
-	                <span aria-hidden="true">이전</span>
-	            </a>
-        	</li>
+		    <li class="page-item <% if(pageNumber == 0) out.print("disabled"); %>">
+                <a class="page-link" href="?postCategory=<%= postCategory %>&searchType=<%= searchType %>&search=<%= search %>&pageNumber=<%= pageNumber - 1 %>">이전</a>
+            </li>
 <%
-    for (int i = 1; i <= totalPages; i++) { 
+    for (int i = startPage; i <= endPage; i++) { 
 %>
-			<li class="page-item <%= currentPage == i ? "active" : "" %>">
+			<li class="page-item<% if(i == pageNumber + 1) out.print("active"); %>">
             	<a class="page-link" href="./board.jsp?postCategory=<%= URLEncoder.encode(postCategory, "UTF-8") %>&searchType=<%= URLEncoder.encode(searchType, "UTF-8") %>&search=<%= URLEncoder.encode(search, "UTF-8") %>&pageNumber=<%= i - 1 %>"><%= i %></a>
-        </li>
+        	</li>
 <% } 
 %>
-		    <li class="page-item">
-	            <a class="page-link <%= currentPage >= totalPages ? "disabled" : "" %>" href="./board.jsp?postCategory=<%= URLEncoder.encode(postCategory, "UTF-8") %>&searchType=<%= URLEncoder.encode(searchType, "UTF-8") %>&search=<%= URLEncoder.encode(search, "UTF-8") %>&pageNumber=<%= currentPage %>" aria-label="Next">
-	                <span aria-hidden="true">다음</span>
-	            </a>
-        	</li>
+		    <li class="page-item <% if(pageNumber >= totalPages - 1) out.print("disabled"); %>">
+                <a class="page-link" href="?postCategory=<%= postCategory %>&searchType=<%= searchType %>&search=<%= search %>&pageNumber=<%= pageNumber + 1 %>">다음</a>
+            </li>
 		  </ul>
 		</nav>
-
+	</section>
 	
 <!-- 게시글 등록하기 모달  -->
 	<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="modal">

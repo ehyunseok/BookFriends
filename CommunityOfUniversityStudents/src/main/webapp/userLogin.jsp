@@ -55,15 +55,11 @@
 					</div>
 				</li>
 			</ul>
-			<form action="./index.jsp" method="get" class="form-inline my-2 my-lg-0">
-				<input type="text" name="search" class="form-control mr-sm-2" type="search" placeholder="내용을 입력하세요." aria-label="Search">
-				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">검색</button>
-			</form>
 		</div>
 	</nav>
 	
 <!-- container  -->
-	<section class="container mt-3" style="max-width: 560px">
+	<section class="container mt-5" style="max-width: 560px">
 		<form method="post" action="./userLoginAction.jsp">
 			<div class="form-group">
 				<label>아이디</label>
@@ -75,11 +71,14 @@
 			</div>
 			<button type="submit" class="btn btn-primary btn-block">로그인</button>
 		</form>
+		<div class="mt-3">
+			<p>아직 계정이 없으신가요? <a href="./userJoin.jsp">회원가입하기</a></p>
+		</div>
 	</section>
 	
 	
 <!-- footer -->
-	<footer class="sticky-bottom bg-dark text-center mt-5" style="color: #FFFFFF;">
+	<footer class="fixed-bottom bg-dark text-center mt-5" style="color: #FFFFFF;">
 		Copyright &copy; 2024 EhyunSeok All Rights Reserved.
 	</footer>
 	

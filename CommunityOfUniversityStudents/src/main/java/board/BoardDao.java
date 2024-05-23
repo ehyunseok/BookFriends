@@ -41,69 +41,81 @@ public class BoardDao {
 
 // 자유게시판 리스트 불러오기(조회, 검색)
 		public ArrayList<BoardDto> getList(String postCategory, String searchType, String search, int pageNumber) {
-		    if (postCategory.equals("전체")) {
-		    	postCategory = "";
-		    }
-		    
-		    ArrayList<BoardDto> boardList = null;
-		    String SQL = "";
-		    
-		    Connection conn = null;
-		    PreparedStatement pstmt = null;
-		    ResultSet rs = null;
-		    
-		    try {
-		        conn = DatabaseUtil.getConnection();
-		        
-		        if (searchType.equals("최신순")) {
-		            SQL = "SELECT * FROM board "
-		                + "WHERE postCategory LIKE ? "
-		                + "AND CONCAT(userID, postTitle, postContent) LIKE ? "
-		                + "ORDER BY postDate DESC LIMIT ?, ?";
-		        } else if (searchType.equals("조회수순")) {
-		            SQL = "SELECT * FROM board "
-		                + "WHERE postCategory LIKE ? "
-		                + "AND CONCAT(userID, postTitle, postContent) LIKE ? "
-		                + "ORDER BY viewCount DESC LIMIT ?, ?";
-		        } else if (searchType.equals("추천순")) {
-		        	SQL = "SELECT * FROM board "
-			                + "WHERE postCategory LIKE ? "
-			                + "AND CONCAT(userID, postTitle, postContent) LIKE ? "
-			                + "ORDER BY likeCount DESC LIMIT ?, ?";
-			        }
-		        
-		        pstmt = conn.prepareStatement(SQL);
-		        pstmt.setString(1, "%" + postCategory + "%");
-		        pstmt.setString(2, "%" + search + "%");
-		        pstmt.setInt(3, pageNumber * 5); // offset 계산
-		        pstmt.setInt(4, pageNumber * 5 + 6); // row count
-		        
-		        rs = pstmt.executeQuery();
-		        
-		        boardList = new ArrayList<BoardDto>(); // 조회 결과를 저장하는 리스트를 초기화함
-		        while (rs.next()) { // 모든 게시글이 존재할 때마다 리스트에 담길 수 있게 함
-		        	BoardDto boardDto = new BoardDto(
-		                    rs.getInt(1),
-		                    rs.getString(2),
-		                    rs.getString(3),
-		                    rs.getString(4),
-		                    rs.getString(5),
-		                    rs.getInt(6),
-		                    rs.getInt(7),
-		                    rs.getTimestamp(8)
-		            );
-		            boardList.add(boardDto);
-		        }
-		    } catch (Exception e) {
-		        e.printStackTrace();
-		    } finally {
-		        try { if (conn != null) conn.close(); } catch (Exception e ) { e.printStackTrace(); }
-		        try { if (pstmt != null) pstmt.close(); } catch (Exception e ) { e.printStackTrace(); }
-		        try { if (rs != null) rs.close(); } catch (Exception e ) { e.printStackTrace(); }
-		    }
-		    
-		    return boardList;
-		}
+	        ArrayList<BoardDto> list = new ArrayList<>();
+	        String SQL = "";
+	        if (postCategory.equals("전체")) {
+	            postCategory = "";
+	        }
+
+	        // Sort by searchType
+	        String orderByClause = "";
+	        switch (searchType) {
+	            case "조회수순":
+	                orderByClause = " ORDER BY viewCount DESC";
+	                break;
+	            case "추천순":
+	                orderByClause = " ORDER BY likeCount DESC";
+	                break;
+	            case "최신순":
+	            default:
+	                orderByClause = " ORDER BY postDate DESC";
+	                break;
+	        }
+
+	        SQL = "SELECT * FROM board WHERE postCategory LIKE ? AND CONCAT(userID, postTitle, postContent) LIKE ?" + orderByClause + " LIMIT ?, ?";
+
+	        try (Connection conn = DatabaseUtil.getConnection();
+	             PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+	            pstmt.setString(1, "%" + postCategory + "%");
+	            pstmt.setString(2, "%" + search + "%");
+	            pstmt.setInt(3, pageNumber * 5);
+	            pstmt.setInt(4, 5);
+	            try (ResultSet rs = pstmt.executeQuery()) {
+	                while (rs.next()) {
+	                    BoardDto boardDto = new BoardDto(
+	                        rs.getInt("postID"),
+	                        rs.getString("userID"),
+	                        rs.getString("postCategory"),
+	                        rs.getString("postTitle"),
+	                        rs.getString("postContent"),
+	                        rs.getInt("viewCount"),
+	                        rs.getInt("likeCount"),
+	                        rs.getTimestamp("postDate")
+	                    );
+	                    list.add(boardDto);
+	                }
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+
+	        return list;
+	    }
+
+	    public int getTotalPosts(String postCategory, String searchType, String search) {
+	        if (postCategory.equals("전체")) {
+	            postCategory = "";
+	        }
+
+	        int totalPosts = 0;
+	        String SQL = "SELECT COUNT(*) FROM board WHERE postCategory LIKE ? AND CONCAT(userID, postTitle, postContent) LIKE ?";
+
+	        try (Connection conn = DatabaseUtil.getConnection();
+	             PreparedStatement pstmt = conn.prepareStatement(SQL)) {
+	            pstmt.setString(1, "%" + postCategory + "%");
+	            pstmt.setString(2, "%" + search + "%");
+	            try (ResultSet rs = pstmt.executeQuery()) {
+	                if (rs.next()) {
+	                    totalPosts = rs.getInt(1);
+	                }
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+
+	        return totalPosts;
+	    }
+
 		
 // 게시글 추천
 		public int like(String postID) {
@@ -322,6 +334,54 @@ public class BoardDao {
 		    }
 		    return null;
 		}
+		
+// 방금 작성한 가져오기
+		public BoardDto getPostAfterResist(String userID) {
+			String selLPSQL = "SELECT MAX(postID) FROM board WHERE userID = ?;";
+			
+			String selectSQL = "SELECT * FROM board WHERE postID = ?;";
+			
+			try (Connection conn = DatabaseUtil.getConnection();
+					PreparedStatement slpPstmt = conn.prepareStatement(selLPSQL);){
+				
+				//1. 사용자가 가장 최신에 작성한 글의 아이디를 가져온다.
+				slpPstmt.setString(1, userID);
+				try(ResultSet rs = slpPstmt.executeQuery();){
+					int lastPostID = -1;
+					if(rs.next()) {
+						lastPostID = rs.getInt(1);
+					}
+					
+					if(lastPostID == -1) {
+						return null;	// 주어진 userID로 postID를 찾지 못함 
+					}
+					
+					//2. lastPostID로 게시글을 조회감
+					try(PreparedStatement selPstmt = conn.prepareStatement(selectSQL);){
+						selPstmt.setInt(1, lastPostID);
+						try(ResultSet rs2 = selPstmt.executeQuery();){
+							if(rs2.next()) {
+								BoardDto board = new BoardDto(); 
+								board.setPostID(rs2.getInt(1));
+								board.setUserID(rs2.getString(2));
+								board.setPostCategory(rs2.getString(3));
+								board.setPostTitle(rs2.getString(4));
+								board.setPostContent(rs2.getString(5));
+								board.setViewCount(rs2.getInt(6));
+								board.setLikeCount(rs2.getInt(7));
+								board.setPostDate(rs2.getTimestamp(8));
+								return board;
+							}
+						}
+					}
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+		
+		
 
 // 인기글 5개 불러오기
 		public ArrayList<BoardDto> top5() {

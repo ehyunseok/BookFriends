@@ -5,11 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
+import board.BoardDto;
 import util.DatabaseUtil;
 
 public class ReplyDao {
 
-	//사용자가 게시글을 작성할 수 있는 함수
+//댓글 작성
 		public int write(ReplyDto replyDto) {
 			
 			String SQL = "INSERT INTO reply VALUES (NULL, ?, ?, ?, 0, ?);";
@@ -34,7 +35,6 @@ public class ReplyDao {
 				try { if(pstmt != null) pstmt.close();} catch(Exception e ) {e.printStackTrace();}
 			}
 			return -1; // db 오류
-
 		}
 
 // 댓글 리스트 불러오기
@@ -285,9 +285,34 @@ public class ReplyDao {
 				try { if(pstmt != null) pstmt.close();} catch(Exception e ) {e.printStackTrace();}
 				try { if(rs != null) rs.close();} catch(Exception e ) {e.printStackTrace();}
 			}
-			
-			
 			return -1;
+		}
+
+// 댓글의 해당 게시글 아이디 찾기
+		public String getPostID(String replyID) {
+			
+			String SQL = "SELECT postID FROM reply WHERE replyID = ?;";
+			
+			Connection conn = null;
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			
+			try {
+				conn = DatabaseUtil.getConnection();
+				pstmt = conn.prepareStatement(SQL);
+				pstmt.setInt(1, Integer.parseInt(replyID));
+				rs = pstmt.executeQuery();
+				if(rs.next()) {
+					return rs.getString(1);
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+			} finally {
+				try { if(conn != null) conn.close();} catch(Exception e ) {e.printStackTrace();}
+				try { if(pstmt != null) pstmt.close();} catch(Exception e ) {e.printStackTrace();}
+				try { if(rs != null) rs.close();} catch(Exception e ) {e.printStackTrace();}
+			}
+			return null;
 		}
 		
 }

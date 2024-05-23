@@ -4,6 +4,9 @@
 <%@ page import="util.SHA256"%>
 <%@ page import="java.sql.Timestamp"%>
 <%@ page import="java.io.PrintWriter"%>
+<%@ page import="board.BoardDao"%>
+<%@ page import="board.BoardDto"%>
+<%@ page import="java.net.URLEncoder"%>
 <%
 	request.setCharacterEncoding("UTF-8");
 
@@ -34,6 +37,28 @@
 	//replyIDStr을 정수로 변환하여 replyID로 저장
 	int replyID = Integer.parseInt(replyIDStr);
 	
+	String postID =  new ReplyDao().getPostID(replyIDStr);
+	if(postID == null || postID.equals("")){
+		PrintWriter script = response.getWriter();
+        script.println("<script>");
+        script.println("alert('게시글 불러오기를 실패했습니다.');");
+        script.println("history.back();");
+        script.println("</script>");
+        script.close();
+        return;
+	}
+	
+	BoardDto board = new BoardDao().getPost(postID);
+	if (board == null) {
+        PrintWriter script = response.getWriter();
+        script.println("<script>");
+        script.println("alert('게시글을 불러올 수 없습니다.');");
+        script.println("history.back();");
+        script.println("</script>");
+        script.close();
+        return;
+    }
+	
 	
 	ReplyDao replyDao = new ReplyDao();
 	int result = replyDao.update(replyID, replyContent);
@@ -50,7 +75,7 @@
 		PrintWriter script = response.getWriter();
 		script.println("<script>");
 		script.println("alert('댓글 수정 완료');");
-		script.println("history.back();");
+		script.println("location.href='./postDetail.jsp?postID=" + URLEncoder.encode(postID, "UTF-8") + "';");
 		script.println("</script>");
 		script.close();
 		return;

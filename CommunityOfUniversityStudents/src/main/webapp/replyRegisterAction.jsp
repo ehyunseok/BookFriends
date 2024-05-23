@@ -6,6 +6,7 @@
 <%@ page import="util.SHA256"%>
 <%@ page import="java.sql.Timestamp"%>
 <%@ page import="java.io.PrintWriter"%>
+<%@ page import="java.net.URLEncoder"%>
 <%
 	request.setCharacterEncoding("UTF-8");
 
@@ -37,7 +38,7 @@
     }
 
     int postID = Integer.parseInt(postIDParam);
-
+	String postID2 = postID + "";
     if (replyContent == null || replyContent.trim().isEmpty()) {
         PrintWriter script = response.getWriter();
         script.println("<script>");
@@ -78,7 +79,7 @@
 		PrintWriter script = response.getWriter();
 		script.println("<script>");
 		script.println("alert('댓글이 등록되었습니다.');");
-		script.println("history.back();");
+		script.println("location.href='./postDetail.jsp?postID=" + URLEncoder.encode(postID2, "UTF-8") + "';");
 		script.println("</script>");
 		script.close();
 		return;

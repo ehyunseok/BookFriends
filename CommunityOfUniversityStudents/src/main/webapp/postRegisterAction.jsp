@@ -4,6 +4,8 @@
 <%@ page import="util.SHA256"%>
 <%@ page import="java.sql.Timestamp"%>
 <%@ page import="java.io.PrintWriter"%>
+<%@ page import="java.net.URLEncoder"%>
+
 <%
 	request.setCharacterEncoding("UTF-8");
 
@@ -62,9 +64,11 @@
 	} else {	// 등록 성공
 		session.setAttribute("userID", userID);
 		PrintWriter script = response.getWriter();
+		BoardDto boardDto = new BoardDao().getPostAfterResist(userID);
+		String postID = boardDto.getPostID() + "";
 		script.println("<script>");
 		script.println("alert('게시글 등록 완료');");
-		script.println("location.href='board.jsp'");
+		script.println("location.href='./postDetail.jsp?postID=" + URLEncoder.encode(postID, "UTF-8") + "';");
 		script.println("</script>");
 		script.close();
 		return;

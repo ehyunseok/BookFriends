@@ -49,19 +49,20 @@
 					</div>
 				</li>
 			</ul>
-			<form action="./index.jsp" method="get" class="form-inline my-2 my-lg-0">
-				<input type="text" name="search" class="form-control mr-sm-2" type="search" placeholder="내용을 입력하세요." aria-label="Search">
-				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">검색</button>
-			</form>
 		</div>
 	</nav>
 	
 <!-- container  -->
-	<section class="container mt-3" style="max-width: 560px">
+	<section class="container mt-5" style="max-width: 560px">
 		<form method="post" action="./userRegisterAction.jsp">
 			<div class="form-group">
 				<label>아이디</label>
-				<input type="text" name="userID" class="form-control">
+				<div class="input-group mb-3">
+					<input type="text" name="userID" class="form-control">
+					<div class="input-group-append">
+                		<a class="btn btn-outline-secondary" type="button" href="./checkUserIDAction.jsp?<%= userID %>">중복확인</a>
+            		</div>
+				</div>
 			</div>
 			<div class="form-group">
 				<label>비밀번호</label>
@@ -69,16 +70,18 @@
 			</div>
 			<div class="form-group">
 				<label>이메일</label>
-				<input type="email" name="userEmail" class="form-control">
+				<input type="email" name="userEmail" class="form-control" placeholder="name@gmail.com">
 			</div>
-
 			<button type="submit" class="btn btn-primary btn-block">회원가입</button>
 		</form>
+		<div class="mt-3">
+			<p>계정이 있으신가요? <a href="./userLogin.jsp">로그인하기</a></p>
+		</div>
 	</section>
 	
 	
 <!-- footer -->
-	<footer class="sticky-bottom bg-dark text-center mt-5" style="color: #FFFFFF;">
+	<footer class="fixed-bottom bg-dark text-center mt-5" style="color: #FFFFFF;">
 		Copyright &copy; 2024 EhyunSeok All Rights Reserved.
 	</footer>
 	
