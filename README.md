@@ -8,6 +8,7 @@
 - [소개](#소개)
 - [개발환경](#개발환경)
 - [주요 기능](#주요-기능)
+- [ERD](#ERD)
 - [프로젝트 설정](#프로젝트-설정)
 
 
@@ -58,6 +59,12 @@
 - **재학생 인증**: 이메일 도메인이 대학교 도메인이 아닐 경우 가입 불가
 - **XSS 방지**
 
+
+## ERD
+#### Entity-Relationship Diagram
+![image](https://github.com/ehyunseok/CommunityOfUniversityStudents_JSP/assets/121013391/87f11134-778e-428f-86fe-4c0c865d450a)
+
+
 ## 프로젝트 설정
 ### 환경 설정
 1. **Eclipse 설치 및 설정**: JSP와 서블릿 개발을 위한 Eclipse IDE 설정
@@ -68,6 +75,7 @@
 ### 데이터베이스 설정
 1. MySQL 데이터베이스 생성
 2. 필요한 테이블 생성 및 초기 데이터 입력 (스키마 및 데이터 정의서 참고)
+
 #### database sql table create query
 ```sql
 CREATE TABLE USER (
