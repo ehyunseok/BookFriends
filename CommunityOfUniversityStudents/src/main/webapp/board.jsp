@@ -18,6 +18,7 @@
 </head>
 <body>
 
+
 <%
 //검색했을 때 어떤 게시글을 검색했는지 판단할 수 있게~
 	request.setCharacterEncoding("UTF-8");
@@ -60,6 +61,7 @@
 		script.close();
 		return;
 	}
+	
 %>
 
 <!-- navigation -->
@@ -210,6 +212,7 @@
 			</div>
 		</div>
 	</div>
+
 	
 <!-- 신고하기 모달  -->
 	<div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="modal">

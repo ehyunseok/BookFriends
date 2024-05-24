@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 import board.BoardDto;
 import util.DatabaseUtil;
 
@@ -22,17 +24,17 @@ public class EvaluationDao {
 			try {
 				conn = DatabaseUtil.getConnection();
 				pstmt = conn.prepareStatement(SQL);
-				pstmt.setString(1, evalDto.userID);
-				pstmt.setString(2, evalDto.lectureName);
-				pstmt.setString(3, evalDto.professorName);
+				pstmt.setString(1, StringEscapeUtils.escapeHtml4(evalDto.userID));
+				pstmt.setString(2, StringEscapeUtils.escapeHtml4(evalDto.lectureName));
+				pstmt.setString(3, StringEscapeUtils.escapeHtml4(evalDto.professorName));
 				pstmt.setInt(4, evalDto.lectureYear);
-				pstmt.setString(5, evalDto.semesterDivide);
-				pstmt.setString(6, evalDto.lectureDivide);
-				pstmt.setString(7, evalDto.evaluationTitle);
-				pstmt.setString(8, evalDto.evaluationContent);
-				pstmt.setString(9, evalDto.totalScore);
-				pstmt.setString(10, evalDto.usabilityScore);
-				pstmt.setString(11, evalDto.skillScore);
+				pstmt.setString(5, StringEscapeUtils.escapeHtml4(evalDto.semesterDivide));
+				pstmt.setString(6, StringEscapeUtils.escapeHtml4(evalDto.lectureDivide));
+				pstmt.setString(7, StringEscapeUtils.escapeHtml4(evalDto.evaluationTitle));
+				pstmt.setString(8, StringEscapeUtils.escapeHtml4(evalDto.evaluationContent));
+				pstmt.setString(9, StringEscapeUtils.escapeHtml4(evalDto.totalScore));
+				pstmt.setString(10, StringEscapeUtils.escapeHtml4(evalDto.usabilityScore));
+				pstmt.setString(11, StringEscapeUtils.escapeHtml4(evalDto.skillScore));
 				return pstmt.executeUpdate();	// insert구문을 실행한 결과를 반환함
 				
 			} catch(Exception e) {

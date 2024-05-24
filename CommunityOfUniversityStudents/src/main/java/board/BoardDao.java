@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-
+import org.apache.commons.text.StringEscapeUtils;
 import util.DatabaseUtil;
 
 public class BoardDao {
@@ -21,10 +21,10 @@ public class BoardDao {
 			try {
 				conn = DatabaseUtil.getConnection();
 				pstmt = conn.prepareStatement(SQL);
-				pstmt.setString(1, boardDto.userID);
-				pstmt.setString(2, boardDto.postCategory);
-				pstmt.setString(3, boardDto.postTitle);
-				pstmt.setString(4, boardDto.postContent);
+				pstmt.setString(1, StringEscapeUtils.escapeHtml4(boardDto.userID));
+				pstmt.setString(2, StringEscapeUtils.escapeHtml4(boardDto.postCategory));
+				pstmt.setString(3, StringEscapeUtils.escapeHtml4(boardDto.postTitle));
+				pstmt.setString(4, StringEscapeUtils.escapeHtml4(boardDto.postContent));
 				pstmt.setTimestamp(5, boardDto.postDate);
 				return pstmt.executeUpdate();	// insert구문을 실행한 결과를 반환함
 				
@@ -122,28 +122,6 @@ public class BoardDao {
 
 			String SQL = "UPDATE board SET likeCount = likeCount + 1 WHERE postID = ?;";
 			// 실행 시 해당 평가의 추천 1씩 증가시킴
-			
-			Connection conn = null;
-			PreparedStatement pstmt = null;
-			
-			try {
-				conn = DatabaseUtil.getConnection();
-				pstmt = conn.prepareStatement(SQL);
-				pstmt.setInt(1, Integer.parseInt(postID));
-				return pstmt.executeUpdate();	//실행 결과를 반환함
-			} catch(Exception e) {
-				e.printStackTrace();
-			} finally {
-				try { if(conn != null) conn.close();} catch(Exception e ) {e.printStackTrace();}
-				try { if(pstmt != null) pstmt.close();} catch(Exception e ) {e.printStackTrace();}
-			}
-			return -1;	//오류 발생
-		}
-		
-// 강의평가 삭제
-		public int delete(String postID) {
-			
-			String SQL = "DELETE FROM board WHERE postID = ?";
 			
 			Connection conn = null;
 			PreparedStatement pstmt = null;
@@ -291,9 +269,9 @@ public class BoardDao {
 			try {
 				conn = DatabaseUtil.getConnection();
 				pstmt = conn.prepareStatement(SQL);
-				pstmt.setString(1, postCategory);
-				pstmt.setString(2, postTitle);
-				pstmt.setString(3, postContent);
+				pstmt.setString(1, StringEscapeUtils.escapeHtml4(postCategory));
+				pstmt.setString(2, StringEscapeUtils.escapeHtml4(postTitle));
+				pstmt.setString(3, StringEscapeUtils.escapeHtml4(postContent));
 				pstmt.setInt(4, postID);
 				return pstmt.executeUpdate();
 				
@@ -308,7 +286,7 @@ public class BoardDao {
 
 		}
 		
-// 댓글 등록할 때 postID 정보 가져오기
+// 게시글 등록할 때 postID 정보 가져오기
 		public BoardDto getPost(int postID) {
 		    String SQL = "SELECT * FROM board WHERE postID = ?";
 		    
@@ -335,7 +313,7 @@ public class BoardDao {
 		    return null;
 		}
 		
-// 방금 작성한 가져오기
+// 방금 작성한 게시글 가져오기
 		public BoardDto getPostAfterResist(String userID) {
 			String selLPSQL = "SELECT MAX(postID) FROM board WHERE userID = ?;";
 			
@@ -420,6 +398,37 @@ public class BoardDao {
 		    }
 		    
 		    return boardList;
+		}
+		
+// XSS 방지
+		public String escapeHtml(String input) {
+		    if (input == null) {
+		        return null;
+		    }
+		    StringBuilder builder = new StringBuilder();
+		    for (char c : input.toCharArray()) {
+		        switch (c) {
+		            case '<':
+		                builder.append("&lt;");
+		                break;
+		            case '>':
+		                builder.append("&gt;");
+		                break;
+		            case '&':
+		                builder.append("&amp;");
+		                break;
+		            case '"':
+		                builder.append("&quot;");
+		                break;
+		            case '\'':
+		                builder.append("&#x27;");
+		                break;
+		            default:
+		                builder.append(c);
+		                break;
+		        }
+		    }
+		    return builder.toString();
 		}
 		
 }

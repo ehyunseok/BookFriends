@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 import board.BoardDto;
 import util.DatabaseUtil;
 
@@ -21,9 +23,9 @@ public class ReplyDao {
 			try {
 				conn = DatabaseUtil.getConnection();
 				pstmt = conn.prepareStatement(SQL);
-				pstmt.setString(1, replyDto.userID);
+				pstmt.setString(1, StringEscapeUtils.escapeHtml4(replyDto.userID));
 				pstmt.setInt(2, replyDto.postID);
-				pstmt.setString(3, replyDto.replyContent);
+				pstmt.setString(3, StringEscapeUtils.escapeHtml4(replyDto.replyContent));
 				pstmt.setTimestamp(4, replyDto.replyDate);
 				return pstmt.executeUpdate();	// insert구문을 실행한 결과를 반환함
 				
@@ -247,7 +249,7 @@ public class ReplyDao {
 			try {
 				conn = DatabaseUtil.getConnection();
 				pstmt = conn.prepareStatement(SQL);
-				pstmt.setString(1, replyContent);
+				pstmt.setString(1, StringEscapeUtils.escapeHtml4(replyContent));
 				pstmt.setInt(2, replyID);
 				return pstmt.executeUpdate();
 				

@@ -26,7 +26,7 @@
 	
 	
 	UserDao userDao = new UserDao();
-	int result = userDao.login(userID, userPassword);
+	int result = userDao.login(userID, SHA256.getSHA256(userPassword));
 	if(result == 1){//로그인 성공
 		session.setAttribute("userID", userID); 	// 세션값 설정
 		PrintWriter script = response.getWriter();
