@@ -50,7 +50,7 @@
 	}
 	String to = userDao.getUserEmail(userID);
 	
-	String subject = "강의평가를 위한 이메일 인증 메일입니다.";
+	String subject = "회원가입 인증을 위한 이메일 인증 메일입니다.";
 	String content = "다음 링크에 접속하여 이메일 인증을 진행해주세요." +
 		"<a href='" + host + "emailCheckAction.jsp?code=" + new SHA256().getSHA256(to) + "'>인증하기</a>";
 		
