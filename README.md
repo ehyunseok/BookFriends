@@ -25,6 +25,8 @@
   - Popper 1.16.1
   - Java Mail 1.4.7
   - Java Activation Framework 1.1.1
+  - Apache Commons Lang 3.14.0
+  - Apache Commons Text 1.12.0
 
 
 ## 주요 기능
