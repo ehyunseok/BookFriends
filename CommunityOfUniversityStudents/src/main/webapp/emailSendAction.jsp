@@ -119,44 +119,35 @@
 				<li class="nav-item active">
 					<a class="nav-link" href="index.jsp">메인</a>
 				</li>
-				<li class="nav-item dropdown">
+				<li class="nav-item">
+					<a class="nav-link" href="./courseReview.jsp">강의평가</a>
+				</li>				
+				<li class="nav-item">
+					<a class="nav-link" href="./board.jsp"><b>자유게시판</b></a>
+				</li>				
+				<li class="nav-item dropdown active">
 					<a class="nav-link dropdown-toggle" id="dropdown" data-toggle="dropdown">
 						회원관리
 					</a>
 					<div class="dropdown-menu" aria-labelledby="dropdown">
-<!-- 사용자가 로그인한 상태가 아닐 경우 로그인/회원가입이 보이게-->
-<%
-	if(userID == null){
-%>
 						<a class="dropdown-item" href="userLogin.jsp">로그인</a>
 						<a class="dropdown-item" href="userJoin.jsp">회원가입</a>
-<%
-	} else {
-%> 	<!-- 로그인 했을 경우 로그아웃만 보이게 -->
-						<a class="dropdown-item" href="userLogoutAction.jsp">로그아웃</a>
-<%
-	}
-%>						
 					</div>
 				</li>
 			</ul>
-			<form action="./index.jsp" method="get" class="form-inline my-2 my-lg-0">
-				<input type="text" name="search" class="form-control mr-sm-2" type="search" placeholder="내용을 입력하세요." aria-label="Search">
-				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">검색</button>
-			</form>
 		</div>
 	</nav>
 	
 <!-- container  -->
-	<section class="container mt-3" style="max-width: 560px">
-		<div class="alert alert-success mt-4" role="alert">
+	<section class="container mt-5" style="max-width: 560px">
+		<div class="alert alert-success mt-5" role="alert">
 			이메일 인증 메일이 전송되었습니다. 회원가입 시 입력했던 이메일 계정에서 인증해주세요.
 		</div>
 	</section>
 	
 	
 <!-- footer -->
-	<footer class="bg-dark mt-4 p-5 text-center" style="color: #FFFFFF;">
+	<footer class="fixed-bottom bg-dark text-center mt-5" style="color: #FFFFFF;">
 		Copyright &copy; 2024 EhyunSeok All Rights Reserved.
 	</footer>
 	

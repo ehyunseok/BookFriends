@@ -36,36 +36,39 @@
 		</button>
 		<div id="navbar" class="collapse navbar-collapse">
 			<ul class="navbar-nav mr-auto">
-				<li class="nav-item active">
+				<li class="nav-item">
 					<a class="nav-link" href="index.jsp">메인</a>
 				</li>
-				<li class="nav-item dropdown">
+				<li class="nav-item">
+					<a class="nav-link" href="./courseReview.jsp">강의평가</a>
+				</li>				
+				<li class="nav-item">
+					<a class="nav-link" href="./board.jsp">자유게시판</a>
+				</li>
+				<li class="nav-item dropdown active">
 					<a class="nav-link dropdown-toggle" id="dropdown" data-toggle="dropdown">
 						회원관리
 					</a>
 					<div class="dropdown-menu" aria-labelledby="dropdown">
+						<a class="dropdown-item" style="color: green;"><b><%= userID %></b> 님 환영합니다.</a>
 						<a class="dropdown-item" href="userLogoutAction.jsp">로그아웃</a>
 					</div>
 				</li>
 			</ul>
-			<form action="./index.jsp" method="get" class="form-inline my-2 my-lg-0">
-				<input type="text" name="search" class="form-control mr-sm-2" type="search" placeholder="내용을 입력하세요." aria-label="Search">
-				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">검색</button>
-			</form>
 		</div>
 	</nav>
 	
 <!-- container  -->
-	<section class="container mt-3" style="max-width: 560px">
-		<div class="alert alert-warning mt-4" role="alert">
+	<section class="container mt-5" style="max-width: 560px">
+		<div class="alert alert-warning mt-5" role="alert">
 			이메일 인증이 완료되어야 이용할 수 있습니다. 인증 메일을 받지 못 하셨나요?
 		</div>
-		<a href="emailSendAction.jsp" class="btn btn-primary">인증 메일 다시 받기</a>
+		<a href="emailSendAction.jsp" class="btn btn-primary btn-block">인증 메일 다시 받기</a>
 	</section>
 	
 	
 <!-- footer -->
-	<footer class="sticky-bottom bg-dark text-center mt-5" style="color: #FFFFFF;">
+	<footer class="fixed-bottom bg-dark text-center mt-5" style="color: #FFFFFF;">
 		Copyright &copy; 2024 EhyunSeok All Rights Reserved.
 	</footer>
 	

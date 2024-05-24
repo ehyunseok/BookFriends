@@ -28,6 +28,8 @@
 		return;
 	}
 %>
+
+
 <!-- navigation -->
 		<nav class="navbar navbar-expand-lg navbar-light bg-light">
 		<a class="navbar-brand" href="index.jsp">이현대학교 대나무숲</a>
@@ -39,7 +41,13 @@
 				<li class="nav-item">
 					<a class="nav-link" href="index.jsp">메인</a>
 				</li>
-				<li class="nav-item dropdown active">
+				<li class="nav-item">
+					<a class="nav-link" href="./courseReview.jsp">강의평가</a>
+				</li>				
+				<li class="nav-item active">
+					<a class="nav-link" href="./board.jsp"><b>자유게시판</b></a>
+				</li>
+				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" id="dropdown" data-toggle="dropdown">
 						회원관리
 					</a>
@@ -60,7 +68,7 @@
 				<div class="input-group mb-3">
 					<input type="text" name="userID" class="form-control">
 					<div class="input-group-append">
-                		<a class="btn btn-outline-secondary" type="button" href="./checkUserIDAction.jsp?<%= userID %>">중복확인</a>
+                		<button class="btn btn-outline-secondary" type="submit" formaction="./checkUserIDAction.jsp" value="userID">중복확인</button>
             		</div>
 				</div>
 			</div>

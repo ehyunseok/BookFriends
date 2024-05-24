@@ -18,12 +18,11 @@
 	
 	
 	UserDao userDao = new UserDao();
-	boolean isTrue = userDao.checkDuplication(userID);
-	if(isTrue == true){//중복된 아이디
-		session.setAttribute("userID", userID);
+	boolean isDuplicate = userDao.checkDuplication(userID);
+	if(isDuplicate){//중복된 아이디
 		PrintWriter script = response.getWriter();
 		script.println("<script>");
-		script.println("alert('아이디가 이미 사용중입니다.');");
+		script.println("alert('이미 사용중인 아이디입니다.');");
 		script.println("history.back();");
 		script.println("</script>");
 		script.close();

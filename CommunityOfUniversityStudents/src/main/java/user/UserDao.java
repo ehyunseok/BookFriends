@@ -70,24 +70,15 @@ public class UserDao {
 		
 		String SQL = "SELECT userID FROM user WHERE userID = ?;";
 		
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		
-		try {
-			conn = DatabaseUtil.getConnection();
-			pstmt = conn.prepareStatement(SQL);
+		try(Connection conn = DatabaseUtil.getConnection()){
+			PreparedStatement pstmt = conn.prepareStatement(SQL);
 			pstmt.setString(1, userID);
-			rs = pstmt.executeQuery();
-			if(rs.next()) {
-				return rs.getBoolean(1);	// 입력한 아이디가 이미 존재하는 경우 true 반환 
+			try(ResultSet rs = pstmt.executeQuery()){
+				return rs.next();	//중복된 아이디일 경우 next()가 true를 반환함
 			}
+			
 		} catch(Exception e) {
 			e.printStackTrace();
-		} finally {
-			try { if(conn != null) conn.close();} catch(Exception e ) {e.printStackTrace();}
-			try { if(pstmt != null) pstmt.close();} catch(Exception e ) {e.printStackTrace();}
-			try { if(rs != null) rs.close();} catch(Exception e ) {e.printStackTrace();}
 		}
 		return false;
 	}

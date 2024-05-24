@@ -135,7 +135,7 @@
 				<div class="row">
 					<div class="col-8 text-left"><%= evaluation.getLectureName() %>&nbsp;<small><%= evaluation.getProfessorName() %></small></div>
 					<div class="col-4 text-right">
-						<small>작성자</small><span> <%= evaluation.getUserID() %></span>
+						<img class="" src="images/icon.png" style="height:15px;"><span> <%= evaluation.getUserID() %></span>
 					</div>
 				</div>
 			</div>

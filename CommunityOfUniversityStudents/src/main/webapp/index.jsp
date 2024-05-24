@@ -39,30 +39,7 @@
 <body>
 
 <%
-//검색했을 때 어떤 게시글을 검색했는지 판단할 수 있게~
 	request.setCharacterEncoding("UTF-8");		
-	String lectureDivide = "전체";
-	String searchType = "최신순";
-	String search = "";
-	int pageNumber = 0;
-	if(request.getParameter("lectureDivide") != null){
-		lectureDivide = request.getParameter("lectureDivide");
-	}
-	if(request.getParameter("searchType") != null){
-		searchType = request.getParameter("searchType");
-	}
-	if(request.getParameter("search") != null){
-		search = request.getParameter("search");
-	}
-	if(request.getParameter("pageNumber") != null){
-		try{
-			pageNumber = Integer.parseInt( request.getParameter("pageNumber") );
-		} catch(Exception e){
-			System.out.println("검색 페이지 오류");
-			e.printStackTrace();
-		}
-	}
-	
 // 로그인 상태 관리
 	String userID = null;
 	if(session.getAttribute("userID") != null){		// 로그인한 상태라서 세션에 userID가 존재할 경우
@@ -99,7 +76,7 @@
 		<div id="navbar" class="collapse navbar-collapse">
 			<ul class="navbar-nav mr-auto">
 				<li class="nav-item active">
-					<a class="nav-link" href="index.jsp">메인</a>
+					<a class="nav-link" href="index.jsp"><b>메인</b></a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="./courseReview.jsp">강의평가</a>
@@ -112,20 +89,8 @@
 						회원관리
 					</a>
 					<div class="dropdown-menu" aria-labelledby="dropdown">
-<!-- 사용자가 로그인한 상태가 아닐 경우 로그인/회원가입이 보이게-->
-<%
-	if(userID == null){
-%>
-						<a class="dropdown-item" href="userLogin.jsp">로그인</a>
-						<a class="dropdown-item" href="userJoin.jsp">회원가입</a>
-<%
-	} else {
-%> 	<!-- 로그인 했을 경우 로그아웃만 보이게 -->
 						<a class="dropdown-item" style="color: green;"><b><%= userID %></b> 님 환영합니다.</a>
 						<a class="dropdown-item" href="userLogoutAction.jsp">로그아웃</a>
-<%
-	}
-%>						
 					</div>
 				</li>
 			</ul>
