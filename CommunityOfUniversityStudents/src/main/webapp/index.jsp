@@ -3,6 +3,8 @@
 <%@ page import="user.UserDao"%>
 <%@ page import="board.BoardDao"%>
 <%@ page import="board.BoardDto"%>
+<%@ page import="review.ReviewDao"%>
+<%@ page import="review.ReviewDto"%>
 <%@ page import="evaluation.EvaluationDao"%>
 <%@ page import="evaluation.EvaluationDto"%>
 <%@ page import="java.util.ArrayList"%>
@@ -12,7 +14,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<title>이현대학교 대나무숲</title>
+	<title>독서친구</title>
 	<!-- 부트스트랩 css 추가하기 -->
 	<link rel="stylesheet" href="./css/bootstrap.min.css">
 	<!-- 커스텀 css 추가하기 -->
@@ -69,7 +71,7 @@
 
 <!-- navigation -->
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">
-		<a class="navbar-brand" href="index.jsp">이현대학교 대나무숲</a>
+		<a class="navbar-brand" href="index.jsp">독서친구</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
 			<span class="navbar-toggler-icon"></span>
 		</button>
@@ -79,10 +81,13 @@
 					<a class="nav-link" href="index.jsp"><b>메인</b></a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="./courseReview.jsp">강의평가</a>
+					<a class="nav-link" href="./bookReview.jsp">서평</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="./board.jsp">자유게시판</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="./recruit.jsp">독서모임</a>
 				</li>
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" id="dropdown" data-toggle="dropdown">
@@ -96,31 +101,32 @@
 			</ul>
 		</div>
 	</nav>
+	
 	<section class="container">
 		<div class="center-container">
 			<div class="row row-cols-1 row-cols-md-2 mt-5">
-				<!-- 강의평가 인기글 -->
+				<!-- 서평 인기글 -->
 				<div class="col card-wrapper">
 					<div class="card">
 						<div class="card-header text-center">
-							<a  href="courseReview.jsp" style="color: black;">
-								<h5 class="card-title"><b>강의평가</b></h5>
+							<a  href="bookReview.jsp" style="color: black;">
+								<h5 class="card-title"><b>서평</b></h5>
 							</a>
 								<p class="card-text">추천수 top5</p>
 						</div>
 						<ul class="list-group list-group-flush">
 						<%
-							ArrayList<EvaluationDto> evalDto = new ArrayList<EvaluationDto>();
-							evalDto = new EvaluationDao().top5();
+							ArrayList<ReviewDto> reviewDto = new ArrayList<>();
+							reviewDto = new ReviewDao().top5();
 							for(int i = 0 ; i < 5; i++){
-								EvaluationDto eval = evalDto.get(i);
+								ReviewDto review = reviewDto.get(i);
 						%>
-							<li class="list-group-item">
-									[<%= eval.getLectureName() %> <small><%= eval.getProfessorName() %></small>] 
+							<li class="list-group-item" onclick="window.location='./reviewDetail.jsp?reviewID=<%= review.getReviewID() %>'">
+									[<%= review.getBookName() %> <small><%= review.getAuthorName() %></small>] 
 								<div class="truncate-text">
-									<b><%= eval.getEvaluationTitle() %></b>  <small style="font-size:xx-small;">추천:<%= eval.getLikeCount() %></small> 
+									<b><%= review.getReviewTitle() %></b>  <small style="font-size:xx-small;">추천:<%= review.getLikeCount() %></small> 
 								</div>
-									<small><img class="" src="images/icon.png" style="height:12px;"><%= eval.getUserID() %></small>
+									<small><img class="" src="images/icon.png" style="height:12px;"><%= review.getUserID() %></small>
 							</li>
 						<% 
 							}

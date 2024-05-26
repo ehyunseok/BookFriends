@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.io.PrintWriter"%>
 <%@ page import="user.UserDao"%>
-<%@ page import="board.BoardDao"%>
-<%@ page import="board.BoardDto"%>
+<%@ page import="recruit.RecruitDao"%>
+<%@ page import="recruit.RecruitDto"%>
 <%@ page import="reply.ReplyDto"%>
 <%@ page import="reply.ReplyDao"%>
 <%@ page import="java.util.ArrayList"%>
@@ -50,31 +50,31 @@
 	}
 	
 	// 해당 게시글 아이디 가져오기
-	String postID =  request.getParameter("postID");
+	String recruitID =  request.getParameter("recruitID");
 	
-	if(postID == null){
+	if(recruitID == null){
 		PrintWriter script = response.getWriter();
 		script.println("<script>");
-		script.println("alert('postID가 null값입니다.');");
+		script.println("alert('recruitID가 null값입니다.');");
 		script.println("history.back();");
 		script.println("</script>");
 		script.close();
 		return;
 	}
 	
-	BoardDao boardDao = new BoardDao();
-	BoardDto board = new BoardDao().getPost(postID);
-    if (board == null) {
+	RecruitDao recruitDao = new RecruitDao();
+	RecruitDto recruit = new RecruitDao().getPost(recruitID);
+    if (recruit == null) {
         PrintWriter script = response.getWriter();
         script.println("<script>");
-        script.println("alert('게시글을 불러올 수 없습니다.');");
+        script.println("alert('모집글을 불러올 수 없습니다.');");
         script.println("history.back();");
         script.println("</script>");
         script.close();
         return;
     }
 	// 댓글 리스트 가져오기
-	ArrayList<ReplyDto> replyList = new ReplyDao().getList(postID);
+	ArrayList<ReplyDto> replyList = new ReplyDao().getList(recruitID);
 	
 	// 댓글 개수 가져오기
 	int countReply = replyList.size();
@@ -95,11 +95,11 @@
 				<li class="nav-item">
 					<a class="nav-link" href="./bookReview.jsp">서평</a>
 				</li>
-				<li class="nav-item active">
-					<a class="nav-link" href="./board.jsp"><b>자유게시판</b></a>
-				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="./recruit.jsp">독서모임</a>
+					<a class="nav-link" href="./board.jsp">자유게시판</a>
+				</li>
+				<li class="nav-item active">
+					<a class="nav-link" href="./recruit.jsp"><b>독서모임</b></a>
 				</li>
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" id="dropdown" data-toggle="dropdown">
@@ -119,23 +119,22 @@
 		<div>
 			<div class="card bg-light mt-3">
 				<div class="card-header bg-light">
-					<h5 class="card-title"><img class="" src="images/icon.png" style="height:20px;"> <b><%= board.getUserID() %></b></h5>
-					<p class="card-text">조회수: <%= board.getViewCount() %> | 작성일: <%= board.getPostDate() %></p>
+					<h5 class="card-title"><img class="" src="images/icon.png" style="height:20px;"> <b><%= recruit.getUserID() %></b></h5>
+					<p class="card-text">조회수: <%= recruit.getViewCount() %> | 작성일: <%= recruit.getRegistDate() %></p>
 				</div>
 				<div class="card-body">
-					<h4 class="card-title"><b><%= board.getPostTitle() %></b></h4>
-					<p class="card-text" style="text-align:justify; white-space:pre-wrap;"><%= board.getPostContent() %>
+					<h4 class="card-title"><b><%= recruit.getRecruitTitle() %></b></h4>
+					<p class="card-text" style="text-align:justify; white-space:pre-wrap;"><%= recruit.getRecruitContent() %>
 					</p>
 					<div class="row">
 						<div class="col-12 text-right">
-							<a style="color: black;" onclick="return confirm('추천하시겠습니까?')" href="./likePostAction.jsp?postID=<%= board.getPostID() %>">추천(<%= board.getLikeCount() %>)</a>
 <%
 // 사용자가 작성자와 동일한 경우 수정, 삭제버튼 노출
-		if(userID.equals(board.getUserID())){
+		if(userID.equals(recruit.getUserID())){
 %>
 							 
-							 | <a style="color: gray;" onclick="return confirm('수정하시겠습니까?')" data-toggle="modal" href="#updateModal">수정</a> | 
-							<a style="color: gray;" onclick="return confirm('삭제하시겠습니까?')" href="./deletePostAction.jsp?postID=<%= board.getPostID() %>">삭제</a>
+							<a style="color: gray;" onclick="return confirm('수정하시겠습니까?')" href="./recruitUpdateAction./jsp?recruitID<%= recruit.getRecruitID() %>">수정</a> | 
+							<a style="color: gray;" onclick="return confirm('삭제하시겠습니까?')" href="./recruitDeleteAction.jsp?recruitID=<%= recruit.getRecruitID() %>">삭제</a>
 						</div>
 <%
 		} else {
@@ -156,7 +155,7 @@
 			<div class="card-header">comment</div>
 			<div class="card-body">
 				<form method="post" action="./replyRegisterAction.jsp">
-					<input type="hidden" name="postID" value="<%= postID %>">
+					<input type="hidden" name="recruitID" value="<%= recruitID %>">
 					<textarea name="replyContent" class="form-control" maxlength="2048" style="height: 100px;"></textarea>
 					<div class="text-right">
 						<button type="submit" class="btn btn-primary mt-1">작성</button>
@@ -226,45 +225,6 @@
 	
 	
 		
-<!-- 게시글 수정하기 모달  -->
-	<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="modal">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="modal">게시글 수정</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<form method="post" action="./postUpdateAction.jsp?postID=<%= postID %>">
-						<div class="form-row">
-							<div class="form-group col-sm-4">
-								<label>카테고리</label>
-								<select name="postCategory" class="form-control">
-									<option value="질문">질문</option>
-									<option value="맛집 추천">맛집 추천</option>
-									<option value="사담">사담</option>
-								</select>
-							</div>
-						</div>
-						<div class="form-group">
-							<label>제목</label>
-							<input type="text" name="postTitle" class="form-control" maxlength="30" value="<%= board.getPostTitle() %>">
-						</div>
-						<div class="form-group">
-							<label>내용</label>
-							<textarea name="postContent" class="form-control" maxlength="2048" style="height: 180px;" ><%= board.getPostContent() %></textarea>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
-							<button type="submit" class="btn btn-primary">수정</button>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
 		
 <!-- footer -->
 	<footer class="fixed-bottom bg-dark text-center mt-5" style="color: #FFFFFF;">

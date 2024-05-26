@@ -65,7 +65,7 @@
 	// 내용을 입력하면 댓글이 등록됨
 	ReplyDao replyDao = new ReplyDao();
 	Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-	int result = replyDao.write(new ReplyDto(0, userID, postID, replyContent, 0, currentTimestamp));
+	int result = replyDao.write(new ReplyDto(0, userID, postID, replyContent, 0, currentTimestamp, 0));
 	if(result == -1){	// 등록 실패
 		PrintWriter script = response.getWriter();
 		script.println("<script>");

@@ -35,14 +35,14 @@
 		return;
 	}
 	
-	String host = "http://localhost:8080/Lecture_Evaluation/";
+	String host = "http://localhost:8080/BookFriends/";
 	String from = "yhdaneys@gmail.com";
 	
 	userID=(String)session.getAttribute("userID");
 	if(userID == null){
 		PrintWriter script = response.getWriter();
 		script.println("<script>");
-		script.println("alert('아이디가 비었당...;;');");
+		script.println("alert('아이디가 입력되지 않았습니다.');");
 		script.println("location.href = 'index.jsp'");
 		script.println("</script>");
 		script.close();
@@ -120,11 +120,14 @@
 					<a class="nav-link" href="index.jsp">메인</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="./courseReview.jsp">강의평가</a>
-				</li>				
+					<a class="nav-link" href="./bookReview.jsp">서평</a>
+				</li>			
 				<li class="nav-item">
 					<a class="nav-link" href="./board.jsp"><b>자유게시판</b></a>
-				</li>				
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="./recruit.jsp">독서모임</a>
+				</li>			
 				<li class="nav-item dropdown active">
 					<a class="nav-link dropdown-toggle" id="dropdown" data-toggle="dropdown">
 						회원관리

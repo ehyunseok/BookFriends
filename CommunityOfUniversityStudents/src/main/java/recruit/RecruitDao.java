@@ -1,4 +1,4 @@
-package board;
+package recruit;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,12 +7,12 @@ import java.util.ArrayList;
 import org.apache.commons.text.StringEscapeUtils;
 import util.DatabaseUtil;
 
-public class BoardDao {
+public class RecruitDao {
 
-	//사용자가 게시글을 작성할 수 있는 함수
-	public int write(BoardDto boardDto) {
+	//사용자가 모집글을 작성할 수 있는 함수
+	public int write(RecruitDto recruitDto) {
 		
-		String SQL = "INSERT INTO board VALUES (NULL, ?, ?, ?, ?, 0, 0, ?);";
+		String SQL = "INSERT INTO recruit VALUES (NULL, ?, ?, ?, ?, ?, 0);";
 		
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -21,11 +21,11 @@ public class BoardDao {
 		try {
 			conn = DatabaseUtil.getConnection();
 			pstmt = conn.prepareStatement(SQL);
-			pstmt.setString(1, StringEscapeUtils.escapeHtml4(boardDto.userID));
-			pstmt.setString(2, StringEscapeUtils.escapeHtml4(boardDto.postCategory));
-			pstmt.setString(3, StringEscapeUtils.escapeHtml4(boardDto.postTitle));
-			pstmt.setString(4, StringEscapeUtils.escapeHtml4(boardDto.postContent));
-			pstmt.setTimestamp(5, boardDto.postDate);
+			pstmt.setString(1, StringEscapeUtils.escapeHtml4(recruitDto.userID));
+			pstmt.setString(2, StringEscapeUtils.escapeHtml4(recruitDto.recruitStatus));
+			pstmt.setString(3, StringEscapeUtils.escapeHtml4(recruitDto.recruitTitle));
+			pstmt.setString(4, StringEscapeUtils.escapeHtml4(recruitDto.recruitContent));
+			pstmt.setTimestamp(5, recruitDto.registDate);
 			return pstmt.executeUpdate();	// insert구문을 실행한 결과를 반환함
 			
 		} catch(Exception e) {
@@ -40,11 +40,11 @@ public class BoardDao {
 	}
 
 // 자유게시판 리스트 불러오기(조회, 검색)
-	public ArrayList<BoardDto> getList(String postCategory, String searchType, String search, int pageNumber) {
-        ArrayList<BoardDto> list = new ArrayList<>();
+	public ArrayList<RecruitDto> getList(String recruitStatus, String searchType, String search, int pageNumber) {
+        ArrayList<RecruitDto> list = new ArrayList<>();
         String SQL = "";
-        if (postCategory.equals("전체")) {
-            postCategory = "";
+        if (recruitStatus.equals("전체")) {
+        	recruitStatus = "";
         }
 
         // Sort by searchType
@@ -53,36 +53,32 @@ public class BoardDao {
             case "조회수순":
                 orderByClause = " ORDER BY viewCount DESC";
                 break;
-            case "추천순":
-                orderByClause = " ORDER BY likeCount DESC";
-                break;
             case "최신순":
             default:
                 orderByClause = " ORDER BY postDate DESC";
                 break;
         }
 
-        SQL = "SELECT * FROM board WHERE postCategory LIKE ? AND CONCAT(userID, postTitle, postContent) LIKE ?" + orderByClause + " LIMIT ?, ?";
+        SQL = "SELECT * FROM recruit WHERE recruitStatus LIKE ? AND CONCAT(userID, recruitTitle, recruitContent) LIKE ?" + orderByClause + " LIMIT ?, ?";
 
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(SQL)) {
-            pstmt.setString(1, "%" + postCategory + "%");
+            pstmt.setString(1, "%" + recruitStatus + "%");
             pstmt.setString(2, "%" + search + "%");
             pstmt.setInt(3, pageNumber * 5);
             pstmt.setInt(4, 5);
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    BoardDto boardDto = new BoardDto(
-                        rs.getInt("postID"),
+                	RecruitDto recruitDto = new RecruitDto(
+                        rs.getInt("recruitID"),
                         rs.getString("userID"),
-                        rs.getString("postCategory"),
-                        rs.getString("postTitle"),
-                        rs.getString("postContent"),
-                        rs.getInt("viewCount"),
-                        rs.getInt("likeCount"),
-                        rs.getTimestamp("postDate")
+                        rs.getString("recruitStatus"),
+                        rs.getString("recruitTitle"),
+                        rs.getString("recruitContent"),
+                        rs.getTimestamp("registDate"),
+                        rs.getInt("viewCount")
                     );
-                    list.add(boardDto);
+                    list.add(recruitDto);
                 }
             }
         } catch (Exception e) {
@@ -92,17 +88,17 @@ public class BoardDao {
         return list;
     }
 
-    public int getTotalPosts(String postCategory, String searchType, String search) {
-        if (postCategory.equals("전체")) {
-            postCategory = "";
+    public int getTotalPosts(String recruitStatus, String searchType, String search) {
+        if (recruitStatus.equals("전체")) {
+        	recruitStatus = "";
         }
 
         int totalPosts = 0;
-        String SQL = "SELECT COUNT(*) FROM board WHERE postCategory LIKE ? AND CONCAT(userID, postTitle, postContent) LIKE ?";
+        String SQL = "SELECT COUNT(*) FROM recruit WHERE recruitStatus LIKE ? AND CONCAT(userID, recruitTitle, recruitContent) LIKE ?";
 
         try (Connection conn = DatabaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(SQL)) {
-            pstmt.setString(1, "%" + postCategory + "%");
+            pstmt.setString(1, "%" + recruitStatus + "%");
             pstmt.setString(2, "%" + search + "%");
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
@@ -117,33 +113,10 @@ public class BoardDao {
     }
 
 		
-// 게시글 추천
-	public int like(String postID) {
-
-		String SQL = "UPDATE board SET likeCount = likeCount + 1 WHERE postID = ?;";
-		// 실행 시 해당 평가의 추천 1씩 증가시킴
-		
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		
-		try {
-			conn = DatabaseUtil.getConnection();
-			pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1, Integer.parseInt(postID));
-			return pstmt.executeUpdate();	//실행 결과를 반환함
-		} catch(Exception e) {
-			e.printStackTrace();
-		} finally {
-			try { if(conn != null) conn.close();} catch(Exception e ) {e.printStackTrace();}
-			try { if(pstmt != null) pstmt.close();} catch(Exception e ) {e.printStackTrace();}
-		}
-		return -1;	//오류 발생
-	}
-		
-// 게시글 작성자의 아이디 가져오기
+// 모집글 작성자의 아이디 가져오기
 	public String getUserID(String postID) {
 		
-		String SQL = "SELECT userID FROM board WHERE postID = ?;";
+		String SQL = "SELECT userID FROM recruit WHERE recruitID = ?;";
 		
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -170,10 +143,10 @@ public class BoardDao {
 	
 		
 // 게시글 가져오기
-	public BoardDto getPost(String postID) {
+	public RecruitDto getPost(String recruitID) {
 		
-		String updateSQL = "UPDATE board SET viewCount = viewCount + 1 WHERE postID = ?;"; 
-		String selectSQL = "SELECT * FROM board WHERE postID = ?;";
+		String updateSQL = "UPDATE recruit SET viewCount = viewCount + 1 WHERE recruitID = ?;"; 
+		String selectSQL = "SELECT * FROM recruit WHERE recruitID = ?;";
 		
 		Connection conn = null;
 		PreparedStatement upPstmt = null;
@@ -184,23 +157,22 @@ public class BoardDao {
 			conn = DatabaseUtil.getConnection();
 			
 			upPstmt = conn.prepareStatement(updateSQL);
-			upPstmt.setInt(1, Integer.parseInt(postID));
+			upPstmt.setInt(1, Integer.parseInt(recruitID));
 			upPstmt.executeUpdate();
 			
 			selPstmt = conn.prepareStatement(selectSQL);
-			selPstmt.setInt(1, Integer.parseInt(postID));
+			selPstmt.setInt(1, Integer.parseInt(recruitID));
 			rs = selPstmt.executeQuery();
 			if(rs.next()) {
-				BoardDto board = new BoardDto(); 
-				board.setPostID(rs.getInt(1));
-				board.setUserID(rs.getString(2));
-				board.setPostCategory(rs.getString(3));
-				board.setPostTitle(rs.getString(4));
-				board.setPostContent(rs.getString(5));
-				board.setViewCount(rs.getInt(6));
-				board.setLikeCount(rs.getInt(7));
-				board.setPostDate(rs.getTimestamp(8));
-				return board;
+				RecruitDto recruit = new RecruitDto(); 
+				recruit.setRecruitID(rs.getInt(1));
+				recruit.setUserID(rs.getString(2));
+				recruit.setRecruitStatus(rs.getString(3));
+				recruit.setRecruitTitle(rs.getString(4));
+				recruit.setRecruitContent(rs.getString(5));
+				recruit.setRegistDate(rs.getTimestamp(8));
+				recruit.setViewCount(rs.getInt(7));
+				return recruit;
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -214,39 +186,18 @@ public class BoardDao {
 	}
 	
 	
-// 특정 게시글 추천
-	public int likePost(String postID) {
-		String SQL = "UPDATE board SET likeCount = likeCount + 1 WHERE postID = ?;";
-		// 실행 시 해당 평가의 추천 1씩 증가시킴
+
+//모집글 삭제
+	public int deletePost(String recruitID) {
 		
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		
-		try {
-			conn = DatabaseUtil.getConnection();
-			pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1, Integer.parseInt(postID));
-			return pstmt.executeUpdate();	//실행 결과를 반환함
-		} catch(Exception e) {
-			e.printStackTrace();
-		} finally {
-			try { if(conn != null) conn.close();} catch(Exception e ) {e.printStackTrace();}
-			try { if(pstmt != null) pstmt.close();} catch(Exception e ) {e.printStackTrace();}
-		}
-		return -1;	//오류 발생
-	}
-		
-//게시글 삭제
-	public int deletePost(String postID) {
-		
-		String SQL = "DELETE FROM board WHERE postID = ?;";
+		String SQL = "DELETE FROM recruit WHERE recruitID = ?;";
 		
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		try {
 			conn = DatabaseUtil.getConnection();
 			pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1, Integer.parseInt(postID));
+			pstmt.setInt(1, Integer.parseInt(recruitID));
 			return pstmt.executeUpdate();
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -258,10 +209,10 @@ public class BoardDao {
 	}
 		
 		
-// 게시글 수정
-	public int update(int postID, String postCategory, String postTitle, String postContent) {
+// 모집글 수정
+	public int update(int recruitID, String recruitStatus, String recruitTitle, String recruitContent) {
 
-		String SQL = "UPDATE board SET postCategory = ?, postTitle = ?, postContent = ? WHERE postID = ?;";
+		String SQL = "UPDATE recruit SET recruitStatus = ?, recruitTitle = ?, recruitContent = ? WHERE recruitID = ?;";
 		
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -270,10 +221,10 @@ public class BoardDao {
 		try {
 			conn = DatabaseUtil.getConnection();
 			pstmt = conn.prepareStatement(SQL);
-			pstmt.setString(1, StringEscapeUtils.escapeHtml4(postCategory));
-			pstmt.setString(2, StringEscapeUtils.escapeHtml4(postTitle));
-			pstmt.setString(3, StringEscapeUtils.escapeHtml4(postContent));
-			pstmt.setInt(4, postID);
+			pstmt.setString(1, StringEscapeUtils.escapeHtml4(recruitStatus));
+			pstmt.setString(2, StringEscapeUtils.escapeHtml4(recruitTitle));
+			pstmt.setString(3, StringEscapeUtils.escapeHtml4(recruitContent));
+			pstmt.setInt(4, recruitID);
 			return pstmt.executeUpdate();
 			
 		} catch(Exception e) {
@@ -287,25 +238,25 @@ public class BoardDao {
 
 	}
 		
-// 게시글 등록할 때 postID 정보 가져오기
-	public BoardDto getPost(int postID) {
-	    String SQL = "SELECT * FROM board WHERE postID = ?";
+// 모집글 등록할 때 postID 정보 가져오기
+	public RecruitDto getPost(int recruitID) {
+	    String SQL = "SELECT * FROM recruit WHERE recruitID = ?";
 	    
 	    try (Connection conn = DatabaseUtil.getConnection();
 	         PreparedStatement pstmt = conn.prepareStatement(SQL)) {
 	         
-	        pstmt.setInt(1, postID);
+	        pstmt.setInt(1, recruitID);
 	        try (ResultSet rs = pstmt.executeQuery()) {
 	            if (rs.next()) {
-	                BoardDto board = new BoardDto();
-	                board.setPostID(rs.getInt("postID"));
-	                board.setUserID(rs.getString("userID"));
-	                board.setPostTitle(rs.getString("postTitle"));
-	                board.setPostContent(rs.getString("postContent"));
-	                board.setLikeCount(rs.getInt("likeCount"));
-	                board.setPostDate(rs.getTimestamp("postDate"));
-	                board.setViewCount(rs.getInt("viewCount"));
-	                return board;
+	            	RecruitDto recruit = new RecruitDto();
+	            	recruit.setRecruitID(rs.getInt("recruitID"));
+	            	recruit.setUserID(rs.getString("userID"));
+	            	recruit.setRecruitStatus(rs.getString("recruitStatus"));
+	            	recruit.setRecruitTitle(rs.getString("recruitTitle"));
+	            	recruit.setRecruitContent(rs.getString("recruitContent"));
+	            	recruit.setViewCount(rs.getInt("viewCount"));
+	            	recruit.setRegistDate(rs.getTimestamp("registDate"));
+	                return recruit;
 	            }
 	        }
 	    } catch (Exception e) {
@@ -314,11 +265,11 @@ public class BoardDao {
 	    return null;
 	}
 		
-// 방금 작성한 게시글 가져오기
-	public BoardDto getPostAfterResist(String userID) {
-		String selLPSQL = "SELECT MAX(postID) FROM board WHERE userID = ?;";
+// 방금 작성한 모집글 가져오기
+	public RecruitDto getPostAfterResist(String userID) {
+		String selLPSQL = "SELECT MAX(recruitID) FROM board WHERE userID = ?;";
 		
-		String selectSQL = "SELECT * FROM board WHERE postID = ?;";
+		String selectSQL = "SELECT * FROM recruit WHERE recruitID = ?;";
 		
 		try (Connection conn = DatabaseUtil.getConnection();
 				PreparedStatement slpPstmt = conn.prepareStatement(selLPSQL);){
@@ -326,30 +277,29 @@ public class BoardDao {
 			//1. 사용자가 가장 최신에 작성한 글의 아이디를 가져온다.
 			slpPstmt.setString(1, userID);
 			try(ResultSet rs = slpPstmt.executeQuery();){
-				int lastPostID = -1;
+				int lastRecruitID = -1;
 				if(rs.next()) {
-					lastPostID = rs.getInt(1);
+					lastRecruitID = rs.getInt(1);
 				}
 				
-				if(lastPostID == -1) {
+				if(lastRecruitID == -1) {
 					return null;	// 주어진 userID로 postID를 찾지 못함 
 				}
 				
-				//2. lastPostID로 게시글을 조회감
+				//2. lastRecruitID로 게시글을 조회감
 				try(PreparedStatement selPstmt = conn.prepareStatement(selectSQL);){
-					selPstmt.setInt(1, lastPostID);
+					selPstmt.setInt(1, lastRecruitID);
 					try(ResultSet rs2 = selPstmt.executeQuery();){
 						if(rs2.next()) {
-							BoardDto board = new BoardDto(); 
-							board.setPostID(rs2.getInt(1));
-							board.setUserID(rs2.getString(2));
-							board.setPostCategory(rs2.getString(3));
-							board.setPostTitle(rs2.getString(4));
-							board.setPostContent(rs2.getString(5));
-							board.setViewCount(rs2.getInt(6));
-							board.setLikeCount(rs2.getInt(7));
-							board.setPostDate(rs2.getTimestamp(8));
-							return board;
+							RecruitDto recruit = new RecruitDto(); 
+							recruit.setRecruitID(rs2.getInt(1));
+							recruit.setUserID(rs2.getString(2));
+							recruit.setRecruitStatus(rs2.getString(3));
+							recruit.setRecruitTitle(rs2.getString(4));
+							recruit.setRecruitContent(rs2.getString(5));
+							recruit.setRegistDate(rs2.getTimestamp(6));
+							recruit.setViewCount(rs2.getInt(7));
+							return recruit;
 						}
 					}
 				}
@@ -362,10 +312,10 @@ public class BoardDao {
 		
 		
 
-// 인기글 5개 불러오기
-	public ArrayList<BoardDto> top5() {
-	    ArrayList<BoardDto> boardList = null;
-	    String SQL = "SELECT * FROM board ORDER BY likeCount DESC LIMIT 5";
+// 최신 모집글 5개 불러오기
+	public ArrayList<RecruitDto> top5() {
+	    ArrayList<RecruitDto> recruitList = null;
+	    String SQL = "SELECT * FROM board ORDER BY regist DESC LIMIT 5";
 	    
 	    Connection conn = null;
 	    PreparedStatement pstmt = null;
@@ -376,19 +326,18 @@ public class BoardDao {
 	        pstmt = conn.prepareStatement(SQL);
 	        rs = pstmt.executeQuery();
 	        
-	        boardList = new ArrayList<BoardDto>();
+	        recruitList = new ArrayList<RecruitDto>();
 	        while (rs.next()) {
-	        	BoardDto boardDto = new BoardDto(
+	        	RecruitDto recruitDto = new RecruitDto(
 	                    rs.getInt(1),
 	                    rs.getString(2),
 	                    rs.getString(3),
 	                    rs.getString(4),
 	                    rs.getString(5),
-	                    rs.getInt(6),
-	                    rs.getInt(7),
-	                    rs.getTimestamp(8)
+	                    rs.getTimestamp(6),
+	                    rs.getInt(7)
 	            );
-	            boardList.add(boardDto);
+	        	recruitList.add(recruitDto);
 	        }
 	    } catch (Exception e) {
 	        e.printStackTrace();
@@ -398,7 +347,7 @@ public class BoardDao {
 	        try { if (rs != null) rs.close(); } catch (Exception e ) { e.printStackTrace(); }
 	    }
 	    
-	    return boardList;
+	    return recruitList;
 	}
 		
 }

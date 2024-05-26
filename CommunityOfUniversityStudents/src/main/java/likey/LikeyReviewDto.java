@@ -1,14 +1,14 @@
 package likey;
 
-public class LikeyPostDto {
+public class LikeyReviewDto {
 	
 	String userID;
 	String reviewID;
 	String userIP;
 	
-	public LikeyPostDto() {}
+	public LikeyReviewDto() {}
 
-	public LikeyPostDto(String userID, String reviewID, String userIP) {
+	public LikeyReviewDto(String userID, String reviewID, String userIP) {
 		super();
 		this.userID = userID;
 		this.reviewID = reviewID;
@@ -38,7 +38,6 @@ public class LikeyPostDto {
 	public void setUserIP(String userIP) {
 		this.userIP = userIP;
 	}
-
 	
 	
 	

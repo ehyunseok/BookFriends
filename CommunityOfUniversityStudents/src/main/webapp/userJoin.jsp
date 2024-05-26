@@ -44,12 +44,15 @@
 				<li class="nav-item">
 					<a class="nav-link" href="./courseReview.jsp">강의평가</a>
 				</li>				
-				<li class="nav-item active">
-					<a class="nav-link" href="./board.jsp"><b>자유게시판</b></a>
+				<li class="nav-item">
+					<a class="nav-link" href="./board.jsp">자유게시판</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="./recruit.jsp">독서모임</a>
 				</li>
 				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" id="dropdown" data-toggle="dropdown">
-						회원관리
+					<a class="nav-link dropdown-toggle active" id="dropdown" data-toggle="dropdown">
+						<b>회원관리</b>
 					</a>
 					<div class="dropdown-menu" aria-labelledby="dropdown">
 						<a class="dropdown-item" href="userLogin.jsp">로그인</a>

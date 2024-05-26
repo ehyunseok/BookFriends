@@ -57,7 +57,7 @@
 		return;
 	}
 	
-	String host = "http://localhost:8080/Lecture_Evaluation/";
+	String host = "http://localhost:8080/BookFriends/";
 	//관리자 이메일로 신고 메일 전송
 	String to = "yhdaneys@gmail.com";
 	userID=(String)session.getAttribute("userID");

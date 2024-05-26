@@ -6,7 +6,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<title>이현대학교 대나무숲</title>
+	<title>독서친구</title>
 	<!-- 부트스트랩 css 추가하기 -->
 	<link rel="stylesheet" href="./css/bootstrap.min.css">
 	<!-- 커스텀 css 추가하기 -->
@@ -30,7 +30,7 @@
 %>
 <!-- navigation -->
 		<nav class="navbar navbar-expand-lg navbar-light bg-light">
-		<a class="navbar-brand" href="index.jsp">이현대학교 대나무숲</a>
+		<a class="navbar-brand" href="index.jsp">독서친구</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar">
 			<span class="navbar-toggler-icon"></span>
 		</button>
@@ -40,14 +40,17 @@
 					<a class="nav-link" href="index.jsp">메인</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="./courseReview.jsp"><b>강의평가</b></a>
+					<a class="nav-link" href="./bookReview.jsp">서평</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="./board.jsp">자유게시판</a>
 				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="./recruit.jsp">독서모임</a>
+				</li>
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle active" id="dropdown" data-toggle="dropdown">
-						회원관리
+						<b>회원관리</b>
 					</a>
 					<div class="dropdown-menu" aria-labelledby="dropdown">
 						<a class="dropdown-item" href="userLogin.jsp">로그인</a>

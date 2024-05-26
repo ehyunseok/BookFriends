@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.io.PrintWriter"%>
 <%@ page import="user.UserDao"%>
-<%@ page import="board.BoardDao"%>
-<%@ page import="board.BoardDto"%>
+<%@ page import="review.ReviewDao"%>
+<%@ page import="review.ReviewDto"%>
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="java.net.URLEncoder"%>
 <%@ page import="java.text.SimpleDateFormat"%>
@@ -17,6 +17,15 @@
 	<link rel="stylesheet" href="./css/bootstrap.min.css">
 	<!-- 커스텀 css 추가하기 -->
 	<link rel="stylesheet" href="./css/custom.css">
+	<style>
+		.table th:nth-child(1), .table td:nth-child(1) { width: 150px; } /* # */
+		.table th:nth-child(2), .table td:nth-child(2) { width: 100px; white-space: nowrap;} /* 카테고리 */
+		.table th:nth-child(4), .table td:nth-child(3) { width: 1200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 1200px; } /* 제목 길면 석점줄임 */
+		.table th:nth-child(5), .table td:nth-child(4) { width: 1000px; white-space: nowrap; }  /* 평점 */
+		.table th:nth-child(6), .table td:nth-child(5) { width: 300px; white-space: nowrap;} /* 작성자 */
+		.table th:nth-child(7), .table td:nth-child(6) { width: 300px; white-space: nowrap;} /* 작성일 */
+		.table th:nth-child(8), .table td:nth-child(7) { width: 100px; white-space: nowrap;}  /* 조회수 */
+	</style>
 </head>
 <body>
 
@@ -24,15 +33,15 @@
 <%
 //검색했을 때 어떤 게시글을 검색했는지 판단할 수 있게~
 	request.setCharacterEncoding("UTF-8");
-	int postID = 0;
-	String postCategory = request.getParameter("postCategory") != null ? request.getParameter("postCategory") : "전체";
+	int reviewID = 0;
+	String category = request.getParameter("category") != null ? request.getParameter("category") : "전체";
     String searchType = request.getParameter("searchType") != null ? request.getParameter("searchType") : "최신순";
     String search = request.getParameter("search") != null ? request.getParameter("search") : "";
     int pageNumber = request.getParameter("pageNumber") != null ? Integer.parseInt(request.getParameter("pageNumber")) : 0;
 
-    BoardDao boardDao = new BoardDao();
-    ArrayList<BoardDto> boardList = boardDao.getList(postCategory, searchType, search, pageNumber);
-    int totalPosts = boardDao.getTotalPosts(postCategory, searchType, search);
+    ReviewDao reviewDao = new ReviewDao();
+    ArrayList<ReviewDto> reviewList = reviewDao.getList(category, searchType, search, pageNumber);
+    int totalPosts = reviewDao.getTotalReviews(category, searchType, search);
     int totalPages = (int) Math.ceil(totalPosts / 5.0);
     int pageBlock = 5;
     int startPage = (pageNumber / pageBlock) * pageBlock + 1;
@@ -63,7 +72,6 @@
 		script.close();
 		return;
 	}
-	
 %>
 
 <!-- navigation -->
@@ -77,11 +85,11 @@
 				<li class="nav-item">
 					<a class="nav-link" href="index.jsp">메인</a>
 				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="./bookReview.jsp">서평</a>
-				</li>
 				<li class="nav-item active">
-					<a class="nav-link" href="./board.jsp"><b>자유게시판</b></a>
+					<a class="nav-link" href="./bookReview.jsp"><b>서평</b></a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="./board.jsp">자유게시판</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="./recruit.jsp">독서모임</a>
@@ -101,12 +109,16 @@
 	
 <!-- container  -->
 	<section class="container">
-		<form method="get" action="./board.jsp" class="form-inline mt-3">
-			<select name="postCategory" class="form-control mx-1 mt-2">
+		<form method="get" action="./bookReview.jsp" class="form-inline mt-3">
+			<select name="category" class="form-control mx-1 mt-2">
 				<option value="전체">전체</option>
-				<option value="질문" <% if(postCategory.equals("질문")) out.println("selected"); %>>질문</option>
-				<option value="맛집 추천" <% if(postCategory.equals("맛집")) out.println("selected"); %>>맛집 추천</option>
-				<option value="사담" <% if(postCategory.equals("사담")) out.println("selected"); %>>사담</option>
+				<option value="문학" <% if(category.equals("문학")) out.println("selected"); %>>문학</option>
+				<option value="사회" <% if(category.equals("사회")) out.println("selected"); %>>사회</option>
+				<option value="과학" <% if(category.equals("과학")) out.println("selected"); %>>과학</option>
+				<option value="예술" <% if(category.equals("예술")) out.println("selected"); %>>예술</option>
+				<option value="역사" <% if(category.equals("역사")) out.println("selected"); %>>역사</option>
+				<option value="언어(어학)" <% if(category.equals("언어(어학)")) out.println("selected"); %>>언어(어학)</option>
+				<option value="기타" <% if(category.equals("기타")) out.println("selected"); %>>기타</option>
 			</select>
 			<select name="searchType" class="form-control mx-1 mt-2">
 				<option value="최신순" <% if(searchType.equals("최신순")) out.println("selected"); %>>최신순</option>
@@ -127,6 +139,7 @@
 						<th scope="col" style="">#</th>
 						<th scope="col" style="">카테고리</th>
 						<th scope="col" style="">제목</th>
+						<th scope="col" style="">평점</th>
 						<th scope="col" style="">작성자</th>
 						<th scope="col" style="">작성일</th>
 						<th scope="col" style="">조회수</th>
@@ -134,19 +147,48 @@
 				</thead>
 				<tbody>
 <%
-	for(BoardDto board : boardList) {
+	for(ReviewDto review : reviewList) {
 %>
 
 			  		<!-- 해당 게시글 번호 페이지로 이동 -->
-			  		<tr onclick="window.location='./postDetail.jsp?postID=<%= board.getPostID() %>'">	
-					    <th scope="row"><%= board.getPostID() %></th>
-					    <td><%= board.getPostCategory() %></td>
-					    <td><%= board.getPostTitle() %> <small>(추천: <%= board.getLikeCount() %>)</small></td>
-					    <td><%= board.getUserID() %></td>
-					    <td><% SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd"); 
-					    	   out.println(sdf.format(board.getPostDate())); %>
+			  		<tr onclick="window.location='./reviewDetail.jsp?reviewID=<%= review.getReviewID() %>'">	
+					    <th scope="row"><%= review.getReviewID() %></th>
+					    <td><%= review.getCategory() %></td>
+					    <td><%= review.getReviewTitle() %> 
+					    	<br><small>(추천: <%= review.getLikeCount() %>)</small>
+					    	<br><small>[<%= review.getBookName() %>(<%= review.getAuthorName() %>)]</small>
 					    </td>
-					    <td><%= board.getViewCount() %></td>
+					  <% switch(review.getReviewScore()){
+					    	case 5:
+					  %>
+					    <td>★★★★★</td>
+					  <% 	break; 
+				    		case 4:
+					  %>
+					    <td>★★★★　</td>
+					  <% 	break; 
+				    		case 3:
+					  %>
+					    <td>★★★　　</td>
+					  <% 	break; 
+				    		case 2:
+					  %>
+					    <td>★★　　　</td>
+					  <% 	break; 
+				    		case 1:
+					  %>
+					    <td>★　　　　</td>
+					  <% 	break; 
+				    		case 0:
+					  %>
+					    <td>☆　　　　</td>
+					  <% 	break;
+					   	} %>
+					   	<td><%= review.getUserID() %></td>
+					    <td><% SimpleDateFormat sdf = new SimpleDateFormat("yy.MM.dd"); 
+					    	   out.println(sdf.format(review.getRegistDate())); %>
+					    </td>
+					    <td><%= review.getViewCount() %></td>
 				    </tr>
 <%
 	}
@@ -163,52 +205,85 @@
 		<nav aria-label="Page navigation" >
 		  <ul class="pagination justify-content-center mt-3" style="padding-bottom: 3px;">
 		    <li class="page-item <% if(pageNumber == 0) out.print("disabled"); %>">
-                <a class="page-link" href="?postCategory=<%= postCategory %>&searchType=<%= searchType %>&search=<%= search %>&pageNumber=<%= pageNumber - 1 %>">이전</a>
+                <a class="page-link" href="?category=<%= category %>&searchType=<%= searchType %>&search=<%= search %>&pageNumber=<%= pageNumber - 1 %>">이전</a>
             </li>
 <%
     for (int i = startPage; i <= endPage; i++) { 
 %>
 			<li class="page-item<% if(i == pageNumber + 1) out.print("active"); %>">
-            	<a class="page-link" href="./board.jsp?postCategory=<%= URLEncoder.encode(postCategory, "UTF-8") %>&searchType=<%= URLEncoder.encode(searchType, "UTF-8") %>&search=<%= URLEncoder.encode(search, "UTF-8") %>&pageNumber=<%= i - 1 %>"><%= i %></a>
+            	<a class="page-link" href="./bookReview.jsp?category=<%= URLEncoder.encode(category, "UTF-8") %>&searchType=<%= URLEncoder.encode(searchType, "UTF-8") %>&search=<%= URLEncoder.encode(search, "UTF-8") %>&pageNumber=<%= i - 1 %>"><%= i %></a>
         	</li>
 <% } 
 %>
 		    <li class="page-item <% if(pageNumber >= totalPages - 1) out.print("disabled"); %>">
-                <a class="page-link" href="?postCategory=<%= postCategory %>&searchType=<%= searchType %>&search=<%= search %>&pageNumber=<%= pageNumber + 1 %>">다음</a>
+                <a class="page-link" href="?category=<%= category %>&searchType=<%= searchType %>&search=<%= search %>&pageNumber=<%= pageNumber + 1 %>">다음</a>
             </li>
 		  </ul>
 		</nav>
 	</section>
 	
-<!-- 게시글 등록하기 모달  -->
+<!-- 서평 등록하기 모달  -->
 	<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="modal">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="modal">게시글 작성</h5>
+					<h5 class="modal-title" id="modal">서평 작성</h5>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
 				<div class="modal-body">
-					<form method="post" action="./postRegisterAction.jsp">
+					<form method="post" action="./reviewRegisterAction.jsp">
+						<div class="form-row">
+							<div class="form-group col-sm-3">
+								<label>카테고리</label>
+								<select name="category" class="form-control">
+									<option selected value="선택">선택</option>
+									<option value="문학">문학</option>
+									<option value="사회">사회</option>
+									<option value="과학">과학</option>
+									<option value="예술">예술</option>
+									<option value="역사">역사</option>
+									<option value="언어(어학)">언어(어학)</option>
+									<option value="기타">기타</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="form-group col-sm-12">
+								<label>서명</label>
+								<input type="text" name="bookName" class="form-control" maxlength="500">
+							</div>
+						</div>
 						<div class="form-row">
 							<div class="form-group col-sm-4">
-								<label>카테고리</label>
-								<select name="postCategory" class="form-control">
-									<option value="질문">질문</option>
-									<option value="맛집 추천">맛집 추천</option>
-									<option value="사담">사담</option>
+								<label>저자</label>
+								<input type="text" name="authorName" class="form-control" maxlength="100">
+							</div>
+							<div class="form-group col-sm-4">
+								<label>출판사</label>
+								<input type="text" name="publisher" class="form-control" maxlength="20">
+							</div>
+							<div class="form-group col-sm-4">
+								<label>평점</label>
+								<select name="reviewScore" class="form-control">
+									<option value="99" selected>선택</option>
+									<option value="5">★★★★★</option>
+									<option value="4">★★★★</option>
+									<option value="3">★★★</option>
+									<option value="2">★★</option>
+									<option value="1">★</option>
+									<option value="0">☆</option>
 								</select>
 							</div>
 						</div>
 						<div class="form-group">
 							<label>제목</label>
-							<input type="text" name="postTitle" class="form-control" maxlength="30">
+							<input type="text" name="reviewTitle" class="form-control" maxlength="100">
 						</div>
 						<div class="form-group">
 							<label>내용</label>
-							<textarea name="postContent" class="form-control" maxlength="2048" style="height: 180px;"></textarea>
+							<textarea name="reviewContent" class="form-control" maxlength="2048" style="height: 180px;"></textarea>
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>

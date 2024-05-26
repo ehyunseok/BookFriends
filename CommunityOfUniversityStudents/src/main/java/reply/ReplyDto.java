@@ -10,10 +10,12 @@ public class ReplyDto {
 	String replyContent;
 	int likeCount;
 	Timestamp replyDate;
+	int recruitID;
 	
 	public ReplyDto() {}
 
-	public ReplyDto(int replyID, String userID, int postID, String replyContent, int likeCount, Timestamp replyDate) {
+	public ReplyDto(int replyID, String userID, int postID, String replyContent, int likeCount, Timestamp replyDate,
+			int recruitID) {
 		super();
 		this.replyID = replyID;
 		this.userID = userID;
@@ -21,6 +23,7 @@ public class ReplyDto {
 		this.replyContent = replyContent;
 		this.likeCount = likeCount;
 		this.replyDate = replyDate;
+		this.recruitID = recruitID;
 	}
 
 	public int getReplyID() {
@@ -47,6 +50,14 @@ public class ReplyDto {
 		this.postID = postID;
 	}
 
+	public int getRecruitID() {
+		return recruitID;
+	}
+
+	public void setRecruitID(int recruitID) {
+		this.recruitID = recruitID;
+	}
+
 	public String getReplyContent() {
 		return replyContent;
 	}
@@ -70,6 +81,7 @@ public class ReplyDto {
 	public void setReplyDate(Timestamp replyDate) {
 		this.replyDate = replyDate;
 	}
+
 	
 	
 	
