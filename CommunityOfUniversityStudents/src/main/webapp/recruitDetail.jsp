@@ -20,6 +20,9 @@
 	
 </head>
 <body>
+<!-- showdown 라이브러리 추가 -->
+<script src="https://cdn.jsdelivr.net/npm/showdown@1.9.1/dist/showdown.min.js"></script>
+
 <%
 	request.setCharacterEncoding("UTF-8");		
 	
@@ -61,9 +64,11 @@
 		script.close();
 		return;
 	}
+	System.out.println("recruitID= "+ recruitID);
 	
 	RecruitDao recruitDao = new RecruitDao();
 	RecruitDto recruit = new RecruitDao().getPost(recruitID);
+	System.out.println("recruit= "+ recruit);
     if (recruit == null) {
         PrintWriter script = response.getWriter();
         script.println("<script>");
@@ -123,9 +128,18 @@
 					<p class="card-text">조회수: <%= recruit.getViewCount() %> | 작성일: <%= recruit.getRegistDate() %></p>
 				</div>
 				<div class="card-body">
-					<h4 class="card-title"><b><%= recruit.getRecruitTitle() %></b></h4>
-					<p class="card-text" style="text-align:justify; white-space:pre-wrap;"><%= recruit.getRecruitContent() %>
-					</p>
+					<div class="row">
+						<div>
+						<% if(recruit.getRecruitStatus().equals("모집중")){ %>
+					    	<span class="badge badge-success">모집중</span>
+					    <% } else{ %>
+					    	<span class="badge badge-secondary">모집완료</span>
+					    <% } %>
+					    </div>
+						<h4 class="card-title"><b><%= recruit.getRecruitTitle() %></b></h4>
+					</div>
+					<div id="markdownContent" style="text-align:justify; white-space:pre-wrap;"><%= recruit.getRecruitContent() %></div>
+					
 					<div class="row">
 						<div class="col-12 text-right">
 <%
@@ -239,5 +253,17 @@
 	<script src="./js/popper.min.js"></script>
 	<!-- bootstrap js 추가하기 -->
 	<script src="./js/bootstrap.min.js"></script>
+	<!-- 마크다운 -->
+	<script>
+    window.onload = function() {
+        // Showdown Converter 생성
+        var converter = new showdown.Converter(),
+            text      = `<%= recruit.getRecruitContent() %>`, // JSP에서 마크다운 데이터 가져오기
+            html      = converter.makeHtml(text); // 마크다운을 HTML로 변환
+
+        // 변환된 HTML을 페이지에 삽입
+        document.getElementById('markdownContent').innerHTML = html;
+    };
+</script>
 </body>
 </html>

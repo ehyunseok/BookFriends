@@ -22,7 +22,7 @@
 
 
 <%
-//검색했을 때 어떤 게시글을 검색했는지 판단할 수 있게~
+//검색했을 때 어떤 게시글을 검색했는지 판단할 수 있게
 	request.setCharacterEncoding("UTF-8");
 	int recruitID = 0;
 	String recruitStatus = request.getParameter("recruitStatus") != null ? request.getParameter("recruitStatus") : "전체";
@@ -121,21 +121,6 @@
 		<div class="card bg-light mt-3">
 			<table class="table table-hover">
 				<tbody>
-					<tr onclick="window.location='./recruitDetail.jsp %>'">	
-					    <td>
-					    	<span class="badge badge-success">모집중</span>
-						    <span>이현독서동호회 모집합니다.</span>
-						    <br><span class="ml-5" style="color:gray;"><small>독서를 사랑하는 분이라면 누구나 환영합니다. 초보라도 환영입니다. 열심히 참여하지 않으면 강퇴 ㄱㄱ....</small></span>
-					    	<br>
-					    	<div class="row m-3">
-						    	<div class="text-left ml-3" style="color:gray;"><img src="images/icon.png" style="height:12px;"> 석이현 · 2024.05.26.23:34</div>
-						    	<div class="text-right ml-auto" style="color:gray;">
-						    		<img src="images/eye-icon.png" style="height:16px;"> 100
-						    		<img src="images/bubble-Icon.png" style="height:25px;"> 100
-						    	</div>
-					    	</div>
-					    </td>
-				    </tr>
 <%
 	for(RecruitDto recruit : recruitList) {
 %>
@@ -149,23 +134,16 @@
 					    	<span class="badge badge-secondary">모집완료</span>
 					    <% } %>
 						    <span><%= recruit.getRecruitTitle() %></span>
-						    <br><span class="ml-5" style="color:gray;"><small><%= recruit.getRecruitContent() %></small></span>
+						    <br><span class="ml-3" style="color:gray;"><small><%= recruit.getRecruitContent() %></small></span>
 					    	<br>
-					    	<div class="row m-3">
-						    	<div class="text-left ml-3" style="color:gray;"><img src="images/icon.png" style="height:12px;"> 석이현 · 2024.05.26.23:34</div>
+					    	<div class="row m-1">
+						    	<div class="text-left ml-1" style="color:gray;"><img src="images/icon.png" style="height:12px;"> 석이현 · 2024.05.26.23:34</div>
 						    	<div class="text-right ml-auto" style="color:gray;">
 						    		<img src="images/eye-icon.png" style="height:16px;"> <%= recruit.getViewCount() %>
-						    		<img src="images/bubble-Icon.png" style="height:25px;"> 100
+						    		<img src="images/bubble-Icon.png" style="height:25px;"> 댓글개수수정하삼!!!!
 						    	</div>
 					    	</div>
 					    </td>	
-					    <td><%= recruit.getRecruitStatus() %></td>
-					    <td><%= recruit.getRecruitTitle() %></td>
-					    <td><%= recruit.getUserID() %></td>
-					    <td><% SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd"); 
-					    	   out.println(sdf.format(recruit.getRegistDate())); %>
-					    </td>
-					    <td><%= recruit.getViewCount() %></td>
 				    </tr>
 <%
 	}

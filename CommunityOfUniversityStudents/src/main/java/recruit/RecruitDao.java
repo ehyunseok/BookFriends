@@ -55,7 +55,7 @@ public class RecruitDao {
                 break;
             case "최신순":
             default:
-                orderByClause = " ORDER BY postDate DESC";
+                orderByClause = " ORDER BY registDate DESC";
                 break;
         }
 
@@ -170,17 +170,12 @@ public class RecruitDao {
 				recruit.setRecruitStatus(rs.getString(3));
 				recruit.setRecruitTitle(rs.getString(4));
 				recruit.setRecruitContent(rs.getString(5));
-				recruit.setRegistDate(rs.getTimestamp(8));
+				recruit.setRegistDate(rs.getTimestamp(6));
 				recruit.setViewCount(rs.getInt(7));
 				return recruit;
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
-		} finally {
-			try { if(conn != null) conn.close();} catch(Exception e ) {e.printStackTrace();}
-			try { if(upPstmt != null) upPstmt.close();} catch(Exception e ) {e.printStackTrace();}
-			try { if(selPstmt != null) selPstmt.close();} catch(Exception e ) {e.printStackTrace();}
-			try { if(rs != null) rs.close();} catch(Exception e ) {e.printStackTrace();}
 		}
 		return null;
 	}
@@ -267,49 +262,48 @@ public class RecruitDao {
 		
 // 방금 작성한 모집글 가져오기
 	public RecruitDto getPostAfterResist(String userID) {
-		String selLPSQL = "SELECT MAX(recruitID) FROM board WHERE userID = ?;";
-		
-		String selectSQL = "SELECT * FROM recruit WHERE recruitID = ?;";
-		
-		try (Connection conn = DatabaseUtil.getConnection();
-				PreparedStatement slpPstmt = conn.prepareStatement(selLPSQL);){
-			
-			//1. 사용자가 가장 최신에 작성한 글의 아이디를 가져온다.
-			slpPstmt.setString(1, userID);
-			try(ResultSet rs = slpPstmt.executeQuery();){
-				int lastRecruitID = -1;
-				if(rs.next()) {
-					lastRecruitID = rs.getInt(1);
-				}
-				
-				if(lastRecruitID == -1) {
-					return null;	// 주어진 userID로 postID를 찾지 못함 
-				}
-				
-				//2. lastRecruitID로 게시글을 조회감
-				try(PreparedStatement selPstmt = conn.prepareStatement(selectSQL);){
-					selPstmt.setInt(1, lastRecruitID);
-					try(ResultSet rs2 = selPstmt.executeQuery();){
-						if(rs2.next()) {
-							RecruitDto recruit = new RecruitDto(); 
-							recruit.setRecruitID(rs2.getInt(1));
-							recruit.setUserID(rs2.getString(2));
-							recruit.setRecruitStatus(rs2.getString(3));
-							recruit.setRecruitTitle(rs2.getString(4));
-							recruit.setRecruitContent(rs2.getString(5));
-							recruit.setRegistDate(rs2.getTimestamp(6));
-							recruit.setViewCount(rs2.getInt(7));
-							return recruit;
-						}
-					}
-				}
-			}
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+	    String selLPSQL = "SELECT MAX(recruitID) FROM recruit WHERE userID = ?;";
+	    
+	    String selectSQL = "SELECT * FROM recruit WHERE recruitID = ?;";
+	    
+	    try (Connection conn = DatabaseUtil.getConnection();
+	            PreparedStatement slpPstmt = conn.prepareStatement(selLPSQL);){
+	        
+	        //1. 사용자가 가장 최신에 작성한 글의 아이디를 가져온다.
+	        slpPstmt.setString(1, userID);
+	        try(ResultSet rs = slpPstmt.executeQuery();){
+	            int lastRecruitID = -1;
+	            if(rs.next()) {
+	                lastRecruitID = rs.getInt(1);
+	            }
+	            
+	            if(lastRecruitID == -1) {
+	                return null;    // 주어진 userID로 postID를 찾지 못함 
+	            }
+	            
+	            //2. lastRecruitID로 게시글을 조회감
+	            try(PreparedStatement selPstmt = conn.prepareStatement(selectSQL);){
+	                selPstmt.setInt(1, lastRecruitID);
+	                try(ResultSet rs2 = selPstmt.executeQuery();){
+	                    if(rs2.next()) {
+	                        RecruitDto recruit = new RecruitDto(); 
+	                        recruit.setRecruitID(rs2.getInt(1));
+	                        recruit.setUserID(rs2.getString(2));
+	                        recruit.setRecruitStatus(rs2.getString(3));
+	                        recruit.setRecruitTitle(rs2.getString(4));
+	                        recruit.setRecruitContent(rs2.getString(5));
+	                        recruit.setRegistDate(rs2.getTimestamp(6));
+	                        recruit.setViewCount(rs2.getInt(7));
+	                        return recruit;
+	                    }
+	                }
+	            }
+	        }
+	    } catch(Exception e) {
+	        e.printStackTrace();
+	    }
+	    return null;
 	}
-		
 		
 
 // 최신 모집글 5개 불러오기

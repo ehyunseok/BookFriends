@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" version="4.0">
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+                             http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
   <display-name>BookFriends</display-name>
+
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
     <welcome-file>index.htm</welcome-file>
@@ -9,4 +14,24 @@
     <welcome-file>default.htm</welcome-file>
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
+
+  <servlet>
+    <servlet-name>CombinedServlet</servlet-name>
+    <servlet-class>recruit.CombinedServlet</servlet-class>
+    <multipart-config>
+      <max-file-size>5242880</max-file-size> <!-- 5MB -->
+      <max-request-size>10485760</max-request-size> <!-- 10MB -->
+      <file-size-threshold>1048576</file-size-threshold> <!-- 1MB -->
+    </multipart-config>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>CombinedServlet</servlet-name>
+    <url-pattern>/recruitWriteAction</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>CombinedServlet</servlet-name>
+    <url-pattern>/file-handler</url-pattern>
+  </servlet-mapping>
 </web-app>
