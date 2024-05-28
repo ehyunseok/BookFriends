@@ -175,12 +175,14 @@
 	</footer>
 	
 
-<!--  -->
+<!-- js추가 -->
 	<!-- jquery js 추가하기 -->
 	<script src="./js/jquery.min.js"></script>
 	<!-- popper js 추가하기 -->
 	<script src="./js/popper.min.js"></script>
 	<!-- bootstrap js 추가하기 -->
 	<script src="./js/bootstrap.min.js"></script>
+	<!-- custom.js 추가하기 -->
+	<script src="./js/custom.js"></script>
 </body>
 </html>

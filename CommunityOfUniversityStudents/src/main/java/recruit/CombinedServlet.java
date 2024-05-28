@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -21,7 +22,7 @@ import javax.servlet.http.Part;
 import file.FileDao;
 import file.FileDto;
 
-@WebServlet(name = "CombinedServlet", urlPatterns = {"/recruitWriteAction", "/file-handler"})
+@WebServlet(name = "CombinedServlet", urlPatterns = {"/recruitWriteAction", "/display"})
 @MultipartConfig(
     fileSizeThreshold = 1024 * 1024 * 1, // 1 MB
     maxFileSize = 1024 * 1024 * 5,       // 5 MB
@@ -31,7 +32,16 @@ public class CombinedServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    private final String uploadDir = Paths.get("C:", "Users", "daney", "DEVFolder", "ProjectsWorkSpace", ".metadata", ".plugins", "org.eclipse.wst.server.core", "tmp1", "wtpwebapps", "BookFriends", "upload").toString();
+    private final String uploadDir = Paths.get("C:", "BookFriends", "uploads").toString();
+    
+ // 업로드 디렉토리가 존재하지 않으면 생성
+    @Override
+    public void init() throws ServletException {
+        File uploadDir = new File(getServletContext().getRealPath("/") + this.uploadDir);
+        if (!uploadDir.exists()) {
+            uploadDir.mkdirs();
+        }
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -39,9 +49,9 @@ public class CombinedServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/plain; charset=UTF-8");
 
-        System.out.println("Received POST request at /file-handler");  // 디버그 로그 추가
+        System.out.println("Received POST request at /recruitWriteAction");  // 디버그 로그
 
-        Part imagePart = request.getPart("image");
+        Part imagePart = request.getPart("uploadFile");
         if (imagePart != null && imagePart.getSize() > 0) {
             String orgFilename = Paths.get(imagePart.getSubmittedFileName()).getFileName().toString();
             String uuid = UUID.randomUUID().toString().replaceAll("-", "");
@@ -58,13 +68,22 @@ public class CombinedServlet extends HttpServlet {
             imagePart.write(uploadFile.getAbsolutePath());
 
             System.out.println("File uploaded successfully: " + saveFilename);
+            System.out.println("File saved to: " + fileFullPath);
 
-            response.getWriter().write(saveFilename);
+            // DB에 파일 메타데이터 저장
+            FileDto fileDto = new FileDto();
+            fileDto.setFileName(saveFilename);
+            fileDto.setFileOriginName(orgFilename);
+            fileDto.setFilePath(uploadDir);
+            FileDao fileDao = new FileDao();
+            fileDao.saveFile(fileDto);
+
+            // JSON 응답으로 이미지 URL 반환
+            response.getWriter().write("{\"fileName\": \"" + saveFilename + "\", \"uploadPath\": \"" + request.getContextPath() + "/uploads" + "\"}");
             return;
         }
 
-        System.out.println("Received POST request at /recruitWriteAction");
-
+        // 여기에 recruitWriteAction 로직을 추가
         String userID = (String) request.getSession().getAttribute("userID");
         if (userID == null) {
             response.sendRedirect("userLogin.jsp");
@@ -98,20 +117,13 @@ public class CombinedServlet extends HttpServlet {
             return;
         }
 
-        String uploadPath = getServletContext().getRealPath("/uploads");
-        File uploadDir = new File(uploadPath);
-        if (!uploadDir.exists()) {
-            uploadDir.mkdirs();
-        }
-
         Part filePart = request.getPart("file");
         if (filePart != null && filePart.getSize() > 0) {
             String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
             String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
             String newFileName = timeStamp + "_" + fileName;
 
-            String filePath = uploadPath + File.separator + newFileName;
-
+            String filePath = uploadDir + File.separator + newFileName;
             filePart.write(filePath);
 
             String fileUrl = request.getContextPath() + "/uploads/" + newFileName;
@@ -132,7 +144,6 @@ public class CombinedServlet extends HttpServlet {
         }
 
         response.sendRedirect("recruit.jsp");
-        System.out.println("Received POST request at /recruitWriteAction");  // 디버그 로그 추가
     }
 
     @Override
@@ -141,17 +152,17 @@ public class CombinedServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=UTF-8");
 
-        System.out.println("Received GET request at /file-handler");
+        System.out.println("Received GET request at /uploads");
 
-        String filename = request.getParameter("filename");
+        String filename = request.getParameter("fileName");
         if (filename == null || filename.isEmpty()) {
             response.getWriter().write("Filename is required");
             return;
         }
 
-        String fileFullPath = Paths.get(uploadDir, filename).toString();
-        File file = new File(fileFullPath);
+        File file = new File(uploadDir, filename);
         if (!file.exists()) {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             response.getWriter().write("File not found");
             return;
         }
@@ -159,7 +170,7 @@ public class CombinedServlet extends HttpServlet {
         try (FileInputStream fis = new FileInputStream(file);
              OutputStream os = response.getOutputStream()) {
 
-            String mimeType = getServletContext().getMimeType(file.getAbsolutePath());
+            String mimeType = Files.probeContentType(file.toPath());
             if (mimeType == null) {
                 mimeType = "application/octet-stream";
             }

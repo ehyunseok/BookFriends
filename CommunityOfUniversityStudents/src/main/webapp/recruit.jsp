@@ -12,11 +12,14 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:;">
 	<title>독서친구</title>
 	<!-- 부트스트랩 css 추가하기 -->
 	<link rel="stylesheet" href="./css/bootstrap.min.css">
 	<!-- 커스텀 css 추가하기 -->
 	<link rel="stylesheet" href="./css/custom.css">
+	<style>
+	</style>
 </head>
 <body>
 
@@ -101,7 +104,7 @@
 	
 <!-- container  -->
 	<section class="container">
-		<form method="get" action="./board.jsp" class="form-inline mt-3">
+		<form method="get" action="./recruit.jsp" class="form-inline mt-3">
 			<select name="postCategory" class="form-control mx-1 mt-2">
 				<option value="전체">전체</option>
 				<option value="모집중" <% if(recruitStatus.equals("모집중")) out.println("selected"); %>>모집중</option>
@@ -123,10 +126,12 @@
 				<tbody>
 <%
 	for(RecruitDto recruit : recruitList) {
+		String recruitContent = recruit.getRecruitContent().replaceAll("<[^>]*>", ""); // HTML 태그 제거
+        String shortContent = recruitContent.length() > 150 ? recruitContent.substring(0, 150) + "..." : recruitContent; // 석점 줄임 처리
 %>
 
 			  		<!-- 해당 게시글 번호 페이지로 이동 -->
-			  		<tr onclick="window.location='./recruitDetail.jsp?recruitID=<%= recruit.getRecruitID() %>'">
+			  		<tr data-url="./recruitDetail.jsp?recruitID=<%= recruit.getRecruitID() %>">
 				  		<td>
 				  		<% if(recruit.getRecruitStatus().equals("모집중")){ %>
 					    	<span class="badge badge-success">모집중</span>
@@ -134,10 +139,11 @@
 					    	<span class="badge badge-secondary">모집완료</span>
 					    <% } %>
 						    <span><%= recruit.getRecruitTitle() %></span>
-						    <br><span class="ml-3" style="color:gray;"><small><%= recruit.getRecruitContent() %></small></span>
+						    <br><span class="ml-3" id="text-ellipsis">
+						    <small><%= shortContent %></small></span>
 					    	<br>
 					    	<div class="row m-1">
-						    	<div class="text-left ml-1" style="color:gray;"><img src="images/icon.png" style="height:12px;"> 석이현 · 2024.05.26.23:34</div>
+						    	<div class="text-left ml-1" style="color:gray;"><img src="images/icon.png" style="height:12px;"> <%= recruit.getUserID() %> · <%= recruit.getRegistDate() %></div>
 						    	<div class="text-right ml-auto" style="color:gray;">
 						    		<img src="images/eye-icon.png" style="height:16px;"> <%= recruit.getViewCount() %>
 						    		<img src="images/bubble-Icon.png" style="height:25px;"> 댓글개수수정하삼!!!!
@@ -220,5 +226,7 @@
 	<script src="./js/popper.min.js"></script>
 	<!-- bootstrap js 추가하기 -->
 	<script src="./js/bootstrap.min.js"></script>
+	<!-- custom.js 추가하기 -->
+	<script src="./js/custom.js"></script>
 </body>
 </html>

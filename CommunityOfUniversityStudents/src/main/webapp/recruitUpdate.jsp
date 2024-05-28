@@ -56,6 +56,31 @@
         script.close();
         return;
     }
+    
+    String recruitID = request.getParameter("recruitID");
+    System.out.println("recuritID="+recruitID);
+    if(recruitID == null){
+		PrintWriter script = response.getWriter();
+		script.println("<script>");
+		script.println("alert('recruitID is null.');");
+		script.println("history.back();");
+		script.println("</script>");
+		script.close();
+		return;
+	}
+    
+    RecruitDao recruitDao = new RecruitDao();
+    RecruitDto recruit = new RecruitDao().getPost(recruitID);
+    if(recruit == null ){
+    	PrintWriter script = response.getWriter();
+        script.println("<script>");
+        script.println("alert('게시글을 불러올 수 없습니다.');");
+        script.println("history.back();");
+        script.println("</script>");
+        script.close();
+        return;
+    }
+    
 %>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -93,23 +118,28 @@
 <section class="container mt-3 mb-5">
     <div class="">
         <div class="card-body">
-            <form action="<%= request.getContextPath() %>/recruitWriteAction" method="post" enctype="multipart/form-data">
-                <div class="form-group">
-                    <input class="" name="recruitTitle" placeholder="모집글 제목을 작성해주세요."
-                           style="height: 50px; width:100%; border: none; background:transparent;"></input>
-                </div>
-                <div class="form-group">
-                    <input name="recruitStatus" value="모집중" type="hidden">
-                </div>
-                <div class="form-group">
-                	<div id="editor"></div>
-                    <input type="hidden" id="quill_html" name="recruitContent" maxlength="2048">
-                </div>
-                <div class="row ml-auto mt-3">
-                    <a class="btn btn-outline-secondary mr-1" href="./recruit.jsp">취소</a>
-                    <button type="submit" class="btn btn-primary">작성</button>
-                </div>
-            </form>
+            <form action="<%= request.getContextPath() %>/recruitUpdate" method="post" enctype="multipart/form-data">
+			    <input type="hidden" name="recruitID" value="<%= recruit.getRecruitID() %>">
+			    <div class="form-group">
+			        <input type="text" name="recruitTitle" id="recruitTitle"
+			               style="height: 50px; width:100%; border: none; background:transparent;" value="<%= recruit.getRecruitTitle() %>">
+			    </div>
+			    <div class="form-group">
+			        <select name="recruitStatus">
+			        	<option></option>
+			            <option value="모집중" <% if(recruit.getRecruitStatus().equals("모집중")) out.println("selected"); %>>모집중</option>
+			            <option value="모집마감" <% if(recruit.getRecruitStatus().equals("모집마감")) out.println("selected"); %>>모집마감</option>
+			        </select>
+			    </div>
+			    <div class="form-group">
+			        <div id="editor"></div>
+			        <input type="hidden" id="quill_html" name="recruitContent" maxlength="2048" value="">
+			    </div>
+			    <div class="row ml-auto mt-3">
+			        <a class="btn btn-outline-secondary mr-1" href="./recruit.jsp">취소</a>
+			        <button type="submit" class="btn btn-primary">작성</button>
+			    </div>
+			</form>
         </div>
     </div>
 </section>
@@ -138,15 +168,19 @@ quill.on('text-change', function(delta, oldDelta, source){
 
 //기본 양식
 const initialData = {
+	recruitTitle: '<%= recruit.getRecruitTitle() %>',
 	content: [
 		{
 			insert:
-				'[독서 모임 모집 내용 예시]\n- 모임 주제 : \n- 모임 목표 : \n- 예상 모임 일정(횟수) : \n- 예상 모임 내용 간략히 : \n- 예상 모집 인원 : \n- 모임 소개와 개설 이유 : \n- 모임 관련 주의 사항 : \n- 모임에 지원할 수 있는 방법을 남겨주세요. (이메일, 카카오 오픈채팅방, 구글폼 등.)',
+				'<%= recruit.getRecruitContent() %>',
 		},
 	],
 };
-const basicForm = () => {quill.setContents(initialData.content);};
-basicForm();
+const beforeForm = () => {
+	document.querySelector('[name="recruitTitle"]').vlaue = initialData.recruitTitle;
+	quill.setContents(initialData.content);
+	};
+beforeForm();
 
 
 function selectLocalImage(){

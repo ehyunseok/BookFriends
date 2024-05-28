@@ -12,6 +12,13 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<!-- csp 보안
+	`default-src 'self'` 기본 출처는 자신의 도메인만 허용
+	`script-src 'self'` 스크립트는 현재 자신의 도메인만 허용
+	`style-src` 스타일 허용
+	`font-src` 폰트 허용
+	`img-src` 이미지 허용  -->
+	<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:;">
 	<title>독서친구</title>
 	<!-- 부트스트랩 css 추가하기 -->
 	<link rel="stylesheet" href="./css/bootstrap.min.css">
@@ -147,7 +154,7 @@
 		if(userID.equals(recruit.getUserID())){
 %>
 							 
-							<a style="color: gray;" onclick="return confirm('수정하시겠습니까?')" href="./recruitUpdateAction./jsp?recruitID<%= recruit.getRecruitID() %>">수정</a> | 
+							<a style="color: gray;" onclick="return confirm('수정하시겠습니까?')" href="<%= request.getContextPath() %>/recruitUpdate?recruitID=<%= recruit.getRecruitID() %>">수정</a> | 
 							<a style="color: gray;" onclick="return confirm('삭제하시겠습니까?')" href="./recruitDeleteAction.jsp?recruitID=<%= recruit.getRecruitID() %>">삭제</a>
 						</div>
 <%

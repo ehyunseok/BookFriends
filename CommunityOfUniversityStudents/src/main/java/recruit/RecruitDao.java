@@ -9,7 +9,7 @@ import util.DatabaseUtil;
 
 public class RecruitDao {
 
-	//사용자가 모집글을 작성할 수 있는 함수
+//사용자가 모집글을 작성할 수 있는 함수
 	public int write(RecruitDto recruitDto) {
 		
 		String SQL = "INSERT INTO recruit VALUES (NULL, ?, ?, ?, ?, ?, 0);";
@@ -21,10 +21,10 @@ public class RecruitDao {
 		try {
 			conn = DatabaseUtil.getConnection();
 			pstmt = conn.prepareStatement(SQL);
-			pstmt.setString(1, StringEscapeUtils.escapeHtml4(recruitDto.userID));
-			pstmt.setString(2, StringEscapeUtils.escapeHtml4(recruitDto.recruitStatus));
-			pstmt.setString(3, StringEscapeUtils.escapeHtml4(recruitDto.recruitTitle));
-			pstmt.setString(4, StringEscapeUtils.escapeHtml4(recruitDto.recruitContent));
+			pstmt.setString(1, recruitDto.userID);
+			pstmt.setString(2, recruitDto.recruitStatus);
+			pstmt.setString(3, recruitDto.recruitTitle);
+			pstmt.setString(4, recruitDto.recruitContent);
 			pstmt.setTimestamp(5, recruitDto.registDate);
 			return pstmt.executeUpdate();	// insert구문을 실행한 결과를 반환함
 			
@@ -39,7 +39,7 @@ public class RecruitDao {
 
 	}
 
-// 자유게시판 리스트 불러오기(조회, 검색)
+// 모집글 리스트 불러오기(조회, 검색)
 	public ArrayList<RecruitDto> getList(String recruitStatus, String searchType, String search, int pageNumber) {
         ArrayList<RecruitDto> list = new ArrayList<>();
         String SQL = "";
@@ -168,7 +168,7 @@ public class RecruitDao {
 				recruit.setRecruitID(rs.getInt(1));
 				recruit.setUserID(rs.getString(2));
 				recruit.setRecruitStatus(rs.getString(3));
-				recruit.setRecruitTitle(rs.getString(4));
+				recruit.setRecruitTitle( rs.getString(4));
 				recruit.setRecruitContent(rs.getString(5));
 				recruit.setRegistDate(rs.getTimestamp(6));
 				recruit.setViewCount(rs.getInt(7));
@@ -205,7 +205,7 @@ public class RecruitDao {
 		
 		
 // 모집글 수정
-	public int update(int recruitID, String recruitStatus, String recruitTitle, String recruitContent) {
+	public int update(RecruitDto recruit) {
 
 		String SQL = "UPDATE recruit SET recruitStatus = ?, recruitTitle = ?, recruitContent = ? WHERE recruitID = ?;";
 		
@@ -216,10 +216,10 @@ public class RecruitDao {
 		try {
 			conn = DatabaseUtil.getConnection();
 			pstmt = conn.prepareStatement(SQL);
-			pstmt.setString(1, StringEscapeUtils.escapeHtml4(recruitStatus));
-			pstmt.setString(2, StringEscapeUtils.escapeHtml4(recruitTitle));
-			pstmt.setString(3, StringEscapeUtils.escapeHtml4(recruitContent));
-			pstmt.setInt(4, recruitID);
+			pstmt.setString(1, recruit.getRecruitStatus());
+			pstmt.setString(2, recruit.getRecruitTitle());
+			pstmt.setString(3, recruit.getRecruitContent());
+			pstmt.setInt(4, recruit.getRecruitID());
 			return pstmt.executeUpdate();
 			
 		} catch(Exception e) {

@@ -119,7 +119,7 @@
 		<div>
 			<div class="card bg-light mt-3">
 				<div class="card-header bg-light">
-					<h5 class="card-title"><img class="" src="images/icon.png" style="height:20px;"> <b><%= board.getUserID() %></b></h5>
+					<h5 class="card-title"><img src="images/icon.png" style="height:20px;"> <b><%= board.getUserID() %></b></h5>
 					<p class="card-text">조회수: <%= board.getViewCount() %> | 작성일: <%= board.getPostDate() %></p>
 				</div>
 				<div class="card-body">
