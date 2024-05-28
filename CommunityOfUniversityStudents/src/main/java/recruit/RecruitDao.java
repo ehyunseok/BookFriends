@@ -114,7 +114,7 @@ public class RecruitDao {
 
 		
 // 모집글 작성자의 아이디 가져오기
-	public String getUserID(String postID) {
+	public String getUserID(String recruitID) {
 		
 		String SQL = "SELECT userID FROM recruit WHERE recruitID = ?;";
 		
@@ -125,7 +125,7 @@ public class RecruitDao {
 		try {
 			conn = DatabaseUtil.getConnection();
 			pstmt = conn.prepareStatement(SQL);
-			pstmt.setInt(1, Integer.parseInt(postID));
+			pstmt.setInt(1, Integer.parseInt(recruitID));
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
 				return rs.getString(1);
@@ -233,7 +233,7 @@ public class RecruitDao {
 
 	}
 		
-// 모집글 등록할 때 postID 정보 가져오기
+// 모집글 등록할 때 recruitID 정보 가져오기
 	public RecruitDto getPost(int recruitID) {
 	    String SQL = "SELECT * FROM recruit WHERE recruitID = ?";
 	    
@@ -278,7 +278,7 @@ public class RecruitDao {
 	            }
 	            
 	            if(lastRecruitID == -1) {
-	                return null;    // 주어진 userID로 postID를 찾지 못함 
+	                return null;    // 주어진 userID로 recruitID를 찾지 못함 
 	            }
 	            
 	            //2. lastRecruitID로 게시글을 조회감

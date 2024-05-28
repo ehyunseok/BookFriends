@@ -117,19 +117,22 @@
 
 <section class="container mt-3 mb-5">
     <div class="">
-        <div class="card-body">
+        <div class="card-body bg-light">
             <form action="<%= request.getContextPath() %>/recruitUpdate" method="post" enctype="multipart/form-data">
 			    <input type="hidden" name="recruitID" value="<%= recruit.getRecruitID() %>">
 			    <div class="form-group">
-			        <input type="text" name="recruitTitle" id="recruitTitle"
-			               style="height: 50px; width:100%; border: none; background:transparent;" value="<%= recruit.getRecruitTitle() %>">
+			        <input type="text" name="recruitTitle" id="recruitTitle" class="border-bottom-0 border border-secondary rounded"
+			               style="height: 50px; width:100%; border: none; background:white;" value="<%= recruit.getRecruitTitle() %>">
 			    </div>
 			    <div class="form-group">
-			        <select name="recruitStatus">
-			        	<option></option>
-			            <option value="모집중" <% if(recruit.getRecruitStatus().equals("모집중")) out.println("selected"); %>>모집중</option>
-			            <option value="모집마감" <% if(recruit.getRecruitStatus().equals("모집마감")) out.println("selected"); %>>모집마감</option>
-			        </select>
+			        <div class="custom-control custom-radio custom-control-inline">
+					  	<input type="radio" id="customRadioInline1" name="recruitStatus" class="custom-control-input" value="모집중" <% if(recruit.getRecruitStatus().equals("모집중")) out.print("checked"); %>>
+					  	<label class="custom-control-label" for="customRadioInline1">모집중</label>
+					</div>
+					<div class="custom-control custom-radio custom-control-inline">
+					  	<input type="radio" id="customRadioInline2" name="recruitStatus" class="custom-control-input" value="모집마감" <% if(!recruit.getRecruitStatus().equals("모집중")) out.print("checked"); %>>
+					 	<label class="custom-control-label" for="customRadioInline2">모집마감</label>
+					</div>
 			    </div>
 			    <div class="form-group">
 			        <div id="editor"></div>
@@ -166,20 +169,22 @@ quill.on('text-change', function(delta, oldDelta, source){
 	document.getElementById("quill_html").value = quill.root.innerHTML;
 });
 
-//기본 양식
+//HTML을 텍스트로 변환하는 함수
+function htmlToText(html) {
+    var tempDiv = document.createElement("div");
+    tempDiv.innerHTML = html;
+    return tempDiv.textContent || tempDiv.innerText || "";
+}
+
+//수정 전 양식
 const initialData = {
 	recruitTitle: '<%= recruit.getRecruitTitle() %>',
-	content: [
-		{
-			insert:
-				'<%= recruit.getRecruitContent() %>',
-		},
-	],
+	content: '<%= recruit.getRecruitContent().replaceAll("\n", "\\n").replaceAll("\r", "\\r").replaceAll("\"", "\\\"") %>',  // 문자열 이스케이프
 };
 const beforeForm = () => {
-	document.querySelector('[name="recruitTitle"]').vlaue = initialData.recruitTitle;
-	quill.setContents(initialData.content);
-	};
+	document.querySelector('[name="recruitTitle"]').value = initialData.recruitTitle;
+	quill.clipboard.dangerouslyPasteHTML(initialData.content);  // HTML 콘텐츠를 그대로 설정
+};
 beforeForm();
 
 
