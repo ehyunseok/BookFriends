@@ -1,8 +1,7 @@
 # BookFriends_JSP
 
 ## 소개
-**BookFriends**는 독서가들이 이용할 수 있는 웹사이트입니다. 서평 공유, 독서 모임 모집, 기타 자유게시판, 실시간 채팅, 도서관 검색
-
+**BookFriends**는 독서가들이 이용할 수 있는 웹사이트입니다. 서평 공유, 독서 모임 모집, 기타 자유게시판, 실시간 채팅, 도서관 검색, 중고 도서 거레/교환
 
 ## 목차
 - [소개](#소개)
@@ -27,7 +26,16 @@
   - Java Activation Framework 1.1.1
   - Apache Commons Lang 3.14.0
   - Apache Commons Text 1.12.0
-
+  - Apache Commons FileUpload 1.5
+  - Apache Commons io 2.16.1
+  - Javax Servlet JSP API 2.3.3
+  - Javax Servlet API 4.0.1
+  - Jason Core 2.13.0
+  - Json 20231013
+  - Json Factory 1.0.2
+  - Json Generator 0.5
+  - Jsoup 1.17.2
+  - MySQL Connector J 8.0.33
 
 ## 주요 기능
 ### 사용자 관리
@@ -59,7 +67,9 @@
 
 ### 미완성 기능 (추후 구현 예정)
 - **채팅**: 실시간 채팅 기능
-- **도서관 검색**: 국립중앙도서관 api 이용.. 인증키 받으면.....제발발
+- **도서관 검색**: 국립중앙도서관 api 이용
+- **중고 도서 거래**
+- **게시판 카테고리 수정**
 
 ## ERD
 #### Entity-Relationship Diagram
@@ -71,80 +81,12 @@
 1. **Eclipse 설치 및 설정**: JSP와 서블릿 개발을 위한 Eclipse IDE 설정
 2. **Apache Tomcat 설치**: 웹 서버로 Apache Tomcat 9.0 설정
 3. **MySQL 설치**: 데이터베이스 설정 및 초기화
-4. **라이브러리 설치**: jQuery, Bootstrap, Popper, Java Mail, Java Activation Framework 등의 라이브러리 설치 및 설정
+4. **라이브러리 설치**: 라이브러리 설치 및 설정
 
 ### 데이터베이스 설정
 1. MySQL 데이터베이스 생성
 2. 필요한 테이블 생성 및 초기 데이터 입력 (스키마 및 데이터 정의서 참고)
 
-#### database sql table create query
-```sql
-CREATE TABLE USER (
-  userID varchar(20) primary key,
-  userPassword varchar(64),
-  userEmail varchar(50),
-  userEmailHash varchar(64),
-  userEmailChecked boolean
-);
-
-CREATE TABLE evaluation (
-  evaluationID int(20) primary key auto_increment,
-  userID varchar(20),
-  lectureName varchar(50),
-  professorName varchar(20),
-  lectureYear int,
-  semesterDivide varchar(20),
-  lectureDivide varchar(10),
-  evaluationTitle varchar(50),
-  evaluationContent varchar(2048),
-  totalScore varchar(5),
-  usabilityScore varchar(5),
-  skillScore varchar(5),
-  likeCount int
-);
-
-CREATE TABLE likey (
-  userID varchar(20),
-  evaluationID int,
-  userIP varchar(50),
-  PRIMARY KEY (userID, evaluationID)
-);
-
-CREATE TABLE likeyPost (
-  userID varchar(20),
-  postID int,
-  userIP varchar(50),
-  PRIMARY KEY (userID, postID)
-);
-
-CREATE TABLE likeyReply (
-  userID varchar(20),
-  replyID int,
-  userIP varchar(50),
-  PRIMARY KEY (userID, replyID)
-);
-
-CREATE TABLE board (
-  postID int primary key auto_increment,
-  userID varchar(20),
-  postCategory varchar(20),
-  postTitle varchar(50),
-  postContent varchar(2048),
-  viewCount int,
-  likeCount int,
-  postDate timestamp default (current_timestamp)
-);
-
-CREATE TABLE reply (
-  replyID int primary key auto_increment,
-  userID varchar(20),
-  postID int,
-  replyContent varchar(2048),
-  likeCount int,
-  replyDate timestamp default (current_timestamp),
-  FOREIGN KEY (postID) REFERENCES board(postID)
-);
-```
 
 ## 업데이트 로그
 - 2024.05.25
@@ -158,4 +100,4 @@ CREATE TABLE reply (
   - 자유게시판 상세페이지 댓글 리스트 수정
 - 2024.05.28
   - 독서모임 모집글 작성, 수정(Quill 에디터 적용), 삭제 구현
-  - CS
+  - CSP 보안 적용(독서모임)
