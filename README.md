@@ -1,7 +1,7 @@
 # BookFriends_JSP
 
 ## 소개
-**BookFriends**는 독서가들이 이용할 수 있는 웹사이트입니다. 서평 공유, 독서 모임 모집, 기타 자유게시판, 실시간 채팅, 도서관 검색, 중고 도서 거레/교환
+**BookFriends**는 독서가들이 이용할 수 있는 웹사이트입니다. 서평 공유, 독서 모임 모집, 기타 자유게시판, 실시간 채팅, 도서관 검색, 중고 도서 거래/교환
 
 ## 목차
 - [소개](#소개)
@@ -73,7 +73,7 @@
 
 ## ERD
 #### Entity-Relationship Diagram
-![image](https://github.com/ehyunseok/CommunityOfUniversityStudents_JSP/assets/121013391/87f11134-778e-428f-86fe-4c0c865d450a)
+
 
 
 ## 프로젝트 설정
