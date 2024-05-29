@@ -14,7 +14,7 @@
 
 ## 개발환경
 - **Frontend**: HTML, CSS, JavaScript
-- **Backend**: JDK 17, JSP
+- **Backend**: JDK 17, JSP, Servlet
 - **IDE**: Eclipse
 - **Database**: MySQL
 - **Server**: Apache Tomcat 9.0
