@@ -51,7 +51,7 @@
 		PrintWriter script = response.getWriter();
 		script.println("<script>");
 		script.println("alert('로그인을 해주세요.');");
-		script.println("location.href='userLogin.jsp'");
+		script.println("location.href='./user/userLogin.jsp'");
 		script.println("</script>");
 		script.close();
 		return;
@@ -62,7 +62,7 @@
 	if(emailChecked == false){
 		PrintWriter script = response.getWriter();
 		script.println("<script>");
-		script.println("location.href='emailSendConfirm.jsp'");
+		script.println("location.href='./user/emailSendConfirm.jsp'");
 		script.println("</script>");
 		script.close();
 		return;
@@ -81,19 +81,19 @@
 					<a class="nav-link" href="index.jsp"><b>메인</b></a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="./bookReview.jsp">서평</a>
+					<a class="nav-link" href="./review/bookReview.jsp">서평</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="./board.jsp">자유게시판</a>
+					<a class="nav-link" href="./board/board.jsp">자유게시판</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="./recruit.jsp">독서모임</a>
+					<a class="nav-link" href="./recruit/recruit.jsp">독서모임</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="./market.jsp">중고장터</a>
+					<a class="nav-link" href="./market/market.jsp">중고장터</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="./chat.jsp">채팅</a>
+					<a class="nav-link" href="./chat/chat.jsp">채팅</a>
 				</li>
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" id="dropdown" data-toggle="dropdown">
@@ -101,7 +101,7 @@
 					</a>
 					<div class="dropdown-menu" aria-labelledby="dropdown">
 						<a class="dropdown-item" style="color: green;"><b><%= userID %></b> 님 환영합니다.</a>
-						<a class="dropdown-item" href="userLogoutAction.jsp">로그아웃</a>
+						<a class="dropdown-item" href="./user/userLogoutAction.jsp">로그아웃</a>
 					</div>
 				</li>
 			</ul>

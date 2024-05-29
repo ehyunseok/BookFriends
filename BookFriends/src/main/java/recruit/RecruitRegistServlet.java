@@ -7,8 +7,6 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.UUID;
 
 import javax.servlet.ServletException;
@@ -49,44 +47,42 @@ public class RecruitRegistServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/plain; charset=UTF-8");
 
-        System.out.println("Received POST request at /recruitWrite");  // 디버그 로그
+        System.out.println("Received POST request at /recruitWrite");
 
-        Part imagePart = request.getPart("uploadFile");
-        if (imagePart != null && imagePart.getSize() > 0) {
-            String orgFilename = Paths.get(imagePart.getSubmittedFileName()).getFileName().toString();
-            String uuid = UUID.randomUUID().toString().replaceAll("-", "");
-            String extension = orgFilename.substring(orgFilename.lastIndexOf(".") + 1);
-            String saveFilename = uuid + "." + extension;
-            String fileFullPath = Paths.get(uploadDir, saveFilename).toString();
+        try {
+            Part imagePart = request.getPart("uploadFile");
+            if (imagePart != null && imagePart.getSize() > 0) {
+                String orgFilename = Paths.get(imagePart.getSubmittedFileName()).getFileName().toString();
+                String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+                String extension = orgFilename.substring(orgFilename.lastIndexOf(".") + 1);
+                String saveFilename = uuid + "." + extension;
+                String fileFullPath = Paths.get(uploadDir, saveFilename).toString();
 
-            File dir = new File(uploadDir);
-            if (!dir.exists()) {
-                dir.mkdirs();
+                File uploadFile = new File(fileFullPath);
+                Files.createDirectories(uploadFile.getParentFile().toPath());
+                imagePart.write(uploadFile.getAbsolutePath());
+
+                System.out.println("File uploaded successfully: " + saveFilename);
+                System.out.println("File saved to: " + fileFullPath);
+
+                FileDto fileDto = new FileDto();
+                fileDto.setFileName(saveFilename);
+                fileDto.setFileOriginName(orgFilename);
+                fileDto.setFilePath(uploadDir);
+                FileDao fileDao = new FileDao();
+                fileDao.saveFile(fileDto);
+
+                response.getWriter().write("{\"fileName\": \"" + saveFilename + "\", \"uploadPath\": \"" + request.getContextPath() + "/uploads" + "\"}");
+                return;
             }
-
-            File uploadFile = new File(fileFullPath);
-            imagePart.write(uploadFile.getAbsolutePath());
-
-            System.out.println("File uploaded successfully: " + saveFilename);
-            System.out.println("File saved to: " + fileFullPath);
-
-            // DB에 파일 메타데이터 저장
-            FileDto fileDto = new FileDto();
-            fileDto.setFileName(saveFilename);
-            fileDto.setFileOriginName(orgFilename);
-            fileDto.setFilePath(uploadDir);
-            FileDao fileDao = new FileDao();
-            fileDao.saveFile(fileDto);
-
-            // JSON 응답으로 이미지 URL 반환
-            response.getWriter().write("{\"fileName\": \"" + saveFilename + "\", \"uploadPath\": \"" + request.getContextPath() + "/uploads" + "\"}");
-            return;
+        } catch (ServletException | IOException e) {
+            System.out.println("Image file part is not present or there was an error processing the file: " + e.getMessage());
         }
 
-        // recruitWrite 로직
+        // 이 부분은 이미지가 없어도 실행됩니다.
         String userID = (String) request.getSession().getAttribute("userID");
         if (userID == null) {
-            response.sendRedirect("userLogin.jsp");
+            response.sendRedirect("../user/userLogin.jsp");
             return;
         }
 
@@ -110,41 +106,9 @@ public class RecruitRegistServlet extends HttpServlet {
             return;
         }
 
-        RecruitDto latestRecruit = recruitDao.getPostAfterResist(userID);
-
-        if (latestRecruit == null) {
-            response.sendRedirect("error.jsp");
-            return;
-        }
-
-        Part filePart = request.getPart("file");
-        if (filePart != null && filePart.getSize() > 0) {
-            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-            String timeStamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-            String newFileName = timeStamp + "_" + fileName;
-
-            String filePath = uploadDir + File.separator + newFileName;
-            filePart.write(filePath);
-
-            String fileUrl = request.getContextPath() + "/uploads/" + newFileName;
-
-            FileDto fileDto = new FileDto();
-            fileDto.setFileName(newFileName);
-            fileDto.setFileOriginName(fileName);
-            fileDto.setFilePath(fileUrl);
-            fileDto.setRecruitID(latestRecruit.getRecruitID());
-            fileDto.setPostID(null);
-
-            FileDao fileDao = new FileDao();
-            try {
-                fileDao.saveFile(fileDto);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        String recruitID = Integer.toString(latestRecruit.getRecruitID());
-        response.sendRedirect("recruitDetail.jsp?recruitID=" + recruitID);
+        // 최근 등록된 모집 게시글 정보를 가져와서 리다이렉트
+        String recruitID = Integer.toString((recruitDao.getPostAfterResist(userID)).getRecruitID());
+        response.sendRedirect("recruit/recruitDetail.jsp?recruitID=" + recruitID);
     }
 
     @Override

@@ -128,6 +128,7 @@ public class RecruitUpdateServlet extends HttpServlet {
             response.getWriter().write("{\"fileName\": \"" + saveFilename + "\", \"uploadPath\": \"" + request.getContextPath() + "/uploads" + "\"}");
         }
 
-        response.sendRedirect("recruit.jsp");
+        String recruitIDStr = Integer.toString(recruitID);
+        response.sendRedirect("recruit/recruitDetail.jsp?recruitID=" + recruitIDStr);
     }
 }
