@@ -48,6 +48,12 @@
 				<li class="nav-item">
 					<a class="nav-link" href="./recruit.jsp">독서모임</a>
 				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="./market.jsp">중고장터</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="./chat.jsp">채팅</a>
+				</li>				
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle active" id="dropdown" data-toggle="dropdown">
 						<b>회원관리</b>

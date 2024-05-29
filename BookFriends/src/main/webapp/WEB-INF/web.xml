@@ -16,8 +16,8 @@
   </welcome-file-list>
 
   <servlet>
-    <servlet-name>CombinedServlet</servlet-name>
-    <servlet-class>recruit.CombinedServlet</servlet-class>
+    <servlet-name>RecruitRegistServlet</servlet-name>
+    <servlet-class>recruit.RecruitRegistServlet</servlet-class>
     <multipart-config>
       <max-file-size>5242880</max-file-size> <!-- 5MB -->
       <max-request-size>10485760</max-request-size> <!-- 10MB -->
@@ -26,15 +26,15 @@
   </servlet>
 
   <servlet-mapping>
-    <servlet-name>CombinedServlet</servlet-name>
-    <url-pattern>/recruitWriteAction</url-pattern>
+    <servlet-name>RecruitRegistServlet</servlet-name>
+    <url-pattern>/recruitWrite</url-pattern>
   </servlet-mapping>
 
   <servlet-mapping>
-    <servlet-name>CombinedServlet</servlet-name>
+    <servlet-name>RecruitRegistServlet</servlet-name>
     <url-pattern>/display</url-pattern>
   </servlet-mapping>
-  
+
   <servlet>
     <servlet-name>RecruitUpdateServlet</servlet-name>
     <servlet-class>recruit.RecruitUpdateServlet</servlet-class>

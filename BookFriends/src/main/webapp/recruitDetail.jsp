@@ -85,8 +85,9 @@
         script.close();
         return;
     }
+    
 	// 댓글 리스트 가져오기
-	ArrayList<ReplyDto> replyList = new ReplyDao().getList(recruitID);
+	ArrayList<ReplyDto> replyList = new ReplyDao().getListForRecruit(recruitID);
 	
 	// 댓글 개수 가져오기
 	int countReply = replyList.size();
@@ -113,6 +114,12 @@
 				<li class="nav-item active">
 					<a class="nav-link" href="./recruit.jsp"><b>독서모임</b></a>
 				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="./market.jsp">중고장터</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="./chat.jsp">채팅</a>
+				</li>				
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" id="dropdown" data-toggle="dropdown">
 						회원관리
@@ -175,7 +182,7 @@
 		<div class="card mt-3">
 			<div class="card-header">comment</div>
 			<div class="card-body">
-				<form method="post" action="./replyRegisterAction.jsp">
+				<form method="post" action="./recruitReplyRegisterAction.jsp">
 					<input type="hidden" name="recruitID" value="<%= recruitID %>">
 					<textarea name="replyContent" class="form-control" maxlength="2048" style="height: 100px;"></textarea>
 					<div class="text-right">
@@ -199,12 +206,10 @@
 							<small><%= replyDto.getReplyDate() %></small>
 							<p style="text-align:justify; white-space:pre-wrap; padding-top:10px; font-size:large;"><%= replyDto.getReplyContent() %></p>
 							<div class="text-right">
-							
-								<a style="color: black;" onclick="return confirm('추천하시겠습니까?')" href="./likeReplyAction.jsp?replyID=<%= replyDto.getReplyID() %>">추천(<%= replyDto.getLikeCount() %>)</a>
 <%
 		if(userID.equals(replyDto.getUserID())){
 %>								 		
-								 | <a style="color: gray;" onclick="return confirm('수정하시겠습니까?')" data-toggle="modal" href="#updateReplyModal<%= replyDto.getReplyID() %>">수정</a> | 
+								<a style="color: gray;" onclick="return confirm('수정하시겠습니까?')" data-toggle="modal" href="#updateReplyModal<%= replyDto.getReplyID() %>">수정</a> | 
 								<a style="color: gray;" onclick="return confirm('삭제하시겠습니까?')" href="./deleteReplyAction.jsp?replyID=<%= replyDto.getReplyID() %>">삭제</a>
 <%
 		}
@@ -222,7 +227,7 @@
 									</button>
 								</div>
 								<div class="modal-body">
-									<form method="post" action="./updateReplyAction.jsp?replyID=<%= replyDto.getReplyID() %>">
+									<form method="post" action="./recruitReplyUpdateAction.jsp?replyID=<%= replyDto.getReplyID() %>">
 										<div class="form-row">
 											<textarea name="replyContent" class="form-control" maxlength="2048" style="height: 180px;"><%= replyDto.getReplyContent() %></textarea>
 										</div>

@@ -15,7 +15,8 @@ public class ReplyDao {
 //게시글 댓글 작성
 	public int write(ReplyDto replyDto) {
 		
-		String SQL = "INSERT INTO reply VALUES (NULL, ?, ?, ?, 0, ?, null);";
+		String SQL = "INSERT INTO reply "
+				+ "VALUES (NULL, ?, ?, ?, 0, ?, null);";
 		
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -38,6 +39,36 @@ public class ReplyDao {
 		}
 		return -1; // db 오류
 	}
+	
+//모임 모집 게시글 댓글 작성
+	public int writeForRecruit(ReplyDto replyDto) {
+		
+		String SQL = "INSERT INTO reply "
+				+ "(replyID, userID, postID, replyContent, likeCount, replyDate, recruitID)"
+				+ "VALUES (NULL, ?, null, ?, 0, ?, ?);";
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			conn = DatabaseUtil.getConnection();
+			pstmt = conn.prepareStatement(SQL);
+			pstmt.setString(1, StringEscapeUtils.escapeHtml4(replyDto.userID));
+			pstmt.setString(2, StringEscapeUtils.escapeHtml4(replyDto.replyContent));
+			pstmt.setTimestamp(3, replyDto.replyDate);
+			pstmt.setInt(4, replyDto.recruitID);
+			return pstmt.executeUpdate();	// insert구문을 실행한 결과를 반환함
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+			System.err.println("Foreign key constraint violation: " + e.getMessage());
+		} finally {
+			try { if(conn != null) conn.close();} catch(Exception e ) {e.printStackTrace();}
+			try { if(pstmt != null) pstmt.close();} catch(Exception e ) {e.printStackTrace();}
+		}
+		return -1; // db 오류
+	}
+
 
 // 댓글 리스트 불러오기
 	public ArrayList<ReplyDto> getList(String postID) {
@@ -80,6 +111,48 @@ public class ReplyDao {
 	    }
 	    
 	    return replyList;
+	}
+// 모입 모집 댓글 리스트 불러오기
+	public ArrayList<ReplyDto> getListForRecruit(String recruitID) {
+		ArrayList<ReplyDto> replyList = null;
+		String SQL = "SELECT * FROM reply "
+				+ "WHERE recruitID = ? "
+				+ "ORDER BY replyDate DESC";
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = DatabaseUtil.getConnection();
+			pstmt = conn.prepareStatement(SQL);
+			pstmt = conn.prepareStatement(SQL);
+			pstmt.setString(1, recruitID);
+			
+			rs = pstmt.executeQuery();
+			
+			replyList = new ArrayList<ReplyDto>();
+			while (rs.next()) { // 해당 게시글에 댓글을 하나하나 리스트에 담길 수 있게 함
+				ReplyDto replyDto = new ReplyDto(
+						rs.getInt(1),
+						rs.getString(2),
+						rs.getInt(3),
+						rs.getString(4),
+						rs.getInt(5),
+						rs.getTimestamp(6),
+						rs.getInt(7)
+						);
+				replyList.add(replyDto);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try { if (conn != null) conn.close(); } catch (Exception e ) { e.printStackTrace(); }
+			try { if (pstmt != null) pstmt.close(); } catch (Exception e ) { e.printStackTrace(); }
+			try { if (rs != null) rs.close(); } catch (Exception e ) { e.printStackTrace(); }
+		}
+		
+		return replyList;
 	}
 		
 // 댓글 추천
@@ -290,11 +363,64 @@ public class ReplyDao {
 		}
 		return -1;
 	}
+//댓글 수 카운트
+	public int countReplyFR(String recruitID) {
+		String SQL = "SELECT COUNT(*) FROM reply WHERE recruitID = ?;";
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = DatabaseUtil.getConnection();
+			pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, Integer.parseInt(recruitID));
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				return rs.getInt(1);
+			}
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try { if(conn != null) conn.close();} catch(Exception e ) {e.printStackTrace();}
+			try { if(pstmt != null) pstmt.close();} catch(Exception e ) {e.printStackTrace();}
+			try { if(rs != null) rs.close();} catch(Exception e ) {e.printStackTrace();}
+		}
+		return -1;
+	}
 
 // 댓글의 해당 게시글 아이디 찾기
 	public String getPostID(String replyID) {
 		
 		String SQL = "SELECT postID FROM reply WHERE replyID = ?;";
+		
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = DatabaseUtil.getConnection();
+			pstmt = conn.prepareStatement(SQL);
+			pstmt.setInt(1, Integer.parseInt(replyID));
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				return rs.getString(1);
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try { if(conn != null) conn.close();} catch(Exception e ) {e.printStackTrace();}
+			try { if(pstmt != null) pstmt.close();} catch(Exception e ) {e.printStackTrace();}
+			try { if(rs != null) rs.close();} catch(Exception e ) {e.printStackTrace();}
+		}
+		return null;
+	}
+	
+// 댓글의 해당 게시글 아이디 찾기
+	public String getRecruitID(String replyID) {
+		
+		String SQL = "SELECT recruitID FROM reply WHERE replyID = ?;";
 		
 		Connection conn = null;
 		PreparedStatement pstmt = null;

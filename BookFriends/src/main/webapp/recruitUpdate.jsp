@@ -102,6 +102,12 @@
             <li class="nav-item active">
                 <a class="nav-link" href="./recruit.jsp"><b>독서모임</b></a>
             </li>
+			<li class="nav-item">
+				<a class="nav-link" href="./market.jsp">중고장터</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="./chat.jsp">채팅</a>
+			</li>            
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="dropdown" data-toggle="dropdown">
                     회원관리
@@ -130,8 +136,8 @@
 					  	<label class="custom-control-label" for="customRadioInline1">모집중</label>
 					</div>
 					<div class="custom-control custom-radio custom-control-inline">
-					  	<input type="radio" id="customRadioInline2" name="recruitStatus" class="custom-control-input" value="모집마감" <% if(!recruit.getRecruitStatus().equals("모집중")) out.print("checked"); %>>
-					 	<label class="custom-control-label" for="customRadioInline2">모집마감</label>
+					  	<input type="radio" id="customRadioInline2" name="recruitStatus" class="custom-control-input" value="모집완료" <% if(!recruit.getRecruitStatus().equals("모집완료")) out.print("checked"); %>>
+					 	<label class="custom-control-label" for="customRadioInline2">모집완료</label>
 					</div>
 			    </div>
 			    <div class="form-group">

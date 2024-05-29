@@ -77,6 +77,12 @@
             <li class="nav-item active">
                 <a class="nav-link" href="./recruit.jsp"><b>독서모임</b></a>
             </li>
+			<li class="nav-item">
+				<a class="nav-link" href="./market.jsp">중고장터</a>
+			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="./chat.jsp">채팅</a>
+			</li>           
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="dropdown" data-toggle="dropdown">
                     회원관리
@@ -93,7 +99,7 @@
 <section class="container mt-3 mb-5">
     <div class="">
         <div class="card-body">
-            <form action="<%= request.getContextPath() %>/recruitWriteAction" method="post" enctype="multipart/form-data">
+            <form action="<%= request.getContextPath() %>/recruitWrite" method="post" enctype="multipart/form-data">
                 <div class="form-group">
                     <input class="" name="recruitTitle" placeholder="모집글 제목을 작성해주세요."
                            style="height: 50px; width:100%; border: none; background:transparent;"></input>
@@ -118,8 +124,9 @@
 <!-- Include the Quill library -->
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
 
-<!-- Initialize Quill editor -->
+<!--  -->
 <script>
+//Initialize Quill editor
 const quill = new Quill('#editor', {
 	modules:{
 		toolbar: [	//툴바 구성 custom
@@ -131,7 +138,8 @@ const quill = new Quill('#editor', {
 	},
 	   	theme: 'snow'
 });
-//에디터에 작성한 내용을 input요소로 변경
+
+//에디터에 작성한 내용을 input요소로 변경, 에디터의 내용이 변경될 때마다 quill_html 숨겨진 입력 필드에 에디터의 HTML 내용을 업데이트
 quill.on('text-change', function(delta, oldDelta, source){
 	document.getElementById("quill_html").value = quill.root.innerHTML;
 });
@@ -149,6 +157,7 @@ const basicForm = () => {quill.setContents(initialData.content);};
 basicForm();
 
 
+//로컬 이미지를 선택하고 업로드하는 기능 정의. 파일 선택 후 AJAX 요청으로 이미지를 서버에 업로드하고 에디터에 삽입함
 function selectLocalImage(){
 	const fileInput = document.createElement('input');
 	fileInput.setAttribute('type', 'file');
@@ -182,7 +191,7 @@ function selectLocalImage(){
 	});
 }
 
-//Ajax 콜백 함수로 툴바의 이미지를 컨트롤함
+// 툴바의 이미지 버튼에 대한 이벤트 핸들러를 추가함 -> 로컬 이미지를 선택하고 업로드할 수 있게~
 quill.getModule('toolbar').addHandler('image', function(){
 	selectLocalImage();
 });

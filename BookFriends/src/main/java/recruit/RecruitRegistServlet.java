@@ -22,13 +22,13 @@ import javax.servlet.http.Part;
 import file.FileDao;
 import file.FileDto;
 
-@WebServlet(name = "CombinedServlet", urlPatterns = {"/recruitWriteAction", "/display"})
+@WebServlet(name = "RecruitRegistServlet", urlPatterns = {"/recruitWrite", "/display"})
 @MultipartConfig(
     fileSizeThreshold = 1024 * 1024 * 1, // 1 MB
     maxFileSize = 1024 * 1024 * 5,       // 5 MB
     maxRequestSize = 1024 * 1024 * 10    // 10 MB
 )
-public class CombinedServlet extends HttpServlet {
+public class RecruitRegistServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
@@ -49,7 +49,7 @@ public class CombinedServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/plain; charset=UTF-8");
 
-        System.out.println("Received POST request at /recruitWriteAction");  // 디버그 로그
+        System.out.println("Received POST request at /recruitWrite");  // 디버그 로그
 
         Part imagePart = request.getPart("uploadFile");
         if (imagePart != null && imagePart.getSize() > 0) {
@@ -83,7 +83,7 @@ public class CombinedServlet extends HttpServlet {
             return;
         }
 
-        // 여기에 recruitWriteAction 로직을 추가
+        // recruitWrite 로직
         String userID = (String) request.getSession().getAttribute("userID");
         if (userID == null) {
             response.sendRedirect("userLogin.jsp");
@@ -143,7 +143,8 @@ public class CombinedServlet extends HttpServlet {
             }
         }
 
-        response.sendRedirect("recruit.jsp");
+        String recruitID = Integer.toString(latestRecruit.getRecruitID());
+        response.sendRedirect("recruitDetail.jsp?recruitID=" + recruitID);
     }
 
     @Override
@@ -152,7 +153,7 @@ public class CombinedServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=UTF-8");
 
-        System.out.println("Received GET request at /uploads");
+        System.out.println("Received GET request at /display");
 
         String filename = request.getParameter("fileName");
         if (filename == null || filename.isEmpty()) {

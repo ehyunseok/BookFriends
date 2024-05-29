@@ -6,7 +6,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<title>이현대학교 대나무숲</title>
+	<title>독서친구</title>
 	<!-- 부트스트랩 css 추가하기 -->
 	<link rel="stylesheet" href="./css/bootstrap.min.css">
 	<!-- 커스텀 css 추가하기 -->
@@ -40,14 +40,20 @@
 					<a class="nav-link" href="index.jsp">메인</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="./courseReview.jsp">강의평가</a>
+					<a class="nav-link" href="./bookReview.jsp">서평</a>
 				</li>				
 				<li class="nav-item">
 					<a class="nav-link" href="./board.jsp">자유게시판</a>
 				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="./market.jsp">중고장터</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="./chat.jsp">채팅</a>
+				</li>
 				<li class="nav-item dropdown active">
 					<a class="nav-link dropdown-toggle" id="dropdown" data-toggle="dropdown">
-						회원관리
+						<b>회원관리</b>
 					</a>
 					<div class="dropdown-menu" aria-labelledby="dropdown">
 						<a class="dropdown-item" style="color: green;"><b><%= userID %></b> 님 환영합니다.</a>

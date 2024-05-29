@@ -67,7 +67,7 @@ public class RecruitUpdateServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/plain; charset=UTF-8");
 
-        System.out.println("Received POST request at /recruitUpdateAction");  // 디버그 로그
+        System.out.println("Received POST request at /recruitUpdate");  // 디버그 로그
 
         String userID = (String) request.getSession().getAttribute("userID");
         if (userID == null) {

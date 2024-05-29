@@ -3,6 +3,8 @@
 <%@ page import="user.UserDao"%>
 <%@ page import="recruit.RecruitDao"%>
 <%@ page import="recruit.RecruitDto"%>
+<%@ page import="reply.ReplyDto"%>
+<%@ page import="reply.ReplyDao"%>
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="java.net.URLEncoder"%>
 <%@ page import="java.text.SimpleDateFormat"%>
@@ -89,6 +91,12 @@
 				<li class="nav-item active">
 					<a class="nav-link" href="./recruit.jsp"><b>독서모임</b></a>
 				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="./market.jsp">중고장터</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="./chat.jsp">채팅</a>
+				</li>				
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" id="dropdown" data-toggle="dropdown">
 						회원관리
@@ -105,7 +113,7 @@
 <!-- container  -->
 	<section class="container">
 		<form method="get" action="./recruit.jsp" class="form-inline mt-3">
-			<select name="postCategory" class="form-control mx-1 mt-2">
+			<select name="recruitStatus" class="form-control mx-1 mt-2">
 				<option value="전체">전체</option>
 				<option value="모집중" <% if(recruitStatus.equals("모집중")) out.println("selected"); %>>모집중</option>
 				<option value="모집완료" <% if(recruitStatus.equals("모집완료")) out.println("selected"); %>>모집완료</option>
@@ -126,6 +134,11 @@
 				<tbody>
 <%
 	for(RecruitDto recruit : recruitList) {
+		// 댓글 리스트 가져오기
+		String recruitIDStr = Integer.toString(recruitID);
+		ArrayList<ReplyDto> replyList = new ReplyDao().getListForRecruit(recruitIDStr);
+		// 댓글 개수 가져오기
+		int countReply = replyList.size();
 		String recruitContent = recruit.getRecruitContent().replaceAll("<[^>]*>", ""); // HTML 태그 제거
         String shortContent = recruitContent.length() > 150 ? recruitContent.substring(0, 150) + "..." : recruitContent; // 석점 줄임 처리
 %>
@@ -146,7 +159,7 @@
 						    	<div class="text-left ml-1" style="color:gray;"><img src="images/icon.png" style="height:12px;"> <%= recruit.getUserID() %> · <%= recruit.getRegistDate() %></div>
 						    	<div class="text-right ml-auto" style="color:gray;">
 						    		<img src="images/eye-icon.png" style="height:16px;"> <%= recruit.getViewCount() %>
-						    		<img src="images/bubble-Icon.png" style="height:25px;"> 댓글개수수정하삼!!!!
+						    		<img src="images/bubble-Icon.png" style="height:25px;"> <%= countReply %>
 						    	</div>
 					    	</div>
 					    </td>	

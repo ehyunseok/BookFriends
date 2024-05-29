@@ -1,11 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="board.BoardDao"%>
-<%@ page import="board.BoardDto"%>
 <%@ page import="reply.ReplyDao"%>
 <%@ page import="reply.ReplyDto"%>
 <%@ page import="util.SHA256"%>
 <%@ page import="java.sql.Timestamp"%>
 <%@ page import="java.io.PrintWriter"%>
+<%@ page import="recruit.RecruitDao"%>
+<%@ page import="recruit.RecruitDto"%>
 <%@ page import="java.net.URLEncoder"%>
 <%
 	request.setCharacterEncoding("UTF-8");
@@ -23,52 +23,50 @@
 		script.close();
 		return;
 	}
+	String replyIDStr = request.getParameter("replyID");
+	String replyContent = request.getParameter("replyContent");
 	
-    String postIDParam = request.getParameter("postID");
-    String replyContent = request.getParameter("replyContent");
-
-    if (postIDParam == null || postIDParam.isEmpty()) {
-        PrintWriter script = response.getWriter();
-        script.println("<script>");
-        script.println("alert('유효하지 않은 postID입니다.');");
-        script.println("history.back();");
-        script.println("</script>");
-        script.close();
-        return;
-    }
-
-    int postID = Integer.parseInt(postIDParam);
-    if (replyContent == null || replyContent.trim().isEmpty()) {
-        PrintWriter script = response.getWriter();
-        script.println("<script>");
-        script.println("alert('내용을 입력하세요.');");
-        script.println("history.back();");
-        script.println("</script>");
-        script.close();
-        return;
-    }
-
-		
-	BoardDao boardDao = new BoardDao();
-	BoardDto board = boardDao.getPost(postID);
-	if(board == null){
+	if(replyIDStr == null || replyContent == null){
+		PrintWriter script = response.getWriter();
+		script.println("<script>");
+		script.println("alert('유효하지 않은 입력')");
+		script.println("history.back();");
+		script.println("</script>");
+	}
+	
+	//replyIDStr을 정수로 변환하여 replyID로 저장
+	int replyID = Integer.parseInt(replyIDStr);
+	
+	String recruitID =  new ReplyDao().getRecruitID(replyIDStr);
+	if(recruitID == null || recruitID.equals("")){
 		PrintWriter script = response.getWriter();
         script.println("<script>");
-        script.println("alert('유효하지 않은 postID입니다.');");
+        script.println("alert('게시글 불러오기를 실패했습니다.');");
         script.println("history.back();");
         script.println("</script>");
         script.close();
         return;
 	}
+	int recruitIDInt = Integer.parseInt(recruitID);
 	
-	// 내용을 입력하면 댓글이 등록됨
+	RecruitDto recruit = new RecruitDao().getPost(recruitIDInt);
+	if (recruit == null) {
+        PrintWriter script = response.getWriter();
+        script.println("<script>");
+        script.println("alert('게시글을 불러올 수 없습니다.');");
+        script.println("history.back();");
+        script.println("</script>");
+        script.close();
+        return;
+    }
+	
+	
 	ReplyDao replyDao = new ReplyDao();
-	Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
-	int result = replyDao.write(new ReplyDto(0, userID, postID, replyContent, 0, currentTimestamp, 0));
-	if(result == -1){	// 등록 실패
+	int result = replyDao.update(replyID, replyContent);
+	if(result == -1){	// 수정 실패
 		PrintWriter script = response.getWriter();
 		script.println("<script>");
-		script.println("alert('댓글 등록 실패');");
+		script.println("alert('댓글 수정 실패');");
 		script.println("history.back();");
 		script.println("</script>");
 		script.close();
@@ -77,8 +75,8 @@
 		session.setAttribute("userID", userID);
 		PrintWriter script = response.getWriter();
 		script.println("<script>");
-		script.println("alert('댓글이 등록되었습니다.');");
-		script.println("location.href='./postDetail.jsp?postID=" + URLEncoder.encode(postIDParam, "UTF-8") + "';");
+		script.println("alert('댓글 수정 완료');");
+		script.println("location.href='./recruitDetail.jsp?recruitID=" + URLEncoder.encode(recruitID, "UTF-8") + "';");
 		script.println("</script>");
 		script.close();
 		return;
