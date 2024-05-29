@@ -17,7 +17,7 @@
 - **Backend**: JDK 17, JSP, Servlet
 - **IDE**: Eclipse
 - **Database**: MySQL
-- **Server**: Apache Tomcat 9.0
+- **Server**: Apache Tomcat 9.0.89
 - **Libraries**:
   - jQuery 3.7.1
   - Bootstrap 4.6.2
