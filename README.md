@@ -73,7 +73,7 @@
 
 ## ERD
 #### Entity-Relationship Diagram
-![image](https://github.com/ehyunseok/CommunityOfUniversityStudents_JSP/assets/121013391/87f11134-778e-428f-86fe-4c0c865d450a)
+
 
 
 ## 프로젝트 설정
