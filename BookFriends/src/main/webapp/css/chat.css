@@ -11,6 +11,11 @@ body{
     width: 100%;
     box-shadow: 0 1px 2px 0 rgb(0 0 0 / 10%);
 }
+
+.chat-app {
+	height: 600px;
+}
+
 .chat-app .people-list {
     width: 280px;
     position: absolute;
@@ -22,14 +27,14 @@ body{
 
 .chat-app .chat {
     margin-left: 280px;
-    border-left: 1px solid #eaeaea
+    border-left: 1px solid #eaeaea;
 }
 
 .people-list {
     -moz-transition: .5s;
     -o-transition: .5s;
     -webkit-transition: .5s;
-    transition: .5s
+    transition: .5s;
 }
 
 .people-list .chat-list li {
@@ -89,7 +94,8 @@ body{
 
 .chat .chat-history {
     padding: 20px;
-    border-bottom: 2px solid #fff
+    border-bottom: 2px solid #fff;
+    overflow-y: auto;
 }
 
 .chat .chat-history ul {
@@ -128,6 +134,7 @@ body{
     display: inline-block;
     position: relative
 }
+
 
 .chat .chat-history .message:after {
     bottom: 100%;
@@ -172,7 +179,8 @@ body{
 }
 
 .chat .chat-message {
-    padding: 20px
+    padding: 20px;
+    margin-top: 1px;
 }
 
 .online,
@@ -254,6 +262,8 @@ body{
     }
 }
 
+
+/* 내가 추가한 것 */
 #glass{
 	background-image: url('../images/magnifying-glass.svg');
     background-size: 50%;
@@ -262,8 +272,34 @@ body{
 }
 
 #sendsvg{
+	height:62px;
 	background-image: url('../images/paper-plane.svg');
     background-size: 50%;
     background-position: center;
     background-repeat: no-repeat;
+    cursor: pointer;
+}
+
+
+#modalS{
+	background-color: #B7F0B1;
+}
+#modalW{
+	background-color: #FFEF85;
+}
+#modalD{
+	background-color: #FFC6C6;
+}
+
+.chat-history {
+    padding: 20px;
+    border-bottom: 2px solid #fff;
+    overflow-y: auto; /* 스크롤바가 필요할 때만 나타나게 설정 */
+    max-height: 380px; /* 최대 높이 설정 */
+    margin: 20px;
+}
+
+#peopleList {
+	overflow-y: auto;
+    max-height: 500px;
 }

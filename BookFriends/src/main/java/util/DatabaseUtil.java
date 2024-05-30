@@ -11,12 +11,12 @@ public class DatabaseUtil {
 			String dbID = "root";
 			String dbPassword = "mysql";
 			Class.forName("com.mysql.cj.jdbc.Driver");
-			System.out.println("연결완료");
+			System.out.println("DB 연결 완료");
 			return DriverManager.getConnection(dbURL, dbID, dbPassword);
 		} catch(Exception e){
-			e.printStackTrace();
+			System.out.println("DB 연결 실패: " + e.getMessage());
+			return null;
 		}
-		return null;
 	}
 	
 }

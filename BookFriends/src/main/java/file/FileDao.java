@@ -9,21 +9,6 @@ import util.DatabaseUtil;
 
 public class FileDao {
 
-	private Connection conn;
-	
-    public FileDao() {
-        try {
-            String dbURL = "jdbc:mysql://localhost:3306/lectureevaluation";
-            String dbID = "root";
-            String dbPassword = "mysql";
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            System.out.println("파일 업로드 db와 연결완료");
-            conn = DriverManager.getConnection(dbURL, dbID, dbPassword);
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public void saveFile(FileDto fileDto) {
         String sql = "INSERT INTO file (fileName, fileOriginName, filePath, recruitID, postID) VALUES (?, ?, ?, ?, ?)";
 
