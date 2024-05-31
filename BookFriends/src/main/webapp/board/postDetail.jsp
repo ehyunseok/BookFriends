@@ -13,11 +13,31 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<title>독서친구</title>
-	<!-- 부트스트랩 css 추가하기 -->
-	<link rel="stylesheet" href="../css/bootstrap.min.css">
-	<!-- 커스텀 css 추가하기 -->
-	<link rel="stylesheet" href="../css/custom.css">
+	<!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/custom.css">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<!-- Popper JS for Bootstrap 4 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="../js/bootstrap.min.js"></script>
 	
+	<style type="text/css">
+	#goToChat {
+		display: flex;  /* Flexbox 레이아웃 활성화 */
+        align-items: center;  /* 수직 중앙 정렬 */
+        justify-content: center;  /* 수평 중앙 정렬 */
+        border: none; 
+        background: transparent; 
+        box-shadow: none;
+        padding: 0;  /* 버튼 내부 여백 제거 */
+	}
+	#goToChat h5 {
+        margin-bottom: 0;  /* h5 태그의 하단 여백 제거 */
+    }
+	</style>
 </head>
 <body>
 <%
@@ -125,7 +145,15 @@
 		<div>
 			<div class="card bg-light mt-3">
 				<div class="card-header bg-light">
-					<h5 class="card-title"><img src="../images/icon.png" style="height:20px;"> <b><%= board.getUserID() %></b></h5>
+					<!-- 회원아이디 영역 클릭 -> 채팅하기 드랍다운 토글 -->
+					<div class="btn-group dropright">
+						<button id="goToChat" class="dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+								<h5 class="card-title"><img src="../images/icon.png" style="height:30px;"> <b><%= board.getUserID() %></b></h5>
+						</button>
+						<div class="dropdown-menu" aria-labelledby="dropdown">
+							<a class="dropdown-item" href="../chat/chat2.jsp?receiverID=<%= board.getUserID() %>">채팅하기</a>
+						</div>
+					</div>
 					<p class="card-text">조회수: <%= board.getViewCount() %> | 작성일: <%= board.getPostDate() %></p>
 				</div>
 				<div class="card-body">
@@ -181,7 +209,15 @@
 	for(ReplyDto replyDto : replyList){
 %>		
 						<li class="list-group-item m-1">
-							<h5><img class="" src="../images/icon.png" style="height:20px;"> <b><%= replyDto.getUserID() %></b></h5>
+							<!-- 회원아이디 영역 클릭 -> 채팅하기 드랍다운 토글 -->
+							<div class="btn-group dropright">
+								<button id="goToChat" class="dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
+										<h5 class="card-title"><img src="../images/icon.png" style="height:30px;"> <b><%= replyDto.getUserID() %></b></h5>
+								</button>
+								<div class="dropdown-menu" aria-labelledby="dropdown">
+									<a class="dropdown-item" href="../chat/chat2.jsp?receiverID=<%= board.getUserID() %>">채팅하기</a>
+								</div>
+							</div>
 							<small><%= replyDto.getReplyDate() %></small>
 							<p style="text-align:justify; white-space:pre-wrap; padding-top:10px; font-size:large;"><%= replyDto.getReplyContent() %></p>
 							<div class="text-right">
@@ -277,12 +313,5 @@
 	</footer>
 	
 
-<!--  -->
-	<!-- jquery js 추가하기 -->
-	<script src="../js/jquery.min.js"></script>
-	<!-- popper js 추가하기 -->
-	<script src="../js/popper.min.js"></script>
-	<!-- bootstrap js 추가하기 -->
-	<script src="../js/bootstrap.min.js"></script>
 </body>
 </html>

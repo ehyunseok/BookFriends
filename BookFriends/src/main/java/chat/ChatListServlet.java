@@ -27,7 +27,7 @@ public class ChatListServlet extends HttpServlet {
 			response.getWriter().write("0");
 			System.out.println("error-메시지를 서버로 전송하지 못함");
 		} else if(listType.equals("ten")) {
-			response.getWriter().write(getTen(URLDecoder.decode(senderID,"UTF-8"), URLDecoder.decode(receiverID,"UTF-8")));
+			response.getWriter().write(getNum(URLDecoder.decode(senderID,"UTF-8"), URLDecoder.decode(receiverID,"UTF-8")));
 		} else {
 			try {
 				response.getWriter().write(getID(URLDecoder.decode(senderID,"UTF-8"), URLDecoder.decode(receiverID,"UTF-8"), listType));
@@ -37,12 +37,12 @@ public class ChatListServlet extends HttpServlet {
 		}
 	}
 	
-	public String getTen(String senderID, String receiverID) {
+	public String getNum(String senderID, String receiverID) {
 	    StringBuffer result = new StringBuffer("");
 	    
 	    result.append("{\"result\":[");
 	    ChatDao chatDao = new ChatDao();
-	    ArrayList<ChatDto> chatList = chatDao.getChatListByRecent(senderID, receiverID, 10);
+	    ArrayList<ChatDto> chatList = chatDao.getChatListByRecent(senderID, receiverID, 100);
 	    if(chatList.size() == 0) return "{}"; // 변경: 빈 배열 대신 빈 객체 반환
 	    Iterator<ChatDto> iterator = chatList.iterator();
 	    while(iterator.hasNext()) {
@@ -56,7 +56,9 @@ public class ChatListServlet extends HttpServlet {
 	            result.append(",");
 	        }
 	    }
+	    
 	    result.append("], \"last\":\"" + chatList.get(chatList.size()-1).getChatID() + "\"}");
+	    chatDao.readChat(senderID, receiverID);
 	    return result.toString();
 	}
 
@@ -89,6 +91,7 @@ public class ChatListServlet extends HttpServlet {
 			}
 		}
 		result.append("], \"last\":\"" + chatList.get(chatList.size()-1).getChatID() + "\"}");
+		chatDao.readChat(senderID, receiverID);
 		return result.toString();
 	}
 	

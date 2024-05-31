@@ -39,4 +39,7 @@ public class ChatSubmitServlet extends HttpServlet {
 		int result = new ChatDao().submit(senderID, receiverID, message);
 		response.getWriter().write(String.valueOf(result));
 	}
+	
+
+	
 }

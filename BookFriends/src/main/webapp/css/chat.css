@@ -1,5 +1,8 @@
 body{
     background-color: #efefef;
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
 .card {
     background: #fff;
@@ -12,9 +15,6 @@ body{
     box-shadow: 0 1px 2px 0 rgb(0 0 0 / 10%);
 }
 
-.chat-app {
-	height: 600px;
-}
 
 .chat-app .people-list {
     width: 280px;
@@ -22,7 +22,7 @@ body{
     left: 0;
     top: 0;
     padding: 20px;
-    z-index: 7
+    z-index: 7;
 }
 
 .chat-app .chat {
@@ -96,6 +96,7 @@ body{
     padding: 20px;
     border-bottom: 2px solid #fff;
     overflow-y: auto;
+    height: 300px
 }
 
 .chat .chat-history ul {
@@ -170,12 +171,13 @@ body{
 
 .chat .chat-history .other-message {
     background: #e8f1f3;
-    text-align: right
+    text-align: left;
+    align-self: flex-end;
 }
 
 .chat .chat-history .other-message:after {
     border-bottom-color: #e8f1f3;
-    left: 93%
+    left: 85%;
 }
 
 .chat .chat-message {
@@ -292,14 +294,117 @@ body{
 }
 
 .chat-history {
+    display: flex;
+    flex-direction: column;
     padding: 20px;
-    border-bottom: 2px solid #fff;
-    overflow-y: auto; /* 스크롤바가 필요할 때만 나타나게 설정 */
-    max-height: 380px; /* 최대 높이 설정 */
-    margin: 20px;
+    overflow-y: auto;
+    height: auto;
 }
+
 
 #peopleList {
 	overflow-y: auto;
     max-height: 500px;
+}
+
+.chat-message.fixed {
+    position: relative;
+    background: white; /* 필요에 따라 배경색 설정 */
+    border-top: 1px solid #eaeaea;
+}
+
+.container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* 메시지 데이터 박스 정렬 */
+.message-data {
+    display: flex;
+    justify-content: flex-end; /* 오른쪽으로 정렬 */
+    align-items: center;
+    width: 100%;
+}
+
+.align-left .message-data,
+.align-right .message-data {
+    justify-content: flex-start;
+    text-align: left;
+}
+
+.align-right .message-data {
+    justify-content: flex-end;
+    text-align: right;
+}
+
+.info-left .message-info {
+    order: 2; /* 순서를 텍스트 다음으로 조정 */
+    padding-left: 10px;
+}
+
+.info-right .avatar {
+    order: 2; /* 이미지를 오른쪽으로 이동 */
+}
+
+.info-right .message-info {
+    padding-right: 10px; /* 오른쪽 메시지에서 텍스트의 오른쪽 패딩 */
+}
+
+.message-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.sender-id {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.time {
+    font-size: 0.85em;
+    color: #666;
+}
+
+.avatar img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+}
+
+.message {
+    width: 100%;
+}
+
+
+/* 메시지 박스 스타일 */
+.my-message {
+    padding: 10px 20px;
+    margin: 5px 0;
+    border-radius: 8px;
+    width: fit-content; /* Content width but allows alignment */
+    max-width: 80%;
+    background: #efefef;
+}
+
+
+
+.my-message {
+    background: #efefef;
+    align-self: flex-start;
+    text-align: left;
+    padding: 18px 20px;
+    line-height: 26px;
+    font-size: 16px;
+    border-radius: 7px;
+}
+
+.other-message {
+	padding-left: 20px;
+    align-self: flex-end;
+    background: #e8f1f3;
+    width: fit-content; /* Content width but allows alignment */
+    border-radius: 8px;
+    float: right;
 }

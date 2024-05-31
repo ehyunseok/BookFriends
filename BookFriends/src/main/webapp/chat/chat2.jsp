@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.io.PrintWriter"%>
 <%@ page import="user.UserDao"%>
+<%@ page import="user.UserDto"%>
+<%@ page import="chat.ChatDao"%>
+<%@ page import="chat.ChatDto"%>
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="java.net.URLEncoder"%>
 <%@ page import="java.text.SimpleDateFormat"%>
@@ -129,20 +132,37 @@
                     </div>
                     <!-- 목록 -->
                     <ul class="list-unstyled chat-list mt-2 mb-0" id="peopleList">
-                        <li class="clearfix">
+                    <%
+                    ChatDao chatDao = new ChatDao();
+                    ArrayList<UserDto> chatFriends = chatDao.getChatFriends(userID);
+                    request.setAttribute("chatFriends", chatFriends);
+                    ChatDto chatDto = new ChatDto();
+                    int num = 1;
+                   	if(chatFriends != null){
+                   		for(UserDto user : chatFriends){
+                   			// 현재 페이지의 receiverID와 각 사용자의 userID를 비교
+                            String activeClass = "";
+                            if(receiverID != null && receiverID.equals(user.getUserID())) {
+                                activeClass = " active"; // 일치하면 active 클래스를 추가
+                            }
+                    %>
+                        <li class="clearfix<%= activeClass %>" data-url="./chat2.jsp?receiverID=<%= user.getUserID() %>">
                             <img src="../images/icon.png" alt="avatar">
                             <div class="about">
-                                <div class="name">Vincent Porter</div>
-                                <div class="status"><i class="fa fa-circle offline"></i> left 7 mins ago</div>
+                                <div class="name"><%= user.getUserID() %></div>
+                                <div class="status">
+                                <% if(num%2 != 0) { %><i class="fa fa-circle online"></i>online
+                                <% } else { %>
+                                	<i class="fa fa-circle offline"></i>offline
+                                <% } %>
+                                </div>
                             </div>
                         </li>
-                        <li class="clearfix active">
-                            <img src="../images/icon.png" alt="avatar">
-                            <div class="about">
-                                <div class="name">Aiden Chavez</div>
-                                <div class="status"><i class="fa fa-circle online"></i> online</div>
-                            </div>
-                        </li>
+                    <%
+                    	num++;
+                    		}
+                   		} 
+                	%>
                     </ul>
                 </div>
                 <!-- 채팅창 -->
@@ -164,7 +184,7 @@
                     	<ul class="m-b-0" id="chatList">
                     	</ul>
                     </div>
-                    <div class="chat-message clearfix">
+                    <div class="chat-message clearfix fixed">
                         <div class="input-group mb-0">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="sendsvg"></span>
@@ -180,6 +200,16 @@
 </section>
 
 <script>
+	//페이지 이동
+	$(document).ready(function() {
+	    // 'li' 요소에 클릭 이벤트 핸들러를 추가합니다.
+	    $("#peopleList").on("click", "li", function() {
+	        var url = $(this).data("url"); // 'data-url' 속성에서 URL을 가져옵니다.
+	        window.location.href = url; // 해당 URL로 페이지를 리다이렉트합니다.
+	    });
+	});
+
+	//전송 버튼 누른 다음 액션
     $(document).ready(function() {
         $('#sendsvg').click(function() {
             var message = $('#message').val().trim(); //공백 제거
@@ -189,14 +219,26 @@
                 submitFunction();
             }
         });
+     	// 엔터 키를 눌렀을 때 메시지 전송
+        $('#message').keypress(function(event) {
+            if (event.which === 13 && !event.shiftKey) { // 13은 엔터 키의 키 코드입니다. shiftKey가 같이 눌리지 않았는지 확인합니다.
+                event.preventDefault(); // 엔터 키 기본 이벤트(새 줄 입력)를 방지합니다.
+                var message = $('#message').val().trim();
+                if (message.length > 0) { // 메시지가 비어 있지 않은 경우에만 전송합니다.
+                    submitFunction();
+                }
+            }
+        });
     });
+    
+    
 
     //모달 자동 닫기 함수
     function autoCloseModal(modalId) {
         $(modalId).modal('show');
         setTimeout(function() {
             $(modalId).modal('hide');
-        }, 2000); // 2초 후에 모달 닫기
+        }, 1000); // 1초 후에 모달 닫기
     }
 
     // 서버 응답에 따라 모달 표시를 처리하는 함수
@@ -234,6 +276,7 @@
                 handleServerResponse(result);
                 if (result == "1") {
                     $('#message').val(''); // 메시지 제출 완료 후 작성란 비우기
+                    $('#chatList').scrollTop($('#chatList')[0].scrollHeight); // 채팅 목록을 가장 최근 메시지로 스크롤
                 }
             }
         });
@@ -255,20 +298,27 @@
 
     function addChat(senderID, message, chatTime) {
         var userID = '<%= userID %>';
+        console.log("senderID = "+ senderID);
         var isSender = senderID === userID;
         var formattedChatTime = formatChatTime(chatTime);
-        var messageClass = isSender ? 'other-message' : 'my-message';
-        var alignClass = isSender ? ' text-right' : '';
+        var messageClass = isSender ? 'my-message' : 'other-message';
+        var alignClass = isSender ? ' align-left' : ' align-right';
+        var infoClass = isSender ? 'info-left' : 'info-right';
+        var avatarPlacement = isSender ? '' : '<div class="avatar"><img src="../images/icon.png" alt="avatar"></div>';
+		var name = isSender? 'me' : senderID;
         var chatHtml =
             '<li class="clearfix ' + alignClass + '">' +
-            '<div class="message-data' + alignClass + '">' +
-            '<span class="message-data-time">' + formattedChatTime + '</span> ' +
-            (isSender ? '<img src="../images/icon.png" alt="avatar">' : '') +
-            '</div>' +
-            '<div class="message ' + messageClass + '">' + message + '</div>' +
+                '<div class="message-data ' + infoClass + '">' +
+                    avatarPlacement +
+                    '<div class="message-info">' +
+                        '<span class="sender-id">' + name + '</span>' +
+                        '<span class="time">' + formattedChatTime + '</span>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="message ' + messageClass + '">' + message + '</div>' +
             '</li>';
         $('#chatList').append(chatHtml);
-        $('#chatList').scrollTop($('#chatList')[0].scrollHeight); // 스크롤을 최신 메시지 위치로 이동
+        $('#chatList').scrollTop($('#chatList')[0].scrollHeight);
     }
 
     function chatListFunction(type) {

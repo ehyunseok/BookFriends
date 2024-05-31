@@ -54,7 +54,6 @@
     <servlet-name>ChatSubmitServlet</servlet-name>
     <servlet-class>chat.ChatSubmitServlet</servlet-class>
   </servlet>
-
   <servlet-mapping>
     <servlet-name>ChatSubmitServlet</servlet-name>
     <url-pattern>/chatSubmitServlet</url-pattern>
@@ -64,10 +63,27 @@
     <servlet-name>ChatListServlet</servlet-name>
     <servlet-class>chat.ChatListServlet</servlet-class>
   </servlet>
-
   <servlet-mapping>
     <servlet-name>ChatListServlet</servlet-name>
     <url-pattern>/chatListServlet</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+	<servlet-name>chatFriendListServlet</servlet-name>
+    <servlet-class>chat.ChatFriendListServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+	<servlet-name>chatFriendListServlet</servlet-name>
+	<url-pattern>/chatFriends</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+	<servlet-name>ChatUnreadServlet</servlet-name>
+    <servlet-class>ChatUnreadServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+	<servlet-name>ChatUnreadServlet</servlet-name>
+	<url-pattern>/chatUnread</url-pattern>
   </servlet-mapping>
 
 </web-app>

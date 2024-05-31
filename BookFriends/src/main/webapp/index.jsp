@@ -127,7 +127,7 @@
 							for(int i = 0 ; i < 5; i++){
 								ReviewDto review = reviewDto.get(i);
 						%>
-							<li class="list-group-item" onclick="window.location='./reviewDetail.jsp?reviewID=<%= review.getReviewID() %>'">
+							<li class="list-group-item" onclick="window.location='./review/reviewDetail.jsp?reviewID=<%= review.getReviewID() %>'">
 									[<%= review.getBookName() %> <small><%= review.getAuthorName() %></small>] 
 								<div class="truncate-text">
 									<b><%= review.getReviewTitle() %></b>  <small style="font-size:xx-small;">추천:<%= review.getLikeCount() %></small> 
@@ -156,7 +156,7 @@
 							for(int i = 0 ; i < 5; i++){
 								BoardDto board = boardList.get(i);
 						%>
-							<li class="list-group-item" onclick="window.location='./postDetail.jsp?postID=<%= board.getPostID() %>'">
+							<li class="list-group-item" onclick="window.location='./board/postDetail.jsp?postID=<%= board.getPostID() %>'">
 								[<%= board.getPostCategory() %>] 
 								<div class="truncate-text">
 									<b><%= board.getPostTitle() %></b>  <small style="font-size:xx-small;">추천:<%= board.getLikeCount() %></small>
