@@ -13,8 +13,6 @@ BookFriends는 독서 커뮤니티를 위한 플랫폼으로, 사용자들이 �
 - [주요 기능](#주요-기능)
 - [ERD](#ERD)
 - [프로젝트 설정](#프로젝트-설정)
-- [설치 및 실행 방법](#설치-및-실행-방법)
-- [테스트](#테스트)
 - [연락처](#연락처)
 - [업데이트 로그](#업데이트-로그)
 
@@ -96,46 +94,6 @@ BookFriends는 독서 커뮤니티를 위한 플랫폼으로, 사용자들이 �
 1. MySQL 데이터베이스 생성
 2. 필요한 테이블 생성 및 초기 데이터 입력 (스키마 및 데이터 정의서 참고)
 
-## 설치 및 실행 방법
-1. 프로젝트를 클론합니다.
-   ```bash
-   git clone https://github.com/yourusername/BookFriends_Spring.git
-   ```
-
-2. 필요한 라이브러리를 설치합니다.
-   ```bash
-   mvn install
-  ```
-
-3. 데이터베이스 설정 파일을 업데이트합니다.
-   - `src/main/resources/application.properties` 파일을 열어 데이터베이스 연결 정보를 업데이트합니다.
-
-  ```properties
-  spring.datasource.url=jdbc:mysql://localhost:3306/yourdatabase
-  spring.datasource.username=yourusername
-  spring.datasource.password=yourpassword
-  ```
-
-4. Redis 설정 파일을 업데이트합니다.
-   - `src/main/resources/application.properties` 파일을 열어 Redis 연결 정보를 업데이트합니다.
-  ```properties
-  spring.redis.host=localhost
-  spring.redis.port=6379
-  ```
-
-5. 애플리케이션을 실행합니다.
-   ```bash
-   mvn spring-boot:run
-   ```
-
-6. 브라우저에서 `http://localhost:8080`에 접속하여 애플리케이션을 확인합니다.
-
-## 테스트
-- **테스트 프레임워크**: JUnit, Mockito
-- **테스트 실행 방법**:
-  ```bash
-  mvn test
-  ```
 
 ## 연락처
 프로젝트 관련 문의 사항이 있으면 yhdaneys@gmail.com으로 연락해 주세요.
