@@ -18,7 +18,7 @@ BookFriends는 독서 커뮤니티를 위한 플랫폼으로, 사용자들이 �
 
 ## 개발환경
 - **Frontend**: HTML, CSS, JavaScript
-- **Backend**: JDK 17, Servlet( -> Spring Framework, Redis 리팩토링 진행중입니다.)
+- **Backend**: JDK 17, JSP, Servlet( -> Spring Framework, Redis 리팩토링 진행중입니다.)
 - **IDE**: IntelliJ IDEA, Eclipse
 - **Database**: MySQL
 - **Server**: Apache Tomcat 9.0.89
