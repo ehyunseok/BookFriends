@@ -1,4 +1,4 @@
-# BookFriends_Spring
+# BookFriends
 
 ## 소개
 **BookFriends**는 독서가들이 이용할 수 있는 웹사이트입니다. 서평 공유, 독서 모임 모집, 자유게시판, 실시간 채팅, 도서관 검색, 중고 도서 거래/교환 기능을 제공합니다.
@@ -18,7 +18,7 @@ BookFriends는 독서 커뮤니티를 위한 플랫폼으로, 사용자들이 �
 
 ## 개발환경
 - **Frontend**: HTML, CSS, JavaScript
-- **Backend**: JDK 17, Spring Framework, Redis
+- **Backend**: JDK 17, Servlet( -> Spring Framework, Redis 리팩토링 진행중입니다.)
 - **IDE**: IntelliJ IDEA, Eclipse
 - **Database**: MySQL
 - **Server**: Apache Tomcat 9.0.89
