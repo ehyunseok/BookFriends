@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS `bookfriends`.`board` (
   INDEX `fk_board_userID` (`userID` ASC) VISIBLE,
   CONSTRAINT `fk_board_userID`
     FOREIGN KEY (`userID`)
-    REFERENCES `lectureevaluation`.`user` (`userID`)
+    REFERENCES `bookfriends`.`user` (`userID`)
     ON DELETE CASCADE);
     
 CREATE TABLE IF NOT EXISTS `bookfriends`.`review` (
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `bookfriends`.`review` (
   INDEX `fk_review_userID` (`userID` ASC) VISIBLE,
   CONSTRAINT `fk_review_userID`
     FOREIGN KEY (`userID`)
-    REFERENCES `lectureevaluation`.`user` (`userID`)
+    REFERENCES `bookfriends`.`user` (`userID`)
     ON DELETE CASCADE);
     
 
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `bookfriends`.`recruit` (
   INDEX `fk_recruit_userID` (`userID` ASC) VISIBLE,
   CONSTRAINT `fk_recruit_userID`
     FOREIGN KEY (`userID`)
-    REFERENCES `lectureevaluation`.`user` (`userID`)
+    REFERENCES `bookfriends`.`user` (`userID`)
     ON DELETE CASCADE);
     
 CREATE TABLE IF NOT EXISTS `bookfriends`.`chat` (
@@ -71,19 +71,19 @@ CREATE TABLE IF NOT EXISTS `bookfriends`.`chat` (
   INDEX `fk_chat_receiverID` (`receiverID` ASC) VISIBLE,
   CONSTRAINT `chat_ibfk_1`
     FOREIGN KEY (`senderID`)
-    REFERENCES `lectureevaluation`.`user` (`userID`)
+    REFERENCES `bookfriends`.`user` (`userID`)
     ON DELETE CASCADE,
   CONSTRAINT `chat_ibfk_2`
     FOREIGN KEY (`receiverID`)
-    REFERENCES `lectureevaluation`.`user` (`userID`)
+    REFERENCES `bookfriends`.`user` (`userID`)
     ON DELETE CASCADE,
   CONSTRAINT `fk_chat_receiverID`
     FOREIGN KEY (`receiverID`)
-    REFERENCES `lectureevaluation`.`user` (`userID`)
+    REFERENCES `bookfriends`.`user` (`userID`)
     ON DELETE CASCADE,
   CONSTRAINT `fk_chat_senderID`
     FOREIGN KEY (`senderID`)
-    REFERENCES `lectureevaluation`.`user` (`userID`)
+    REFERENCES `bookfriends`.`user` (`userID`)
     ON DELETE CASCADE);
     
     
@@ -101,15 +101,15 @@ CREATE TABLE IF NOT EXISTS `bookfriends`.`reply` (
   INDEX `fk_reply_userID` (`userID` ASC) VISIBLE,
   CONSTRAINT `fk_reply_postID`
     FOREIGN KEY (`postID`)
-    REFERENCES `lectureevaluation`.`board` (`postID`)
+    REFERENCES `bookfriends`.`board` (`postID`)
     ON DELETE CASCADE,
   CONSTRAINT `fk_reply_recruitID`
     FOREIGN KEY (`recruitID`)
-    REFERENCES `lectureevaluation`.`recruit` (`recruitID`)
+    REFERENCES `bookfriends`.`recruit` (`recruitID`)
     ON DELETE CASCADE,
   CONSTRAINT `fk_reply_userID`
     FOREIGN KEY (`userID`)
-    REFERENCES `lectureevaluation`.`user` (`userID`)
+    REFERENCES `bookfriends`.`user` (`userID`)
     ON DELETE CASCADE);
     
     
@@ -125,19 +125,19 @@ CREATE TABLE IF NOT EXISTS `bookfriends`.`file` (
   INDEX `fk_file_recruitID` (`recruitID` ASC) VISIBLE,
   CONSTRAINT `fk_file_postID`
     FOREIGN KEY (`postID`)
-    REFERENCES `lectureevaluation`.`board` (`postID`)
+    REFERENCES `bookfriends`.`board` (`postID`)
     ON DELETE CASCADE,
   CONSTRAINT `fk_file_recruitID`
     FOREIGN KEY (`recruitID`)
-    REFERENCES `lectureevaluation`.`recruit` (`recruitID`)
+    REFERENCES `bookfriends`.`recruit` (`recruitID`)
     ON DELETE CASCADE,
   CONSTRAINT `fk_postID`
     FOREIGN KEY (`postID`)
-    REFERENCES `lectureevaluation`.`board` (`postID`)
+    REFERENCES `bookfriends`.`board` (`postID`)
     ON DELETE CASCADE,
   CONSTRAINT `fk_recruitID`
     FOREIGN KEY (`recruitID`)
-    REFERENCES `lectureevaluation`.`recruit` (`recruitID`)
+    REFERENCES `bookfriends`.`recruit` (`recruitID`)
     ON DELETE CASCADE);
     
     
@@ -148,7 +148,7 @@ CREATE TABLE IF NOT EXISTS `bookfriends`.`likeypost` (
   PRIMARY KEY (`userID`, `postID`),
   CONSTRAINT `fk_likeyPost_userID`
     FOREIGN KEY (`userID`)
-    REFERENCES `lectureevaluation`.`user` (`userID`)
+    REFERENCES `bookfriends`.`user` (`userID`)
     ON DELETE CASCADE);
     
     
@@ -159,7 +159,7 @@ CREATE TABLE IF NOT EXISTS `bookfriends`.`likeyreview` (
   PRIMARY KEY (`userID`, `reviewID`),
   CONSTRAINT `fk_likeyReview_userID`
     FOREIGN KEY (`userID`)
-    REFERENCES `lectureevaluation`.`user` (`userID`)
+    REFERENCES `bookfriends`.`user` (`userID`)
     ON DELETE CASCADE);
     
 CREATE TABLE IF NOT EXISTS `bookfriends`.`likeyreply` (
@@ -169,7 +169,7 @@ CREATE TABLE IF NOT EXISTS `bookfriends`.`likeyreply` (
   PRIMARY KEY (`userID`, `replyID`),
   CONSTRAINT `fk_likeyReply_userID`
     FOREIGN KEY (`userID`)
-    REFERENCES `lectureevaluation`.`user` (`userID`)
+    REFERENCES `bookfriends`.`user` (`userID`)
     ON DELETE CASCADE);
 
 
