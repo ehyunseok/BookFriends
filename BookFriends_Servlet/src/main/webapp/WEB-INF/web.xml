@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<<<<<<< HEAD
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" version="4.0">
+  <display-name>CommunityOfUniverseStudents</display-name>
+=======
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+                             http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+  <display-name>BookFriends</display-name>
+
+>>>>>>> de1542043d23d26350fb0f2ac86d9c86ca687a0c
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+  </welcome-file-list>
+<<<<<<< HEAD
+</web-app>
+=======
+
+  <servlet>
+    <servlet-name>RecruitRegistServlet</servlet-name>
+    <servlet-class>recruit.RecruitRegistServlet</servlet-class>
+    <multipart-config>
+      <max-file-size>5242880</max-file-size> <!-- 5MB -->
+      <max-request-size>10485760</max-request-size> <!-- 10MB -->
+      <file-size-threshold>1048576</file-size-threshold> <!-- 1MB -->
+    </multipart-config>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>RecruitRegistServlet</servlet-name>
+    <url-pattern>/recruitWrite</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>RecruitRegistServlet</servlet-name>
+    <url-pattern>/display</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>RecruitUpdateServlet</servlet-name>
+    <servlet-class>recruit.RecruitUpdateServlet</servlet-class>
+    <multipart-config>
+      <max-file-size>5242880</max-file-size> <!-- 5MB -->
+      <max-request-size>10485760</max-request-size> <!-- 10MB -->
+      <file-size-threshold>1048576</file-size-threshold> <!-- 1MB -->
+    </multipart-config>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>RecruitUpdateServlet</servlet-name>
+    <url-pattern>/recruitUpdate</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>ChatSubmitServlet</servlet-name>
+    <servlet-class>chat.ChatSubmitServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ChatSubmitServlet</servlet-name>
+    <url-pattern>/chatSubmitServlet</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>ChatListServlet</servlet-name>
+    <servlet-class>chat.ChatListServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ChatListServlet</servlet-name>
+    <url-pattern>/chatListServlet</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+	<servlet-name>chatFriendListServlet</servlet-name>
+    <servlet-class>chat.ChatFriendListServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+	<servlet-name>chatFriendListServlet</servlet-name>
+	<url-pattern>/chatFriends</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+	<servlet-name>ChatUnreadServlet</servlet-name>
+    <servlet-class>ChatUnreadServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+	<servlet-name>ChatUnreadServlet</servlet-name>
+	<url-pattern>/chatUnread</url-pattern>
+  </servlet-mapping>
+
+</web-app>
+>>>>>>> de1542043d23d26350fb0f2ac86d9c86ca687a0c
