@@ -23,10 +23,6 @@ BookFriends는 독서 커뮤니티를 위한 플랫폼으로, 사용자들이 �
 - **Database**: MySQL
 - **Server**: Apache Tomcat 9.0.89
 - **Libraries**:
-  - Spring Boot 2.6.x
-  - Spring Data JPA
-  - Spring Security
-  - Redis 6.x
   - jQuery 3.7.1
   - Bootstrap 4.6.2
   - Popper 1.16.1
@@ -87,13 +83,11 @@ BookFriends는 독서 커뮤니티를 위한 플랫폼으로, 사용자들이 �
 1. **IntelliJ IDEA 또는 Eclipse 설치 및 설정**: Spring Framework 개발을 위한 IDE 설정
 2. **Apache Tomcat 설치**: 웹 서버로 Apache Tomcat 9.0 설정
 3. **MySQL 설치**: 데이터베이스 설정 및 초기화
-4. **Redis 설치**: 캐시 및 세션 관리를 위한 Redis 설정
-5. **라이브러리 설치**: 라이브러리 설치 및 설정 (Spring Boot Starter, Spring Data JPA, Spring Security 등)
+4. **라이브러리 설치**: 라이브러리 설치 및 설정
 
 ### 데이터베이스 설정
 1. MySQL 데이터베이스 생성
 2. 필요한 테이블 생성 및 초기 데이터 입력 (스키마 및 데이터 정의서 참고)
-
 
 ## 연락처
 프로젝트 관련 문의 사항이 있으면 yhdaneys@gmail.com으로 연락해 주세요.
