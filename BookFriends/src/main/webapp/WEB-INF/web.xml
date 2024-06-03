@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<<<<<<< HEAD
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" version="4.0">
-  <display-name>CommunityOfUniverseStudents</display-name>
-=======
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://xmlns.jcp.org/xml/ns/javaee"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
@@ -10,7 +6,6 @@
          version="4.0">
   <display-name>BookFriends</display-name>
 
->>>>>>> de1542043d23d26350fb0f2ac86d9c86ca687a0c
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
     <welcome-file>index.htm</welcome-file>
@@ -19,9 +14,6 @@
     <welcome-file>default.htm</welcome-file>
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
-<<<<<<< HEAD
-</web-app>
-=======
 
   <servlet>
     <servlet-name>RecruitRegistServlet</servlet-name>
@@ -95,4 +87,3 @@
   </servlet-mapping>
 
 </web-app>
->>>>>>> de1542043d23d26350fb0f2ac86d9c86ca687a0c
